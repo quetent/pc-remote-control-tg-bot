@@ -13,7 +13,7 @@ namespace RemoteControlBot
             var cts = new CancellationTokenSource();
             var receiverOptions = new ReceiverOptions() { AllowedUpdates = Array.Empty<UpdateType>() };
 
-            var bot = new Bot(Config.TOKEN, receiverOptions, cts.Token);
+            var bot = new Bot(Config.ENABLE_LOGGING, Config.TOKEN, receiverOptions, cts.Token);
             bot.Start();
 
             Console.ReadKey();

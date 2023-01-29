@@ -1,20 +1,23 @@
-﻿using Telegram.Bot.Exceptions;
-using Telegram.Bot.Types;
-using Telegram.Bot;
+﻿using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace RemoteControlBot
 {
     internal class Bot
     {
+        private readonly bool _enableLogging;
+
         private readonly TelegramBotClient _botClient;
         private readonly ReceiverOptions _receiverOptions;
 
         private readonly CancellationToken _cancellationToken;
 
-        public Bot(string token, ReceiverOptions recieverOptions, CancellationToken cancellationToken)
+        public Bot(bool enableLogging, string token, ReceiverOptions recieverOptions, CancellationToken cancellationToken)
         {
+            _enableLogging = enableLogging;
             _botClient = new TelegramBotClient(token);
             _receiverOptions = recieverOptions;
             _cancellationToken = cancellationToken;
@@ -29,7 +32,7 @@ namespace RemoteControlBot
                 cancellationToken: _cancellationToken);
         }
 
-        private static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             if (update.Message is not { } message)
                 return;
@@ -46,16 +49,10 @@ namespace RemoteControlBot
                 cancellationToken: cancellationToken);
         }
 
-        private static async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
-            var exceptionMessage = exception switch
-            {
-                ApiRequestException apiRequestException 
-                    => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-                _ => exception.ToString()
-            };
-
-            Console.WriteLine(exceptionMessage);
+            if (_enableLogging)
+                Logger.LogUnhandledException(exception);
 
             return Task.CompletedTask;
         }
