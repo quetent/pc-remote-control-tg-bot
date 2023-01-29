@@ -36,6 +36,9 @@ namespace RemoteControlBot
                 pollingErrorHandler: HandlePollingErrorAsync,
                 receiverOptions: _receiverOptions,
                 cancellationToken: _cancellationToken);
+
+            if (_enableLogging)
+                Logger.LogBotStartup();
         }
 
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)

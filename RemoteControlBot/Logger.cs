@@ -7,8 +7,14 @@ namespace RemoteControlBot
     internal static class Logger
     {
         public static ConsoleColor NeutralColor { get; set; } = ConsoleColor.White;
+        public static ConsoleColor InfoColor { get; set; } = ConsoleColor.DarkYellow;
         public static ConsoleColor NewMessageColor { get; set; } = ConsoleColor.DarkGreen;
         public static ConsoleColor ExceptionColor { get; set; } = ConsoleColor.DarkRed;
+
+        public static void LogBotStartup()
+        {
+            LogByPattern("Startup", "Bot has been started", InfoColor);
+        }
 
         public static void LogMessageRecieved(string messageText, User? user)
         {

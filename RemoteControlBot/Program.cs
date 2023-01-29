@@ -16,6 +16,11 @@ namespace RemoteControlBot
             var bot = new Bot(Config.OWNER_ID, Config.ENABLE_LOGGING, Config.TOKEN, receiverOptions, cts.Token);
             bot.Start();
 
+            Wait();
+        }
+
+        private static void Wait()
+        {
             Console.ReadKey();
         }
     }
