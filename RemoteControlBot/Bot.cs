@@ -3,6 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using static RemoteControlBot.Keyboards;
 using static RemoteControlBot.BotFunctions;
 
 namespace RemoteControlBot
