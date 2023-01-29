@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Telegram.Bot.Types.ReplyMarkups;
 
 namespace RemoteControlBot
 {
-    internal class Keyboards
+    internal static class Keyboards
     {
-
+        internal static ReplyKeyboardMarkup MainMenu = new(
+            new[]
+            {
+                new[]
+                {
+                    new KeyboardButton("Button1"), new KeyboardButton("Button2")
+                }
+            });
     }
 }

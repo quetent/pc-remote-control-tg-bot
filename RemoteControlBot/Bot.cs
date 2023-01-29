@@ -52,25 +52,12 @@ namespace RemoteControlBot
 
             var chatId = message.Chat.Id;
 
-            var keyboard = new ReplyKeyboardMarkup(
-                new[]
-                {
-                    new[]
-                    {
-                        new KeyboardButton("hello"), new KeyboardButton("world")
-                    },
-                    new[]
-                    {
-                        new KeyboardButton("next"), new KeyboardButton("stay")
-                    }
-                });
-
             Logger.LogMessageRecieved(messageText, update.Message.From);
 
             await _botClient.SendTextMessageAsync(
                             message.Chat.Id,
                             text: "sss",
-                            replyMarkup: keyboard);
+                            replyMarkup: Keyboards.MainMenu);
         }
 
         private async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
