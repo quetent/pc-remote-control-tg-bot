@@ -1,14 +1,13 @@
-﻿using System.Runtime.Intrinsics.Arm;
+﻿using System.Runtime.CompilerServices;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using static RemoteControlBot.BotFunctions;
 
 namespace RemoteControlBot
 {
-    internal class Bot
+    public class Bot
     {
         private readonly long _ownerId;
         private readonly bool _enableLogging;
@@ -18,10 +17,10 @@ namespace RemoteControlBot
 
         private readonly CancellationToken _cancellationToken;
 
-        public Bot(long ownerId, 
-                   bool enableLogging, 
-                   string token, 
-                   ReceiverOptions recieverOptions, 
+        public Bot(long ownerId,
+                   bool enableLogging,
+                   string token,
+                   ReceiverOptions recieverOptions,
                    CancellationToken cancellationToken)
         {
             _ownerId = ownerId;
@@ -50,20 +49,63 @@ namespace RemoteControlBot
             if (message.Text is not { } messageText)
                 return;
 
+            Logger.LogMessageRecieved(messageText, update.Message.From);
+
             var chatId = message.Chat.Id;
 
-            Logger.LogMessageRecieved(messageText, update.Message.From);
+            if (chatId != _ownerId)
+                return;
+
+            IReplyMarkup markup;
+            
+            if (MAIN_MENU_LABELS.Contains(messageText))
+            {
+                if (messageText == POWER)
+                {
+                    markup = Keyboards.Power;
+                }
+                else if (messageText == VOLUME)
+                {
+                    markup = Keyboards.Volume;
+                }
+                else if (messageText == SCREEN)
+                {
+                    markup = Keyboards.Screen;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+            }
+            else if (POWER_LABELS.Contains(messageText))
+            {
+                markup = Keyboards.Power;
+            }
+            else if (VOLUME_LABELS.Contains(messageText))
+            {
+                markup = Keyboards.Volume;
+            }
+            else if (SCREEN_LABELS.Contains(messageText))
+            {
+                markup = Keyboards.Screen;
+            }
+            else
+            {
+                markup = Keyboards.MainMenu;
+            }
 
             await _botClient.SendTextMessageAsync(
                             message.Chat.Id,
                             text: "sss",
-                            replyMarkup: Keyboards.MainMenu);
+                            replyMarkup: markup);
         }
 
-        private async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             if (_enableLogging)
                 Logger.LogUnhandledException(exception);
+
+            return Task.CompletedTask;
         }
     }
 }

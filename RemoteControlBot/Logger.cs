@@ -4,7 +4,7 @@ using static System.Console;
 
 namespace RemoteControlBot
 {
-    internal static class Logger
+    public static class Logger
     {
         public static ConsoleColor NeutralColor { get; set; } = ConsoleColor.White;
         public static ConsoleColor InfoColor { get; set; } = ConsoleColor.DarkYellow;

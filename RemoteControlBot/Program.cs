@@ -8,7 +8,7 @@ namespace RemoteControlBot
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var cts = new CancellationTokenSource();
             var receiverOptions = new ReceiverOptions() { AllowedUpdates = Array.Empty<UpdateType>() };
@@ -21,7 +21,7 @@ namespace RemoteControlBot
 
         private static void Wait()
         {
-            Console.ReadKey();
+            Console.ReadLine();
         }
     }
 }
