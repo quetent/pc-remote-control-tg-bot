@@ -1,8 +1,10 @@
-﻿using Telegram.Bot;
+﻿using System.Runtime.Intrinsics.Arm;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace RemoteControlBot
 {
@@ -50,12 +52,25 @@ namespace RemoteControlBot
 
             var chatId = message.Chat.Id;
 
+            var keyboard = new ReplyKeyboardMarkup(
+                new[]
+                {
+                    new[]
+                    {
+                        new KeyboardButton("hello"), new KeyboardButton("world")
+                    },
+                    new[]
+                    {
+                        new KeyboardButton("next"), new KeyboardButton("stay")
+                    }
+                });
+
             Logger.LogMessageRecieved(messageText, update.Message.From);
 
-            var sentMessage = await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: "You said:\n" + messageText,
-                cancellationToken: cancellationToken);
+            await _botClient.SendTextMessageAsync(
+                            message.Chat.Id,
+                            text: "sss",
+                            replyMarkup: keyboard);
         }
 
         private async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)

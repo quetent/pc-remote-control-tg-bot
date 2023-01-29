@@ -44,9 +44,7 @@ namespace RemoteControlBot
 
         private static string GetCurrentDateTimeAsString()
         {
-            var now = DateTime.Now;
-
-            return $"{now.Month:d2}.{now.Day:d2}.{now.Year} {now.Hour:d2}:{now.Minute:d2}:{now.Second:d2}";
+            return $"{DateTime.Now:G}";
         }
 
         private static void SetForegroundColor(ConsoleColor color)
