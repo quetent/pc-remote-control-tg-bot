@@ -8,6 +8,7 @@ namespace RemoteControlBot
 {
     internal class Bot
     {
+        private readonly long _ownerId;
         private readonly bool _enableLogging;
 
         private readonly TelegramBotClient _botClient;
@@ -15,8 +16,13 @@ namespace RemoteControlBot
 
         private readonly CancellationToken _cancellationToken;
 
-        public Bot(bool enableLogging, string token, ReceiverOptions recieverOptions, CancellationToken cancellationToken)
+        public Bot(long ownerId, 
+                   bool enableLogging, 
+                   string token, 
+                   ReceiverOptions recieverOptions, 
+                   CancellationToken cancellationToken)
         {
+            _ownerId = ownerId;
             _enableLogging = enableLogging;
             _botClient = new TelegramBotClient(token);
             _receiverOptions = recieverOptions;
@@ -41,20 +47,18 @@ namespace RemoteControlBot
 
             var chatId = message.Chat.Id;
 
-            Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+            Logger.LogMessageRecieved(messageText, update.Message.From);
 
-            Message sentMessage = await botClient.SendTextMessageAsync(
+            var sentMessage = await botClient.SendTextMessageAsync(
                 chatId: chatId,
                 text: "You said:\n" + messageText,
                 cancellationToken: cancellationToken);
         }
 
-        private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        private async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             if (_enableLogging)
                 Logger.LogUnhandledException(exception);
-
-            return Task.CompletedTask;
         }
     }
 }
