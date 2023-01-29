@@ -1,0 +1,7 @@
+.vs/
+RemoteControlBot.sln
+
+RemoteControlBot/bin/
+RemoteControlBot/obj/
+
+RemoteControlBot/Config.cs
