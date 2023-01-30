@@ -1,9 +1,10 @@
-﻿using Telegram.Bot;
+﻿using AudioSwitcher.AudioApi.CoreAudio;
+using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using static RemoteControlBot.BotFunctions;
 using static RemoteControlBot.Keyboard;
+using static RemoteControlBot.BotFunctions;
 
 namespace RemoteControlBot
 {
@@ -14,6 +15,8 @@ namespace RemoteControlBot
 
         private readonly TelegramBotClient _botClient;
         private readonly ReceiverOptions _receiverOptions;
+
+        private readonly Lazy<VolumeManager> _volumeManager = new();
 
         private readonly CancellationToken _cancellationToken;
 
@@ -53,19 +56,35 @@ namespace RemoteControlBot
             if (_enableLogging)
                 Log.MessageRecieved(messageText, user);
 
-            if (!isValid && !IsAccessAllowed(user))
+            if (!(isValid && IsAccessAllowed(user)))
                 return;
+
+            ExecuteCommand(messageText);
 
             var chatId = GetChatId(message);
             var text = GetTextAnswer(messageText);
             var markup = GetMarkup(messageText);
 
             await _botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: text,
-                            replyMarkup: markup,
-                            cancellationToken: cancellationToken);
+                    chatId: chatId,
+                    text: text,
+                    replyMarkup: markup,
+                    cancellationToken: cancellationToken);
         }
+
+
+        private void ExecuteCommand(string textMessage)
+        {
+            var a = textMessage switch
+            {
+                LOUDER_5 => _volumeManager.Value.ChangeVolume(5),
+                _ => 1
+            };
+        }
+
+
+
+
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
