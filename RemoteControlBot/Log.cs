@@ -9,6 +9,8 @@ namespace RemoteControlBot
         public static ConsoleColor InfoColor { get; set; } = ConsoleColor.DarkYellow;
         public static ConsoleColor NewMessageColor { get; set; } = ConsoleColor.DarkGreen;
         public static ConsoleColor ExceptionColor { get; set; } = ConsoleColor.DarkRed;
+        public static ConsoleColor ExecuteCommandColor { get; set; } = ConsoleColor.DarkBlue;
+        public static ConsoleColor KeyboardRequestingColor { get; set; } = ConsoleColor.DarkGray;
 
         public static void BotStartup()
         {
@@ -28,6 +30,21 @@ namespace RemoteControlBot
             ByPattern("Unhandled exception", exception.Message, ExceptionColor);
         }
 
+        public static void UnknownCommand(string commandText)
+        {
+            ByPattern("Unknown command", commandText, ExecuteCommandColor);
+        }
+
+        public static void KeyboardRequest()
+        {
+            ExecuteByPattern("Keyboard request", KeyboardRequestingColor);
+        }
+
+        public static void CommandExecute(string commandText)
+        {
+            ExecuteByPattern(commandText);
+        }
+
         private static void ByPattern(string eventType, string eventText, ConsoleColor eventColor)
         {
             var now = GetCurrentDateTimeAsString();
@@ -39,6 +56,16 @@ namespace RemoteControlBot
             WriteLine($"{eventText}");
 
             WriteLine();
+        }
+
+        private static void ExecuteByPattern(string commandText)
+        {
+            ExecuteByPattern(commandText, ExecuteCommandColor);
+        }
+
+        private static void ExecuteByPattern(string commandText, ConsoleColor color)
+        {
+            ByPattern("Execute", commandText, color);
         }
 
         private static string GetCurrentDateTimeAsString()

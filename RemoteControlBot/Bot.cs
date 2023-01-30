@@ -57,7 +57,9 @@ namespace RemoteControlBot
             if (!(isValid && IsAccessAllowed(user)))
                 return;
 
-            ExecuteVolumeCommand(messageText);
+            var commandType = DetermineCommandType(messageText);
+
+            ExecuteCommand(commandType, messageText);
 
             var chatId = GetChatId(message);
             var text = GetTextAnswer(messageText);
@@ -70,22 +72,6 @@ namespace RemoteControlBot
                     cancellationToken: cancellationToken);
         }
 
-
-        private void ExecuteVolumeCommand(string textMessage)
-        {
-            var a = textMessage switch
-            {
-                LOUDER_5 => VolumeManager.ChangeVolume(5),
-                MUTE => VolumeManager.Mute(),
-                UNMUTE => VolumeManager.UnMute(),
-                _ => 1
-            };
-        }
-
-
-
-
-
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             if (_enableLogging)
@@ -94,19 +80,106 @@ namespace RemoteControlBot
             return Task.CompletedTask;
         }
 
+        private static string? DetermineCommandType(string command)
+        {
+            string? commandType;
+
+            if (MAIN_MENU_LABELS.Contains(command) || command == BACK_LABEL)
+                commandType = BACK_LABEL;
+            else if (POWER_LABELS.Contains(command))
+                commandType = POWER_LABEL;
+            else if (VOLUME_LABELS.Contains(command))
+                commandType = VOLUME_LABEL;
+            else if (SCREEN_LABELS.Contains(command))
+                commandType = SCREEN_LABEL;
+            else
+                commandType = null;
+
+            return commandType;
+        }
+
+        private void ExecuteCommand(string? commandType, string commandText)
+        {
+            if (commandType is null)
+            {
+                if (_enableLogging)
+                    Log.UnknownCommand(commandText);
+                
+                return;
+            }
+
+            if (commandType == BACK_LABEL)
+            {
+                if (_enableLogging)
+                    Log.KeyboardRequest();
+
+                return;
+            }
+
+            if (commandType == VOLUME_LABEL)
+                ExecuteVolumeCommand(commandText);
+            //else if (commandType == SCREEN_LABEL)
+            //else if (commandType == POWER_LABEL)
+
+            Log.CommandExecute(commandText);
+        }
+
+        private static void ExecuteVolumeCommand(string textMessage)
+        {
+            switch (textMessage)
+            {
+                case LOUDER_5:
+                    VolumeManager.ChangeVolume(5);
+                    break;
+                case QUIETER_5:
+                    VolumeManager.ChangeVolume(-5);
+                    break;
+                case LOUDER_10:
+                    VolumeManager.ChangeVolume(10);
+                    break;
+                case QUIETER_10:
+                    VolumeManager.ChangeVolume(-10);
+                    break;
+                case MAX:
+                    VolumeManager.ChangeVolume(100);
+                    break;
+                case MIN:
+                    VolumeManager.ChangeVolume(-100);
+                    break;
+                case MUTE:
+                    VolumeManager.Mute();
+                    break;
+                case UNMUTE:
+                    VolumeManager.UnMute();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
         private static bool IsUpdateValid(Update update)
         {
             return update.Message?.Text is not null;
         }
 
-        private static string GetMessageText(Message message)
+        private bool IsAccessAllowed(User? user)
         {
-            return message.Text!.Trim();
+            return user?.Id == _ownerId;
         }
 
         private static Message GetMessage(Update update)
         {
             return update.Message!;
+        }
+
+        private static User? GetMessageSender(Message message)
+        {
+            return message.From;
+        }
+
+        private static string GetMessageText(Message message)
+        {
+            return message.Text!.Trim();
         }
 
         private static long GetChatId(Message message)
@@ -119,21 +192,16 @@ namespace RemoteControlBot
             return "temp";
         }
 
-        private static User? GetMessageSender(Message message)
-        {
-            return message.From;
-        }
-
         private static IReplyMarkup GetMarkup(string messageText)
         {
             IReplyMarkup markup;
 
             if (MAIN_MENU_LABELS.Contains(messageText))
-                if (messageText == POWER)
+                if (messageText == POWER_LABEL)
                     markup = Power;
-                else if (messageText == VOLUME)
+                else if (messageText == VOLUME_LABEL)
                     markup = Volume;
-                else if (messageText == SCREEN)
+                else if (messageText == SCREEN_LABEL)
                     markup = Screen;
                 else
                     throw new NotImplementedException();
@@ -147,11 +215,6 @@ namespace RemoteControlBot
                 markup = MainMenu;
 
             return markup;
-        }
-
-        private bool IsAccessAllowed(User? user)
-        {
-            return user?.Id == _ownerId;
         }
     }
 }

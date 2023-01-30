@@ -5,27 +5,27 @@ namespace RemoteControlBot
 {
     internal static class Keyboard 
     { 
-        internal const string POWER = "Power";
-        internal const string VOLUME = "Volume";
-        internal const string SCREEN = "Screen";
+        internal const string POWER_LABEL = "Power";
+        internal const string VOLUME_LABEL = "Volume";
+        internal const string SCREEN_LABEL = "Screen";
 
-        internal static readonly string[] MAIN_MENU_LABELS = { POWER, VOLUME, SCREEN };
+        internal const string BACK_LABEL = "< Back >";
+
+        internal static readonly string[] MAIN_MENU_LABELS = { POWER_LABEL, VOLUME_LABEL, SCREEN_LABEL };
         internal static readonly string[] POWER_LABELS = { SHUTDOWN, SLEEP, RESTART };
         internal static readonly string[] VOLUME_LABELS = { LOUDER_5, QUIETER_5, LOUDER_10, QUIETER_10, MAX, MIN, MUTE, UNMUTE };
         internal static readonly string[] SCREEN_LABELS = { SCREENSHOT };
-
-        private const string BACK_LABEL = "< Back >";
 
         internal static ReplyKeyboardMarkup MainMenu = new(
             new[]
             {
                 new[]
                 {
-                    new KeyboardButton(POWER), new KeyboardButton(VOLUME),
+                    new KeyboardButton(POWER_LABEL), new KeyboardButton(VOLUME_LABEL),
                 },
                 new[]
                 {
-                    new KeyboardButton(SCREEN)
+                    new KeyboardButton(SCREEN_LABEL)
                 }
             });
 
