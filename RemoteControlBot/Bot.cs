@@ -226,7 +226,6 @@ namespace RemoteControlBot
         private static string GetTextAnswerByVolumeCommand(string commandText)
         {
             string answer;
-            string insertion;
 
             int volumeLevel;
             bool isBadMuteRequest = VolumeManager.IsBadMuteRequest();
@@ -237,51 +236,61 @@ namespace RemoteControlBot
                     volumeLevel = VolumeManager.GetCurrentVolumeLevel();
                     if (volumeLevel == 100)
                         goto case MAX;
-                    answer = $"Volume increased ({volumeLevel - 5} -> {volumeLevel})";
+                    answer = GetVolumeChangeAnswer("increased", volumeLevel - 5, volumeLevel);
                     break;
                 case QUIETER_5:
                     volumeLevel = VolumeManager.GetCurrentVolumeLevel();
                     if (volumeLevel == 0)
                         goto case MIN;
-                    answer = $"Volume increased ({volumeLevel + 5} -> {volumeLevel})";
+                    answer = GetVolumeChangeAnswer("decreased", volumeLevel + 5, volumeLevel);
                     break;
                 case LOUDER_10:
                     volumeLevel = VolumeManager.GetCurrentVolumeLevel();
                     if (volumeLevel == 100)
                         goto case MAX;
-                    answer = $"Volume increased ({volumeLevel - 10} -> {volumeLevel})";
+                    answer = GetVolumeChangeAnswer("increased", volumeLevel - 10, volumeLevel);
                     break;
                 case QUIETER_10:
                     volumeLevel = VolumeManager.GetCurrentVolumeLevel();
                     if (volumeLevel == 0)
                         goto case MIN;
-                    answer = $"Volume increased ({volumeLevel + 10} -> {volumeLevel})";
+                    answer = GetVolumeChangeAnswer("decreased", volumeLevel + 10, volumeLevel);
                     break;
                 case MAX:
-                    answer = "Volume is set to max";
+                    answer = "Volume is set to max (100)";
                     break;
                 case MIN:
-                    answer = "Volume is set to min";
+                    answer = "Volume is set to min (0)";
                     break;
                 case MUTE:
-                    if (isBadMuteRequest)
-                        insertion = "already";
-                    else
-                        insertion = "has been";
-                    answer = $"Speaker {insertion} muted";
+                    answer = GetMuteRequestAnswer(MUTE, isBadMuteRequest, "already");
                     break;
                 case UNMUTE:
-                    if (isBadMuteRequest)
-                        insertion = "is not";
-                    else
-                        insertion = "has been";
-                    answer = $"Speaker {insertion} muted";
+                    answer = GetMuteRequestAnswer(UNMUTE, isBadMuteRequest, "is not");
                     break;
                 default:
                     throw new NotImplementedException();
             }
 
             return answer;
+        }
+
+        private static string GetVolumeChangeAnswer(string change, int previous, int current)
+        {
+            return $"Volume {change} ({previous} -> {current})";
+        }
+
+        private static string GetMuteRequestAnswer(string requestType, bool isBadMuteRequest, string caseBad)
+        {
+            string insertion;
+
+            if (isBadMuteRequest)
+                insertion = $"{caseBad} ";
+            else
+                insertion = "has been " 
+                        + (requestType == UNMUTE ? "un" : string.Empty);
+
+            return $"Speaker {insertion}muted";
         }
 
         private static string GetTextAnswerByScreenCommand(string commandText)
