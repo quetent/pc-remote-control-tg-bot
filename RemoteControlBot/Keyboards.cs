@@ -18,11 +18,11 @@ namespace RemoteControlBot
             {
                 new[]
                 {
-                    new KeyboardButton(BotFunctions.POWER), new KeyboardButton(BotFunctions.VOLUME),
+                    new KeyboardButton(POWER), new KeyboardButton(VOLUME),
                 },
                 new[]
                 {
-                    new KeyboardButton(BotFunctions.SCREEN)
+                    new KeyboardButton(SCREEN)
                 }
             });
 
@@ -31,7 +31,7 @@ namespace RemoteControlBot
             {
                 new[]
                 {
-                    new KeyboardButton(BotFunctions.SHUTDOWN), new KeyboardButton(BotFunctions.SLEEP), new KeyboardButton(BotFunctions.RESTART)
+                    new KeyboardButton(SHUTDOWN), new KeyboardButton(SLEEP), new KeyboardButton(RESTART)
                 },
                 new[]
                 {
@@ -44,19 +44,19 @@ namespace RemoteControlBot
             {
                 new[]
                 {
-                    new KeyboardButton(BotFunctions.LOUDER_5), new KeyboardButton(BotFunctions.QUIETER_5)
+                    new KeyboardButton(LOUDER_5), new KeyboardButton(QUIETER_5)
                 },
                 new[]
                 {
-                    new KeyboardButton(BotFunctions.LOUDER_10), new KeyboardButton(BotFunctions.QUIETER_10)
+                    new KeyboardButton(LOUDER_10), new KeyboardButton(QUIETER_10)
                 },
                 new[]
                 {
-                    new KeyboardButton(BotFunctions.MAX), new KeyboardButton(BotFunctions.MIN)
+                    new KeyboardButton(MAX), new KeyboardButton(MIN)
                 },
                 new[]
                 {
-                    new KeyboardButton(BotFunctions.MUTE)
+                    new KeyboardButton(MUTE)
                 },
                 new[]
                 {
@@ -69,7 +69,7 @@ namespace RemoteControlBot
             {
                 new[]
                 {
-                    new KeyboardButton(BotFunctions.SCREENSHOT)
+                    new KeyboardButton(SCREENSHOT)
                 },
                 new[]
                 {

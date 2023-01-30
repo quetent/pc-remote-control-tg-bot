@@ -4,32 +4,32 @@ using static System.Console;
 
 namespace RemoteControlBot
 {
-    public static class Logger
+    public static class Log
     {
         public static ConsoleColor NeutralColor { get; set; } = ConsoleColor.White;
         public static ConsoleColor InfoColor { get; set; } = ConsoleColor.DarkYellow;
         public static ConsoleColor NewMessageColor { get; set; } = ConsoleColor.DarkGreen;
         public static ConsoleColor ExceptionColor { get; set; } = ConsoleColor.DarkRed;
 
-        public static void LogBotStartup()
+        public static void BotStartup()
         {
-            LogByPattern("Startup", "Bot has been started", InfoColor);
+            ByPattern("Startup", "Bot has been started", InfoColor);
         }
 
-        public static void LogMessageRecieved(string messageText, User? user)
+        public static void MessageRecieved(string messageText, User? user)
         {
             var username = user?.ToString();
             var messageFrom = username == string.Empty ? "unknown" : username;
 
-            LogByPattern("New message recieved", $"\"{messageText}\" from {messageFrom}", NewMessageColor);
+            ByPattern("New message recieved", $"\"{messageText}\" from {messageFrom}", NewMessageColor);
         }
 
-        public static void LogUnhandledException(Exception exception)
+        public static void UnhandledException(Exception exception)
         {
-            LogByPattern("Unhandled exception", exception.Message, ExceptionColor);
+            ByPattern("Unhandled exception", exception.Message, ExceptionColor);
         }
 
-        private static void LogByPattern(string eventType, string eventText, ConsoleColor eventColor)
+        private static void ByPattern(string eventType, string eventText, ConsoleColor eventColor)
         {
             var now = GetCurrentDateTimeAsString();
 

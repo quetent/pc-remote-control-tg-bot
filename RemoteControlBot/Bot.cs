@@ -40,7 +40,12 @@ namespace RemoteControlBot
                 cancellationToken: _cancellationToken);
 
             if (_enableLogging)
-                Logger.LogBotStartup();
+                Log.BotStartup();
+        }
+
+        private bool IsAccessAllowed(long chatId)
+        {
+            return chatId == _ownerId;
         }
 
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
@@ -49,12 +54,12 @@ namespace RemoteControlBot
                 return;
             if (message.Text is not { } messageText)
                 return;
-
-            Logger.LogMessageRecieved(messageText, update.Message.From);
+            if (_enableLogging)
+                Log.MessageRecieved(messageText, update.Message.From);
 
             var chatId = message.Chat.Id;
 
-            if (chatId != _ownerId)
+            if (!IsAccessAllowed(chatId))
                 return;
 
             IReplyMarkup markup;
@@ -104,7 +109,7 @@ namespace RemoteControlBot
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             if (_enableLogging)
-                Logger.LogUnhandledException(exception);
+                Log.UnhandledException(exception);
 
             return Task.CompletedTask;
         }
