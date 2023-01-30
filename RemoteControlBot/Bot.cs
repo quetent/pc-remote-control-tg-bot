@@ -1,11 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using static RemoteControlBot.Keyboard;
 using static RemoteControlBot.BotFunctions;
-using System.Diagnostics.SymbolStore;
+using static RemoteControlBot.Keyboard;
 
 namespace RemoteControlBot
 {
@@ -47,8 +45,10 @@ namespace RemoteControlBot
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             var isValid = IsUpdateValid(update);
-            var (message, messageText) = GetMessageAndMessageText(update);
-            var chatId = message.Chat.Id;
+
+            var message = GetMessage(update);
+            var messageText = GetMessageText(message);
+            var chatId = GetChatId(message);
 
             if (_enableLogging)
                 Log.MessageRecieved(messageText, message.From);
@@ -73,18 +73,24 @@ namespace RemoteControlBot
             return Task.CompletedTask;
         }
 
-
         private static bool IsUpdateValid(Update update)
         {
             return update.Message?.Text is not null;
         }
 
-        private static (Message message, string messageText) GetMessageAndMessageText(Update update)
+        private static string GetMessageText(Message message)
         {
-            var message = update.Message;
-            var messageText = message!.Text!;
+            return message.Text!.Trim();
+        }
 
-            return (message, messageText);
+        private static Message GetMessage(Update update)
+        {
+            return update.Message!;
+        }
+
+        private static long GetChatId(Message message)
+        {
+            return message.Chat.Id;
         }
 
         private static IReplyMarkup GetMarkup(string messageText)

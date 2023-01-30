@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RemoteControlBot
+﻿namespace RemoteControlBot
 {
     internal static class BotFunctions
     {
@@ -17,7 +11,7 @@ namespace RemoteControlBot
         internal const string RESTART = "Restart";
 
         internal const string LOUDER_5 = "Up (+5)";
-        internal const string QUIETER_5 = "Down (-5)"; 
+        internal const string QUIETER_5 = "Down (-5)";
         internal const string LOUDER_10 = "Up (+10)";
         internal const string QUIETER_10 = "Down (-10)";
         internal const string MAX = "Max";

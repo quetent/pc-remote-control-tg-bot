@@ -1,5 +1,4 @@
-﻿using System;
-using Telegram.Bot.Types;
+﻿using Telegram.Bot.Types;
 using static System.Console;
 
 namespace RemoteControlBot

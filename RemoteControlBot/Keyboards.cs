@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Telegram.Bot.Types.ReplyMarkups;
+﻿using Telegram.Bot.Types.ReplyMarkups;
 using static RemoteControlBot.BotFunctions;
 
 namespace RemoteControlBot
