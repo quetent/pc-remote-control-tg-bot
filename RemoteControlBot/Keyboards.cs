@@ -4,7 +4,7 @@ using static RemoteControlBot.BotFunctions;
 
 namespace RemoteControlBot
 {
-    internal static class Keyboards
+    internal static class Keyboard
     {
         internal static readonly string[] MAIN_MENU_LABELS = { POWER, VOLUME, SCREEN };
         internal static readonly string[] POWER_LABELS = { SHUTDOWN, SLEEP, RESTART };

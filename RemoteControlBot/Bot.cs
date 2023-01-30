@@ -3,8 +3,9 @@ using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using static RemoteControlBot.Keyboards;
+using static RemoteControlBot.Keyboard;
 using static RemoteControlBot.BotFunctions;
+using System.Diagnostics.SymbolStore;
 
 namespace RemoteControlBot
 {
@@ -43,67 +44,25 @@ namespace RemoteControlBot
                 Log.BotStartup();
         }
 
-        private bool IsAccessAllowed(long chatId)
-        {
-            return chatId == _ownerId;
-        }
-
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            if (update.Message is not { } message)
-                return;
-            if (message.Text is not { } messageText)
-                return;
-            if (_enableLogging)
-                Log.MessageRecieved(messageText, update.Message.From);
-
+            var isValid = IsUpdateValid(update);
+            var (message, messageText) = GetMessageAndMessageText(update);
             var chatId = message.Chat.Id;
 
-            if (!IsAccessAllowed(chatId))
+            if (_enableLogging)
+                Log.MessageRecieved(messageText, message.From);
+
+            if (!isValid && !IsAccessAllowed(chatId))
                 return;
 
-            IReplyMarkup markup;
-            
-            if (MAIN_MENU_LABELS.Contains(messageText))
-            {
-                if (messageText == POWER)
-                {
-                    markup = Keyboards.Power;
-                }
-                else if (messageText == VOLUME)
-                {
-                    markup = Keyboards.Volume;
-                }
-                else if (messageText == SCREEN)
-                {
-                    markup = Keyboards.Screen;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-            }
-            else if (POWER_LABELS.Contains(messageText))
-            {
-                markup = Keyboards.Power;
-            }
-            else if (VOLUME_LABELS.Contains(messageText))
-            {
-                markup = Keyboards.Volume;
-            }
-            else if (SCREEN_LABELS.Contains(messageText))
-            {
-                markup = Keyboards.Screen;
-            }
-            else
-            {
-                markup = Keyboards.MainMenu;
-            }
+            var markup = GetMarkup(messageText);
 
             await _botClient.SendTextMessageAsync(
-                            message.Chat.Id,
-                            text: "sss",
-                            replyMarkup: markup);
+                            chatId,
+                            text: "temp answer",
+                            replyMarkup: markup,
+                            cancellationToken: cancellationToken);
         }
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -112,6 +71,50 @@ namespace RemoteControlBot
                 Log.UnhandledException(exception);
 
             return Task.CompletedTask;
+        }
+
+
+        private static bool IsUpdateValid(Update update)
+        {
+            return update.Message?.Text is not null;
+        }
+
+        private static (Message message, string messageText) GetMessageAndMessageText(Update update)
+        {
+            var message = update.Message;
+            var messageText = message!.Text!;
+
+            return (message, messageText);
+        }
+
+        private static IReplyMarkup GetMarkup(string messageText)
+        {
+            IReplyMarkup markup;
+
+            if (MAIN_MENU_LABELS.Contains(messageText))
+                if (messageText == POWER)
+                    markup = Power;
+                else if (messageText == VOLUME)
+                    markup = Volume;
+                else if (messageText == SCREEN)
+                    markup = Screen;
+                else
+                    throw new NotImplementedException();
+            else if (POWER_LABELS.Contains(messageText))
+                markup = Power;
+            else if (VOLUME_LABELS.Contains(messageText))
+                markup = Volume;
+            else if (SCREEN_LABELS.Contains(messageText))
+                markup = Screen;
+            else
+                markup = MainMenu;
+
+            return markup;
+        }
+
+        private bool IsAccessAllowed(long chatId)
+        {
+            return chatId == _ownerId;
         }
     }
 }

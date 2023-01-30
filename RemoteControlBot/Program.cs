@@ -11,7 +11,7 @@ namespace RemoteControlBot
         static void Main()
         {
             var cts = new CancellationTokenSource();
-            var receiverOptions = new ReceiverOptions() { AllowedUpdates = Array.Empty<UpdateType>() };
+            var receiverOptions = new ReceiverOptions() { AllowedUpdates = new[] { UpdateType.Message } };
 
             var bot = new Bot(Config.OWNER_ID, Config.ENABLE_LOGGING, Config.TOKEN, receiverOptions, cts.Token);
             bot.Start();
