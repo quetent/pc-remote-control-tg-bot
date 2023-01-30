@@ -225,10 +225,8 @@ namespace RemoteControlBot
 
         private static string GetTextAnswerByVolumeCommand(string commandText)
         {
-            string answer;
-
             int volumeLevel;
-            bool isBadMuteRequest = VolumeManager.IsBadMuteRequest();
+            string answer;
 
             switch (commandText)
             {
@@ -263,10 +261,10 @@ namespace RemoteControlBot
                     answer = "Volume is set to min (0)";
                     break;
                 case MUTE:
-                    answer = GetMuteRequestAnswer(MUTE, isBadMuteRequest, "already");
+                    answer = GetMuteRequestAnswer(MUTE, "already");
                     break;
                 case UNMUTE:
-                    answer = GetMuteRequestAnswer(UNMUTE, isBadMuteRequest, "is not");
+                    answer = GetMuteRequestAnswer(UNMUTE, "is not");
                     break;
                 default:
                     throw new NotImplementedException();
@@ -280,8 +278,9 @@ namespace RemoteControlBot
             return $"Volume {change} ({previous} -> {current})";
         }
 
-        private static string GetMuteRequestAnswer(string requestType, bool isBadMuteRequest, string caseBad)
+        private static string GetMuteRequestAnswer(string requestType, string caseBad)
         {
+            bool isBadMuteRequest = VolumeManager.IsBadMuteRequest();
             string insertion;
 
             if (isBadMuteRequest)
