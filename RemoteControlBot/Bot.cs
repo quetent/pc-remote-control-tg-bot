@@ -187,7 +187,7 @@ namespace RemoteControlBot
             return message.Chat.Id;
         }
 
-        private static string GetTextAnswer(string commandType, string messageText)
+        private static string GetTextAnswer(string? commandType, string messageText)
         {
             string answer;
 
