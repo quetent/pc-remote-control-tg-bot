@@ -62,7 +62,7 @@ namespace RemoteControlBot
             ExecuteCommand(commandType, messageText);
 
             var chatId = GetChatId(message);
-            var text = GetTextAnswer(messageText);
+            var text = GetTextAnswer(commandType, messageText);
             var markup = GetMarkup(messageText);
 
             await _botClient.SendTextMessageAsync(
@@ -187,9 +187,113 @@ namespace RemoteControlBot
             return message.Chat.Id;
         }
 
-        private static string GetTextAnswer(string messageText)
+        private static string GetTextAnswer(string commandType, string messageText)
         {
-            return "temp";
+            string answer;
+
+            if (commandType is null)
+                answer = "Unknown command";
+            else if (commandType == BACK_LABEL)
+                answer = "...";
+            else if (commandType == POWER_LABEL)
+                answer = GetTextAnswerByPowerCommand(messageText);
+            else if (commandType == VOLUME_LABEL)
+                answer = GetTextAnswerByVolumeCommand(messageText);
+            else if (commandType == SCREEN_LABEL)
+                answer = GetTextAnswerByScreenCommand(messageText);
+            else
+                throw new NotImplementedException();
+
+            return answer;
+        }
+
+        private static string GetTextAnswerByPowerCommand(string commandText)
+        {
+            string answer;
+
+            if (commandText == SHUTDOWN)
+                answer = "Shutdown has been requested";
+            else if (commandText == RESTART)
+                answer = "Restart has been requested";
+            else if (commandText == SLEEP)
+                answer = "Sleep has been requested";
+            else
+                throw new NotImplementedException();
+
+            return answer;
+        }
+
+        private static string GetTextAnswerByVolumeCommand(string commandText)
+        {
+            string answer;
+            string insertion;
+
+            int volumeLevel;
+            bool isBadMuteRequest = VolumeManager.IsBadMuteRequest();
+
+            switch (commandText)
+            {
+                case LOUDER_5:
+                    volumeLevel = VolumeManager.GetCurrentVolumeLevel();
+                    if (volumeLevel == 100)
+                        goto case MAX;
+                    answer = $"Volume increased ({volumeLevel - 5} -> {volumeLevel})";
+                    break;
+                case QUIETER_5:
+                    volumeLevel = VolumeManager.GetCurrentVolumeLevel();
+                    if (volumeLevel == 0)
+                        goto case MIN;
+                    answer = $"Volume increased ({volumeLevel + 5} -> {volumeLevel})";
+                    break;
+                case LOUDER_10:
+                    volumeLevel = VolumeManager.GetCurrentVolumeLevel();
+                    if (volumeLevel == 100)
+                        goto case MAX;
+                    answer = $"Volume increased ({volumeLevel - 10} -> {volumeLevel})";
+                    break;
+                case QUIETER_10:
+                    volumeLevel = VolumeManager.GetCurrentVolumeLevel();
+                    if (volumeLevel == 0)
+                        goto case MIN;
+                    answer = $"Volume increased ({volumeLevel + 10} -> {volumeLevel})";
+                    break;
+                case MAX:
+                    answer = "Volume is set to max";
+                    break;
+                case MIN:
+                    answer = "Volume is set to min";
+                    break;
+                case MUTE:
+                    if (isBadMuteRequest)
+                        insertion = "already";
+                    else
+                        insertion = "has been";
+                    answer = $"Speaker {insertion} muted";
+                    break;
+                case UNMUTE:
+                    if (isBadMuteRequest)
+                        insertion = "is not";
+                    else
+                        insertion = "has been";
+                    answer = $"Speaker {insertion} muted";
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return answer;
+        }
+
+        private static string GetTextAnswerByScreenCommand(string commandText)
+        {
+            string answer;
+
+            if (commandText == SCREENSHOT)
+                answer = "Screenshot was taken";
+            else
+                throw new NotImplementedException();
+
+            return answer;
         }
 
         private static IReplyMarkup GetMarkup(string messageText)

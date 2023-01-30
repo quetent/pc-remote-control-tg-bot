@@ -11,25 +11,50 @@ namespace RemoteControlBot
     {
         private static readonly CoreAudioController _audioController = new();
 
-        public static int ChangeVolume(int level)
-        {
-            PlaybackDevice().Volume += level;
+        private static bool _badMuteRequest = false;
 
+        public static bool IsBadMuteRequest()
+        {
+            return _badMuteRequest;
+        }
+
+        public static int GetCurrentVolumeLevel()
+        {
             return (int)PlaybackDevice().Volume;
         }
 
-        public static int Mute()
+        public static void ChangeVolume(int level)
         {
-            PlaybackDevice().Mute(true);
-
-            return 0;
+            PlaybackDevice().Volume += level;
         }
 
-        public static int UnMute()
+        public static void Mute()
         {
-            PlaybackDevice().Mute(false);
+            if (IsMuted())
+            {
+                _badMuteRequest = true;
+                return;
+            }
 
-            return 0;
+            _badMuteRequest = false;
+            PlaybackDevice().Mute(true);
+        }
+
+        public static void UnMute()
+        {
+            if (!IsMuted())
+            {
+                _badMuteRequest = true;
+                return;
+            }
+
+            _badMuteRequest = false;
+            PlaybackDevice().Mute(false);
+        }
+
+        private static bool IsMuted()
+        {
+            return PlaybackDevice().IsMuted;
         }
 
         private static CoreAudioDevice PlaybackDevice()
