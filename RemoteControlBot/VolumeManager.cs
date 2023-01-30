@@ -7,15 +7,34 @@ using AudioSwitcher.AudioApi.CoreAudio;
 
 namespace RemoteControlBot
 {
-    public class VolumeManager
+    public static class VolumeManager
     {
         private static readonly CoreAudioController _audioController = new();
 
-        public int ChangeVolume(int level)
+        public static int ChangeVolume(int level)
         {
-            _audioController.DefaultPlaybackDevice.Volume += level;
+            PlaybackDevice().Volume += level;
 
-            return (int)_audioController.DefaultPlaybackDevice.Volume;
+            return (int)PlaybackDevice().Volume;
         }
+
+        public static int Mute()
+        {
+            PlaybackDevice().Mute(true);
+
+            return 0;
+        }
+
+        public static int UnMute()
+        {
+            PlaybackDevice().Mute(false);
+
+            return 0;
+        }
+
+        private static CoreAudioDevice PlaybackDevice()
+        {
+            return _audioController.DefaultPlaybackDevice;
+        } 
     }
 }

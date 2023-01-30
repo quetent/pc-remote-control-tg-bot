@@ -16,8 +16,6 @@ namespace RemoteControlBot
         private readonly TelegramBotClient _botClient;
         private readonly ReceiverOptions _receiverOptions;
 
-        private readonly Lazy<VolumeManager> _volumeManager = new();
-
         private readonly CancellationToken _cancellationToken;
 
         public Bot(long ownerId,
@@ -59,7 +57,7 @@ namespace RemoteControlBot
             if (!(isValid && IsAccessAllowed(user)))
                 return;
 
-            ExecuteCommand(messageText);
+            ExecuteVolumeCommand(messageText);
 
             var chatId = GetChatId(message);
             var text = GetTextAnswer(messageText);
@@ -73,11 +71,13 @@ namespace RemoteControlBot
         }
 
 
-        private void ExecuteCommand(string textMessage)
+        private void ExecuteVolumeCommand(string textMessage)
         {
             var a = textMessage switch
             {
-                LOUDER_5 => _volumeManager.Value.ChangeVolume(5),
+                LOUDER_5 => VolumeManager.ChangeVolume(5),
+                MUTE => VolumeManager.Mute(),
+                UNMUTE => VolumeManager.UnMute(),
                 _ => 1
             };
         }

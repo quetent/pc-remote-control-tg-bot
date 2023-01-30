@@ -15,6 +15,7 @@
         internal const string MAX = "Max";
         internal const string MIN = "Min";
         internal const string MUTE = "Mute";
+        internal const string UNMUTE = "Unmute";
 
         // SCREEN
         internal const string SCREENSHOT = "Screenshot";
