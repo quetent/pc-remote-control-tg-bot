@@ -48,19 +48,21 @@ namespace RemoteControlBot
 
             var message = GetMessage(update);
             var messageText = GetMessageText(message);
-            var chatId = GetChatId(message);
+            var user = GetMessageSender(message);
 
             if (_enableLogging)
-                Log.MessageRecieved(messageText, message.From);
+                Log.MessageRecieved(messageText, user);
 
-            if (!isValid && !IsAccessAllowed(chatId))
+            if (!isValid && !IsAccessAllowed(user))
                 return;
 
+            var chatId = GetChatId(message);
+            var text = GetTextAnswer(messageText);
             var markup = GetMarkup(messageText);
 
             await _botClient.SendTextMessageAsync(
-                            chatId,
-                            text: "temp answer",
+                            chatId: chatId,
+                            text: text,
                             replyMarkup: markup,
                             cancellationToken: cancellationToken);
         }
@@ -93,6 +95,16 @@ namespace RemoteControlBot
             return message.Chat.Id;
         }
 
+        private static string GetTextAnswer(string messageText)
+        {
+            return "temp";
+        }
+
+        private static User? GetMessageSender(Message message)
+        {
+            return message.From;
+        }
+
         private static IReplyMarkup GetMarkup(string messageText)
         {
             IReplyMarkup markup;
@@ -118,9 +130,9 @@ namespace RemoteControlBot
             return markup;
         }
 
-        private bool IsAccessAllowed(long chatId)
+        private bool IsAccessAllowed(User? user)
         {
-            return chatId == _ownerId;
+            return user?.Id == _ownerId;
         }
     }
 }
