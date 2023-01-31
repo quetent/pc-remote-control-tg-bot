@@ -65,8 +65,7 @@ namespace RemoteControlBot
                     HibernatePC();
                     break;
                 case RESTART:
-                    //RestartPC();
-                    Console.WriteLine("Ssssss");
+                    RestartPC();
                     break;
                 case LOCK:
                     LockPC();
@@ -91,7 +90,7 @@ namespace RemoteControlBot
 
         private static void ShutdownPC()
         {
-            StartCommandLineProcess("shutdown.exe", "/s /t 0");
+            StartCommandLineProcess("shutdown.exe", "/s /f /t 0");
         }
 
         private static void HibernatePC()
