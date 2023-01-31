@@ -4,7 +4,8 @@
     {
         // POWER
         internal const string SHUTDOWN = "Shutdown";
-        internal const string SLEEP = "Sleep";
+        internal const string HIBERNATE = "Hibernate";
+        internal const string LOCK = "Lock";
         internal const string RESTART = "Restart";
 
         // VOLUME

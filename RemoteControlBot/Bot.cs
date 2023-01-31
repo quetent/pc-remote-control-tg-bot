@@ -12,9 +12,11 @@ namespace RemoteControlBot
     public class Bot
     {
         private readonly long _ownerId;
+        public long OwnerId => _ownerId;
 
         private readonly TelegramBotClient _botClient;
         private readonly ReceiverOptions _receiverOptions;
+        private DateTime _startupTime;
 
         private readonly CancellationToken _cancellationToken;
 
@@ -31,6 +33,8 @@ namespace RemoteControlBot
 
         public void Start()
         {
+            _startupTime = DateTime.Now;
+            
             _botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
                 pollingErrorHandler: HandlePollingErrorAsync,
@@ -43,17 +47,34 @@ namespace RemoteControlBot
 
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            var isValid = IsUpdateValid(update);
+            var isUpdateValid = UpdateValidator.IsUpdateValid(update);
+            var sendTime = update.Message!.Date.ToLocalTime();
+
+            if (!isUpdateValid)
+            {
+                Log.MessageSkipped("< no message text >", null);
+                return;
+            }
 
             var message = GetMessage(update);
             var messageText = GetMessageText(message);
             var user = GetMessageSender(message);
 
+            var sequence = new[]
+            {
+                isUpdateValid, 
+                UpdateValidator.IsAccessAllowed(this, user), 
+                UpdateValidator.IsMessageAfterStartup(_startupTime, sendTime)
+            };
+
+            if (!UpdateValidator.IsSequenceValid(sequence))
+            {
+                Log.MessageSkipped(messageText, user);
+                return;
+            }
+
             if (ENABLE_LOGGING)
                 Log.MessageRecieved(messageText, user);
-
-            if (!(isValid && IsAccessAllowed(user)))
-                return;
 
             var commandType = DetermineCommandType(messageText);
 
@@ -76,16 +97,6 @@ namespace RemoteControlBot
                 Log.UnhandledException(exception);
 
             return Task.CompletedTask;
-        }
-
-        private static bool IsUpdateValid(Update update)
-        {
-            return update.Message?.Text is not null;
-        }
-
-        private bool IsAccessAllowed(User? user)
-        {
-            return user?.Id == _ownerId;
         }
 
         private static Message GetMessage(Update update)

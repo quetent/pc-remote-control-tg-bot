@@ -10,7 +10,7 @@ namespace RemoteControlBot
         public static ConsoleColor NewMessageColor { get; set; } = ConsoleColor.DarkGreen;
         public static ConsoleColor ExceptionColor { get; set; } = ConsoleColor.DarkRed;
         public static ConsoleColor ExecuteCommandColor { get; set; } = ConsoleColor.DarkBlue;
-        public static ConsoleColor KeyboardRequestingColor { get; set; } = ConsoleColor.DarkGray;
+        public static ConsoleColor NotImportantColor { get; set; } = ConsoleColor.DarkGray;
 
         public static void BotStartup()
         {
@@ -19,10 +19,12 @@ namespace RemoteControlBot
 
         public static void MessageRecieved(string messageText, User? user)
         {
-            var username = user?.ToString();
-            var messageFrom = username == string.Empty ? "unknown" : username;
+            NewMessage(messageText, user, "Message recieved", NewMessageColor);
+        }
 
-            ByPattern("New message recieved", $"\"{messageText}\" from {messageFrom}", NewMessageColor);
+        public static void MessageSkipped(string messageText, User? user)
+        {
+            NewMessage(messageText, user, "Message skipped", NotImportantColor);
         }
 
         public static void UnhandledException(Exception exception)
@@ -37,12 +39,17 @@ namespace RemoteControlBot
 
         public static void KeyboardRequest()
         {
-            ExecuteByPattern("Keyboard request", KeyboardRequestingColor);
+            ExecuteByPattern("Keyboard request", NotImportantColor);
         }
 
         public static void CommandExecute(string commandText)
         {
             ExecuteByPattern(commandText);
+        }
+
+        public static void FunctionNotImplemented(string commandText)
+        {
+            ExecuteByPattern($"Function not implemented: {commandText}", InfoColor);
         }
 
         private static void ByPattern(string eventType, string eventText, ConsoleColor eventColor)
@@ -66,6 +73,14 @@ namespace RemoteControlBot
         private static void ExecuteByPattern(string commandText, ConsoleColor color)
         {
             ByPattern("Execute", commandText, color);
+        }
+
+        private static void NewMessage(string messageText, User? user, string eventText, ConsoleColor color)
+        {
+            var username = user?.ToString();
+            var messageFrom = username == string.Empty || username is null ? "unknown" : username;
+
+            ByPattern(eventText, $"\"{messageText}\" from {messageFrom}", color);
         }
 
         private static string GetCurrentDateTimeAsString()

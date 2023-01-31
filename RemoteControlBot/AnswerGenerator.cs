@@ -10,10 +10,12 @@ namespace RemoteControlBot
 
             if (commandText == SHUTDOWN)
                 answer = "Shutdown has been requested";
+            else if (commandText == HIBERNATE)
+                answer = "Hibernate has been requested";
             else if (commandText == RESTART)
                 answer = "Restart has been requested";
-            else if (commandText == SLEEP)
-                answer = "Sleep has been requested";
+            else if (commandText == LOCK)
+                answer = "Lock has been requested";
             else
                 answer = GetBotFunctionNotImplementedAnswer();
 

@@ -1,4 +1,6 @@
-﻿using static RemoteControlBot.BotFunctions;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using static RemoteControlBot.BotFunctions;
 using static RemoteControlBot.Keyboard;
 
 namespace RemoteControlBot
@@ -54,8 +56,61 @@ namespace RemoteControlBot
 
         private static void ExecutePowerCommand(string textMessage)
         {
-
+            switch (textMessage)
+            {
+                case SHUTDOWN:
+                    ShutdownPC();
+                    break;
+                case HIBERNATE:
+                    HibernatePC();
+                    break;
+                case RESTART:
+                    //RestartPC();
+                    Console.WriteLine("Ssssss");
+                    break;
+                case LOCK:
+                    LockPC();
+                    break;
+                default:
+                    if (ENABLE_LOGGING)
+                        Log.FunctionNotImplemented(textMessage);
+                    break;
+            }
         }
+
+        private static void StartCommandLineProcess(string command, string args)
+        {
+            var processInfo = new ProcessStartInfo(command, args)
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+
+            Process.Start(processInfo);
+        }
+
+        private static void ShutdownPC()
+        {
+            StartCommandLineProcess("shutdown.exe", "/s /t 0");
+        }
+
+        private static void HibernatePC()
+        {
+            StartCommandLineProcess("shutdown.exe", "/h");
+        }
+
+        private static void RestartPC()
+        {
+            StartCommandLineProcess("shutdown.exe", "/r /f /t 0");
+        }
+
+        private static void LockPC()
+        {
+            LockWorkStation();
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool LockWorkStation();
 
         private static void ExecuteVolumeCommand(string textMessage)
         {
@@ -86,7 +141,9 @@ namespace RemoteControlBot
                     VolumeManager.UnMute();
                     break;
                 default:
-                    throw new NotImplementedException();
+                    if (ENABLE_LOGGING)
+                        Log.FunctionNotImplemented(textMessage);
+                    break;
             }
         }
 
