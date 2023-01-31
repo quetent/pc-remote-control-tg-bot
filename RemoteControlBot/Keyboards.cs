@@ -3,8 +3,8 @@ using static RemoteControlBot.BotFunctions;
 
 namespace RemoteControlBot
 {
-    internal static class Keyboard 
-    { 
+    internal static class Keyboard
+    {
         internal const string POWER_LABEL = "Power";
         internal const string VOLUME_LABEL = "Volume";
         internal const string SCREEN_LABEL = "Screen";
