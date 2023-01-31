@@ -41,12 +41,20 @@ namespace RemoteControlBot
                 return;
             }
 
-            if (commandType == VOLUME_LABEL)
+            if (commandType == POWER_LABEL)
+                ExecutePowerCommand(commandText);
+            else if (commandType == VOLUME_LABEL)
                 ExecuteVolumeCommand(commandText);
-            //else if (commandType == SCREEN_LABEL)
-            //else if (commandType == POWER_LABEL)
+            else if (commandType == SCREEN_LABEL)
+                ExecuteScreenCommand(commandText);
 
-            Log.CommandExecute(commandText);
+            if (ENABLE_LOGGING)
+                Log.CommandExecute(commandText);
+        }
+
+        private static void ExecutePowerCommand(string textMessage)
+        {
+
         }
 
         private static void ExecuteVolumeCommand(string textMessage)
@@ -80,6 +88,11 @@ namespace RemoteControlBot
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        private static void ExecuteScreenCommand(string textMessage)
+        {
+
         }
     }
 }

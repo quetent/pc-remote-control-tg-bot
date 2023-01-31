@@ -15,7 +15,7 @@ namespace RemoteControlBot
             else if (commandText == SLEEP)
                 answer = "Sleep has been requested";
             else
-                throw new NotImplementedException();
+                answer = GetBotFunctionNotImplementedAnswer();
 
             return answer;
         }
@@ -27,7 +27,7 @@ namespace RemoteControlBot
             if (commandText == SCREENSHOT)
                 answer = "Screenshot was taken";
             else
-                throw new NotImplementedException();
+                answer = GetBotFunctionNotImplementedAnswer();
 
             return answer;
         }
@@ -35,39 +35,26 @@ namespace RemoteControlBot
         internal static string GetTextAnswerByVolumeCommand(string commandText)
         {
             string answer;
-            int volumeLevel;
 
             switch (commandText)
             {
                 case LOUDER_5:
-                    volumeLevel = VolumeManager.GetCurrentVolumeLevel();
-                    if (volumeLevel == 100)
-                        goto case MAX;
-                    answer = GetVolumeChangeAnswer("increased", volumeLevel - 5, volumeLevel);
+                    answer = GetVolumeChangeAnswer("increased", 5);
                     break;
                 case QUIETER_5:
-                    volumeLevel = VolumeManager.GetCurrentVolumeLevel();
-                    if (volumeLevel == 0)
-                        goto case MIN;
-                    answer = GetVolumeChangeAnswer("decreased", volumeLevel + 5, volumeLevel);
+                    answer = GetVolumeChangeAnswer("decreased", -5);
                     break;
                 case LOUDER_10:
-                    volumeLevel = VolumeManager.GetCurrentVolumeLevel();
-                    if (volumeLevel == 100)
-                        goto case MAX;
-                    answer = GetVolumeChangeAnswer("increased", volumeLevel - 10, volumeLevel);
+                    answer = GetVolumeChangeAnswer("increased", 10);
                     break;
                 case QUIETER_10:
-                    volumeLevel = VolumeManager.GetCurrentVolumeLevel();
-                    if (volumeLevel == 0)
-                        goto case MIN;
-                    answer = GetVolumeChangeAnswer("decreased", volumeLevel + 10, volumeLevel);
+                    answer = GetVolumeChangeAnswer("decreased", -10);
                     break;
                 case MAX:
-                    answer = "Volume is set to max (100)";
+                    answer = GetVolumeIsMaxAnswer();
                     break;
                 case MIN:
-                    answer = "Volume is set to min (0)";
+                    answer = GetVolumeIsMinAnswer();
                     break;
                 case MUTE:
                     answer = GetMuteRequestAnswer(MUTE, "already");
@@ -76,15 +63,45 @@ namespace RemoteControlBot
                     answer = GetMuteRequestAnswer(UNMUTE, "is not");
                     break;
                 default:
-                    throw new NotImplementedException();
+                    answer = GetBotFunctionNotImplementedAnswer();
+                    break;
             }
 
             return answer;
         }
 
-        private static string GetVolumeChangeAnswer(string change, int previous, int current)
+        private static string GetVolumeIsMaxAnswer()
         {
-            return $"Volume {change} ({previous} -> {current})";
+            return "Volume is set to max (100)";
+        }
+
+        private static string GetVolumeIsMinAnswer()
+        {
+            return "Volume is set to min (0)";
+        }
+
+        private static string GetVolumeChangeAnswer(string change, int changeLevel)
+        {
+            var volumeLevel = VolumeManager.GetCurrentVolumeLevel();
+            string answer;
+
+            if (volumeLevel == 100)
+                answer = GetVolumeIsMaxAnswer();
+            else if (volumeLevel == 0)
+                answer = GetVolumeIsMinAnswer();
+            else
+            {
+                int previous, current;
+
+                if (changeLevel > 0)
+                    (previous, current) = (volumeLevel - changeLevel, volumeLevel);
+                else
+                    (previous, current) = (volumeLevel - changeLevel, volumeLevel);
+
+                answer = $"Volume {change} ({previous} -> {current})";
+            }
+
+            return answer;
         }
 
         private static string GetMuteRequestAnswer(string requestType, string caseBad)
@@ -99,6 +116,11 @@ namespace RemoteControlBot
                         + (requestType == UNMUTE ? "un" : string.Empty);
 
             return $"Speaker {insertion}muted";
+        }
+
+        private static string GetBotFunctionNotImplementedAnswer()
+        {
+            return "Selected function is not implemented";
         }
     }
 }
