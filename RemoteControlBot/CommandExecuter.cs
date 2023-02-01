@@ -29,62 +29,92 @@ namespace RemoteControlBot
             return commandType;
         }
 
-        internal static void ExecuteCommand(CommandType commandType, string commandText)
+        internal static CommandInfo DetermineCommandInfo(CommandType commandType, string commandText)
         {
-            if (commandType is CommandType.Undefined)
+            return commandType switch
             {
-                if (ENABLE_LOGGING)
-                    Log.UnknownCommand(commandText);
-
-                return;
-            }
-
-            if (commandType is CommandType.Transfer)
-            {
-                if (ENABLE_LOGGING)
-                    Log.KeyboardRequest();
-
-                return;
-            }
-
-            if (commandType is CommandType.Power)
-                ExecutePowerCommand(commandText);
-            else if (commandType is CommandType.Volume)
-                ExecuteVolumeCommand(commandText);
-            else if (commandType is CommandType.Screen)
-                ExecuteScreenCommand(commandText);
-            else
-            {
-                if (ENABLE_LOGGING)
-                    Log.FunctionNotImplemented($"{commandType} -> {commandText}");
-
-                return;
-            }
-
-            if (ENABLE_LOGGING)
-                Log.CommandExecute(commandText);
+                CommandType.Undefined => CommandInfo.Null,
+                CommandType.Transfer => CommandInfo.Null,
+                CommandType.Power => DeterminePowerCommandInfo(commandText),
+                CommandType.Volume => DetermineVolumeCommandInfo(commandText),
+                CommandType.Screen => DetermineScreenCommandInfo(commandText),
+                _ => throw new NotImplementedException()
+            };
         }
 
-        private static void ExecutePowerCommand(string textMessage)
+        private static CommandInfo DeterminePowerCommandInfo(string commandText)
         {
-            switch (textMessage)
+            return commandText switch
             {
-                case SHUTDOWN:
+                SHUTDOWN => CommandInfo.Shutdown,
+                HIBERNATE => CommandInfo.Hibernate,
+                LOCK => CommandInfo.Lock,
+                RESTART => CommandInfo.Restart,
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        private static CommandInfo DetermineVolumeCommandInfo(string commandText)
+        {
+            return commandText switch
+            {
+                LOUDER_5 => CommandInfo.Louder5,
+                QUIETER_5 => CommandInfo.Quieter5,
+                LOUDER_10 => CommandInfo.Louder10,
+                QUIETER_10 => CommandInfo.Quieter10,
+                MAX => CommandInfo.Max,
+                MIN => CommandInfo.Min,
+                MUTE => CommandInfo.Mute,
+                UNMUTE => CommandInfo.Unmute,
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        private static CommandInfo DetermineScreenCommandInfo(string commandText)
+        {
+            return commandText switch
+            {
+                SCREENSHOT => CommandInfo.Screenshot,
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        internal static void ExecuteCommand(CommandType commandType, CommandInfo commandInfo)
+        {
+            if (commandType is CommandType.Undefined)
+                return;
+
+            if (commandType is CommandType.Transfer)
+                return;
+
+            if (commandType is CommandType.Power)
+                ExecutePowerCommand(commandInfo);
+            else if (commandType is CommandType.Volume)
+                ExecuteVolumeCommand(commandInfo);
+            else if (commandType is CommandType.Screen)
+                ExecuteScreenCommand(commandInfo);
+            else
+                throw new NotImplementedException();
+        }
+
+        private static void ExecutePowerCommand(CommandInfo commandInfo)
+        {
+            switch (commandInfo)
+            {
+                case CommandInfo.Shutdown:
                     ShutdownPC();
                     break;
-                case HIBERNATE:
+                case CommandInfo.Hibernate:
                     HibernatePC();
                     break;
-                case RESTART:
-                    RestartPC();
-                    break;
-                case LOCK:
+                case CommandInfo.Lock:
                     LockPC();
                     break;
-                default:
-                    if (ENABLE_LOGGING)
-                        Log.FunctionNotImplemented(textMessage);
+                case CommandInfo.Restart:
+                    RestartPC();
                     break;
+                default:
+                    throw new NotImplementedException();
             }
         }
 
@@ -119,52 +149,48 @@ namespace RemoteControlBot
             LockWorkStation();
         }
 
-        private static void ExecuteVolumeCommand(string textMessage)
+        private static void ExecuteVolumeCommand(CommandInfo commandInfo)
         {
-            switch (textMessage)
+            switch (commandInfo)
             {
-                case LOUDER_5:
+                case CommandInfo.Louder5:
                     VolumeManager.ChangeVolume(5);
                     break;
-                case QUIETER_5:
+                case CommandInfo.Quieter5:
                     VolumeManager.ChangeVolume(-5);
                     break;
-                case LOUDER_10:
+                case CommandInfo.Louder10:
                     VolumeManager.ChangeVolume(10);
                     break;
-                case QUIETER_10:
+                case CommandInfo.Quieter10:
                     VolumeManager.ChangeVolume(-10);
                     break;
-                case MAX:
+                case CommandInfo.Max:
                     VolumeManager.ChangeVolume(100);
                     break;
-                case MIN:
+                case CommandInfo.Min:
                     VolumeManager.ChangeVolume(-100);
                     break;
-                case MUTE:
+                case CommandInfo.Mute:
                     VolumeManager.Mute();
                     break;
-                case UNMUTE:
+                case CommandInfo.Unmute:
                     VolumeManager.UnMute();
                     break;
                 default:
-                    if (ENABLE_LOGGING)
-                        Log.FunctionNotImplemented(textMessage);
-                    break;
+                    throw new NotImplementedException();
             }
         }
 
-        private static void ExecuteScreenCommand(string textMessage)
+        private static void ExecuteScreenCommand(CommandInfo commandInfo)
         {
-            switch (textMessage)
+            switch (commandInfo)
             {
-                case SCREENSHOT:
+                case CommandInfo.Screenshot:
                     DoAndSaveScreenshot(PathManager.GetScreenshotAbsolutePath(), SCREENSHOT_FORMAT);
                     break;
                 default:
-                    if (ENABLE_LOGGING)
-                        Log.FunctionNotImplemented(textMessage);
-                    break;
+                    throw new NotImplementedException();
             }
         }
 

@@ -2,35 +2,31 @@
 {
     internal enum CommandType
     {
-        Power = 0,
-        Volume = 2,
-        Screen = 4,
-        Transfer = 8,
-        Undefined = 16
+        Undefined = 0,
+        Power = 2,
+        Volume = 4,
+        Screen = 8,
+        Transfer = 16,
     }
 
-    internal enum PowerCommand
+    internal enum CommandInfo
     {
-        Shutdown = 0,
-        Hibernate = 2,
-        Lock = 4,
-        Restart = 8
-    }
+        Null = 0,
 
-    internal enum VolumeCommand
-    {
-        Louder5 = 0,
-        Quieter5 = 2,
-        Louder10 = 4,
-        Quiter10 = 8,
-        Max = 16,
-        Min = 32,
-        Mute = 64,
-        Unmute = 128
-    }
+        Shutdown = 2,
+        Hibernate = 4,
+        Lock = 8,
+        Restart = 16,
 
-    internal enum ScreenCommand
-    {
-        Screenshot = 0
+        Louder5 = 32,
+        Quieter5 = 64,
+        Louder10 = 128,
+        Quieter10 = 256,
+        Max = 512,
+        Min = 1024,
+        Mute = 2048,
+        Unmute = 4096,
+
+        Screenshot = 8192
     }
 }

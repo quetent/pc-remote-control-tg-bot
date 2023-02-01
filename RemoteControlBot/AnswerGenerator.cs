@@ -9,72 +9,41 @@ namespace RemoteControlBot
             return "Selected function is not implemented";
         }
 
-        internal static string GetTextAnswerByPowerCommand(string commandText)
+        internal static string GetTextAnswerByPowerCommand(CommandInfo commandText)
         {
-            string answer;
-
-            if (commandText == SHUTDOWN)
-                answer = "Shutdown has been requested";
-            else if (commandText == HIBERNATE)
-                answer = "Hibernate has been requested";
-            else if (commandText == RESTART)
-                answer = "Restart has been requested";
-            else if (commandText == LOCK)
-                answer = "Lock has been requested";
-            else
-                answer = GetBotFunctionNotImplementedAnswer();
-
-            return answer;
-        }
-
-        internal static string GetTextAnswerByScreenCommand(string commandText)
-        {
-            string answer;
-
-            if (commandText == SCREENSHOT)
-                answer = "Screenshot was taken";
-            else
-                answer = GetBotFunctionNotImplementedAnswer();
-
-            return answer;
-        }
-
-        internal static string GetTextAnswerByVolumeCommand(string commandText)
-        {
-            string answer;
-
-            switch (commandText)
+            return commandText switch
             {
-                case LOUDER_5:
-                    answer = GetVolumeChangeAnswer("increased", 5);
-                    break;
-                case QUIETER_5:
-                    answer = GetVolumeChangeAnswer("decreased", -5);
-                    break;
-                case LOUDER_10:
-                    answer = GetVolumeChangeAnswer("increased", 10);
-                    break;
-                case QUIETER_10:
-                    answer = GetVolumeChangeAnswer("decreased", -10);
-                    break;
-                case MAX:
-                    answer = GetVolumeIsMaxAnswer();
-                    break;
-                case MIN:
-                    answer = GetVolumeIsMinAnswer();
-                    break;
-                case MUTE:
-                    answer = GetMuteRequestAnswer(MUTE, "already");
-                    break;
-                case UNMUTE:
-                    answer = GetMuteRequestAnswer(UNMUTE, "is not");
-                    break;
-                default:
-                    answer = GetBotFunctionNotImplementedAnswer();
-                    break;
-            }
+                CommandInfo.Shutdown => "Shutdown has been requested",
+                CommandInfo.Hibernate => "Hibernate has been requested",
+                CommandInfo.Lock => "Lock has been requested",
+                CommandInfo.Restart => "Restart has been requested",
+                _ => GetBotFunctionNotImplementedAnswer()
+            };
+        }
 
-            return answer;
+        internal static string GetTextAnswerByScreenCommand(CommandInfo commandInfo)
+        {
+            return commandInfo switch
+            {
+                CommandInfo.Screenshot => "Screenshot was taken",
+                _ => GetBotFunctionNotImplementedAnswer()
+            };
+        }
+
+        internal static string GetTextAnswerByVolumeCommand(CommandInfo commandInfo)
+        {
+            return commandInfo switch
+            {
+                CommandInfo.Louder5 => GetVolumeChangeAnswer("increased", 5),
+                CommandInfo.Quieter5 => GetVolumeChangeAnswer("decreased", -5),
+                CommandInfo.Louder10 => GetVolumeChangeAnswer("increased", 10),
+                CommandInfo.Quieter10 => GetVolumeChangeAnswer("decreased", -10),
+                CommandInfo.Max => GetVolumeIsMaxAnswer(),
+                CommandInfo.Min => GetVolumeIsMinAnswer(),
+                CommandInfo.Mute => GetMuteRequestAnswer(MUTE, "already"),
+                CommandInfo.Unmute => GetMuteRequestAnswer(UNMUTE, "is not"),
+                _ => GetBotFunctionNotImplementedAnswer(),
+            };
         }
 
         private static string GetVolumeIsMaxAnswer()

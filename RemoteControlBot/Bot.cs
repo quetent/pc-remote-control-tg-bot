@@ -81,11 +81,12 @@ namespace RemoteControlBot
                 Log.MessageRecieved(messageText, user);
 
             var commandType = DetermineCommandType(messageText);
+            var commandInfo = DetermineCommandInfo(commandType, messageText);
 
-            ExecuteCommand(commandType, messageText);
+            ExecuteCommand(commandType, commandInfo);
 
             var chatId = GetChatId(message);
-            var text = GetTextAnswer(commandType, messageText);
+            var text = GetTextAnswer(commandType, commandInfo);
             var markup = GetMarkup(messageText);
 
             await _botClient.SendTextMessageAsync(
@@ -99,7 +100,9 @@ namespace RemoteControlBot
                     await SendScreenshotAsync(chatId, PathManager.GetScreenshotAbsolutePath(), cancellationToken);
         }
 
-        private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient,
+                                                         Exception exception,
+                                                         CancellationToken cancellationToken)
         {
             if (ENABLE_LOGGING)
                 Log.UnhandledException(exception);
@@ -137,20 +140,20 @@ namespace RemoteControlBot
             return message.Chat.Id;
         }
 
-        private static string GetTextAnswer(CommandType commandType, string messageText)
+        private static string GetTextAnswer(CommandType commandType, CommandInfo commandInfo)
         {
             string answer;
 
             if (commandType is CommandType.Undefined)
                 answer = "Unknown command";
-            else if (commandType == CommandType.Transfer)
+            else if (commandType is CommandType.Transfer)
                 answer = "...";
-            else if (commandType == CommandType.Power)
-                answer = GetTextAnswerByPowerCommand(messageText);
-            else if (commandType == CommandType.Volume)
-                answer = GetTextAnswerByVolumeCommand(messageText);
-            else if (commandType == CommandType.Screen)
-                answer = GetTextAnswerByScreenCommand(messageText);
+            else if (commandType is CommandType.Power)
+                answer = GetTextAnswerByPowerCommand(commandInfo);
+            else if (commandType is CommandType.Volume)
+                answer = GetTextAnswerByVolumeCommand(commandInfo);
+            else if (commandType is CommandType.Screen)
+                answer = GetTextAnswerByScreenCommand(commandInfo);
             else
                 answer = GetBotFunctionNotImplementedAnswer();
 
