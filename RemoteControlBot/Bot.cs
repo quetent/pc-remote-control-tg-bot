@@ -1,6 +1,7 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 using static RemoteControlBot.AnswerGenerator;
 using static RemoteControlBot.CommandExecuter;
@@ -89,6 +90,10 @@ namespace RemoteControlBot
                     text: text,
                     replyMarkup: markup,
                     cancellationToken: cancellationToken);
+
+            if (commandType == SCREEN_LABEL)
+                if (messageText == BotFunctions.SCREENSHOT)
+                    await SendScreenshotAsync(chatId, PathManager.GetScreenshotAbsolutePath(), cancellationToken);
         }
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -97,6 +102,16 @@ namespace RemoteControlBot
                 Log.UnhandledException(exception);
 
             return Task.CompletedTask;
+        }
+
+        private async Task SendScreenshotAsync(long chatId, string filepath, CancellationToken cancellationToken)
+        {
+            using var stream = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+
+            await _botClient.SendPhotoAsync(
+                chatId: chatId,
+                photo: new InputOnlineFile(stream),
+                cancellationToken: cancellationToken);
         }
 
         private static Message GetMessage(Update update)

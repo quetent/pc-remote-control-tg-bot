@@ -6,7 +6,7 @@ using static RemoteControlBot.Keyboard;
 
 namespace RemoteControlBot
 {
-    internal class CommandExecuter
+    internal static class CommandExecuter
     {
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool LockWorkStation();
@@ -53,6 +53,13 @@ namespace RemoteControlBot
                 ExecuteVolumeCommand(commandText);
             else if (commandType == SCREEN_LABEL)
                 ExecuteScreenCommand(commandText);
+            else
+            {
+                if (ENABLE_LOGGING)
+                    Log.FunctionNotImplemented($"{commandType}: {commandText}");
+
+                return;
+            }
 
             if (ENABLE_LOGGING)
                 Log.CommandExecute(commandText);
@@ -152,7 +159,7 @@ namespace RemoteControlBot
             switch (textMessage)
             {
                 case SCREENSHOT:
-                    DoAndSaveScreenshot(SCREENSHOT_FILENAME);
+                    DoAndSaveScreenshot(PathManager.GetScreenshotAbsolutePath(), SCREENSHOT_FORMAT);
                     break;
                 default:
                     if (ENABLE_LOGGING)
@@ -161,17 +168,17 @@ namespace RemoteControlBot
             }
         }
 
-        private static void DoAndSaveScreenshot(string filename)
+        private static void DoAndSaveScreenshot(string filepath, ImageFormat imageFormat)
         {
             var size = ScreenManager.GetMonitorSize();
             using var screenshot = ScreenManager.DoScreenshot(size);
 
-            var fileFormat = ImageFormat.Png;
+            var fileFormat = imageFormat;
             var fileFormatAsString = fileFormat.ToString().ToLowerInvariant();
 
             var now = DateTimeManager.GetCurrentDateTime();
 
-            ScreenManager.SaveScreenshot(screenshot, fileFormat, $"{filename}.{fileFormatAsString}", SCREENSHOT_SAVE_DIR);
+            ScreenManager.SaveScreenshot(screenshot, fileFormat, filepath);
         }
     }
 }

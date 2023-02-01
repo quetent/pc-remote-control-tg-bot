@@ -122,7 +122,7 @@ namespace RemoteControlBot
                 insertion = "has been "
                         + (requestType == UNMUTE ? "un" : string.Empty);
 
-            return $"Speaker {insertion}muted";
+            return $"Speakers {insertion}muted";
         }
     }
 }

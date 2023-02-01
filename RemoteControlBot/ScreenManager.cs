@@ -22,10 +22,10 @@ namespace RemoteControlBot
             return bitmap;
         }
 
-        public static void SaveScreenshot(Bitmap bitmap, ImageFormat format, string filename, string path = "")
+        public static void SaveScreenshot(Bitmap bitmap, ImageFormat format, string filepath)
         {
             // drops if trying save file with too long name
-            bitmap.Save(Path.Combine(path, filename), format);
+            bitmap.Save(filepath, format);
         }
 
         public static Size GetMonitorSize()
