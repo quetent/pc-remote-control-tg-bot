@@ -4,6 +4,11 @@ namespace RemoteControlBot
 {
     internal static class AnswerGenerator
     {
+        internal static string GetBotFunctionNotImplementedAnswer()
+        {
+            return "Selected function is not implemented";
+        }
+
         internal static string GetTextAnswerByPowerCommand(string commandText)
         {
             string answer;
@@ -118,11 +123,6 @@ namespace RemoteControlBot
                         + (requestType == UNMUTE ? "un" : string.Empty);
 
             return $"Speaker {insertion}muted";
-        }
-
-        private static string GetBotFunctionNotImplementedAnswer()
-        {
-            return "Selected function is not implemented";
         }
     }
 }

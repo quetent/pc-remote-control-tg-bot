@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using static RemoteControlBot.BotFunctions;
 using static RemoteControlBot.Keyboard;
@@ -7,6 +8,9 @@ namespace RemoteControlBot
 {
     internal class CommandExecuter
     {
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool LockWorkStation();
+
         internal static string? DetermineCommandType(string command)
         {
             string? commandType;
@@ -108,9 +112,6 @@ namespace RemoteControlBot
             LockWorkStation();
         }
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern bool LockWorkStation();
-
         private static void ExecuteVolumeCommand(string textMessage)
         {
             switch (textMessage)
@@ -148,7 +149,29 @@ namespace RemoteControlBot
 
         private static void ExecuteScreenCommand(string textMessage)
         {
+            switch (textMessage)
+            {
+                case SCREENSHOT:
+                    DoAndSaveScreenshot(SCREENSHOT_FILENAME);
+                    break;
+                default:
+                    if (ENABLE_LOGGING)
+                        Log.FunctionNotImplemented(textMessage);
+                    break;
+            }
+        }
 
+        private static void DoAndSaveScreenshot(string filename)
+        {
+            var size = ScreenManager.GetMonitorSize();
+            using var screenshot = ScreenManager.DoScreenshot(size);
+
+            var fileFormat = ImageFormat.Png;
+            var fileFormatAsString = fileFormat.ToString().ToLowerInvariant();
+
+            var now = DateTimeManager.GetCurrentDateTime();
+
+            ScreenManager.SaveScreenshot(screenshot, fileFormat, $"{filename}.{fileFormatAsString}", SCREENSHOT_SAVE_DIR);
         }
     }
 }

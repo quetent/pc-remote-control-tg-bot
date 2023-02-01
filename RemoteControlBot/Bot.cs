@@ -33,8 +33,8 @@ namespace RemoteControlBot
 
         public void Start()
         {
-            _startupTime = DateTime.Now;
-            
+            _startupTime = DateTimeManager.GetCurrentDateTime();
+
             _botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
                 pollingErrorHandler: HandlePollingErrorAsync,
@@ -62,8 +62,8 @@ namespace RemoteControlBot
 
             var sequence = new[]
             {
-                isUpdateValid, 
-                UpdateValidator.IsAccessAllowed(this, user), 
+                isUpdateValid,
+                UpdateValidator.IsAccessAllowed(this, user),
                 UpdateValidator.IsMessageAfterStartup(_startupTime, sendTime)
             };
 
@@ -134,7 +134,7 @@ namespace RemoteControlBot
             else if (commandType == SCREEN_LABEL)
                 answer = GetTextAnswerByScreenCommand(messageText);
             else
-                throw new NotImplementedException();
+                answer = AnswerGenerator.GetBotFunctionNotImplementedAnswer();
 
             return answer;
         }
