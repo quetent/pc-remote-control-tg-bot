@@ -5,7 +5,6 @@ using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 using static RemoteControlBot.AnswerGenerator;
 using static RemoteControlBot.CommandExecuter;
-using static RemoteControlBot.Keyboard;
 using static RemoteControlBot.MarkupGenerator;
 
 namespace RemoteControlBot
@@ -53,7 +52,9 @@ namespace RemoteControlBot
 
             if (!isUpdateValid)
             {
-                Log.MessageSkipped("< no message text >", null);
+                if (ENABLE_LOGGING)
+                    Log.MessageSkipped("< no message text >", null);
+
                 return;
             }
 
@@ -70,7 +71,9 @@ namespace RemoteControlBot
 
             if (!UpdateValidator.IsSequenceValid(sequence))
             {
-                Log.MessageSkipped(messageText, user);
+                if (ENABLE_LOGGING)
+                    Log.MessageSkipped(messageText, user);
+
                 return;
             }
 
@@ -91,7 +94,7 @@ namespace RemoteControlBot
                     replyMarkup: markup,
                     cancellationToken: cancellationToken);
 
-            if (commandType == SCREEN_LABEL)
+            if (commandType is CommandType.Screen)
                 if (messageText == BotFunctions.SCREENSHOT)
                     await SendScreenshotAsync(chatId, PathManager.GetScreenshotAbsolutePath(), cancellationToken);
         }
@@ -109,9 +112,9 @@ namespace RemoteControlBot
             using var stream = new FileStream(filepath, FileMode.Open, FileAccess.Read);
 
             await _botClient.SendPhotoAsync(
-                chatId: chatId,
-                photo: new InputOnlineFile(stream),
-                cancellationToken: cancellationToken);
+                    chatId: chatId,
+                    photo: new InputOnlineFile(stream),
+                    cancellationToken: cancellationToken);
         }
 
         private static Message GetMessage(Update update)
@@ -134,22 +137,22 @@ namespace RemoteControlBot
             return message.Chat.Id;
         }
 
-        private static string GetTextAnswer(string? commandType, string messageText)
+        private static string GetTextAnswer(CommandType commandType, string messageText)
         {
             string answer;
 
-            if (commandType is null)
+            if (commandType is CommandType.Undefined)
                 answer = "Unknown command";
-            else if (commandType == BACK_LABEL)
+            else if (commandType == CommandType.Transfer)
                 answer = "...";
-            else if (commandType == POWER_LABEL)
+            else if (commandType == CommandType.Power)
                 answer = GetTextAnswerByPowerCommand(messageText);
-            else if (commandType == VOLUME_LABEL)
+            else if (commandType == CommandType.Volume)
                 answer = GetTextAnswerByVolumeCommand(messageText);
-            else if (commandType == SCREEN_LABEL)
+            else if (commandType == CommandType.Screen)
                 answer = GetTextAnswerByScreenCommand(messageText);
             else
-                answer = AnswerGenerator.GetBotFunctionNotImplementedAnswer();
+                answer = GetBotFunctionNotImplementedAnswer();
 
             return answer;
         }

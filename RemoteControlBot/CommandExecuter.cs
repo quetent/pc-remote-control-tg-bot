@@ -11,27 +11,27 @@ namespace RemoteControlBot
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool LockWorkStation();
 
-        internal static string? DetermineCommandType(string command)
+        internal static CommandType DetermineCommandType(string command)
         {
-            string? commandType;
+            CommandType commandType;
 
             if (MAIN_MENU_LABELS.Contains(command) || command == BACK_LABEL)
-                commandType = BACK_LABEL;
+                commandType = CommandType.Transfer;
             else if (POWER_LABELS.Contains(command))
-                commandType = POWER_LABEL;
+                commandType = CommandType.Power;
             else if (VOLUME_LABELS.Contains(command))
-                commandType = VOLUME_LABEL;
+                commandType = CommandType.Volume;
             else if (SCREEN_LABELS.Contains(command))
-                commandType = SCREEN_LABEL;
+                commandType = CommandType.Screen;
             else
-                commandType = null;
+                commandType = CommandType.Undefined;
 
             return commandType;
         }
 
-        internal static void ExecuteCommand(string? commandType, string commandText)
+        internal static void ExecuteCommand(CommandType commandType, string commandText)
         {
-            if (commandType is null)
+            if (commandType is CommandType.Undefined)
             {
                 if (ENABLE_LOGGING)
                     Log.UnknownCommand(commandText);
@@ -39,7 +39,7 @@ namespace RemoteControlBot
                 return;
             }
 
-            if (commandType == BACK_LABEL)
+            if (commandType is CommandType.Transfer)
             {
                 if (ENABLE_LOGGING)
                     Log.KeyboardRequest();
@@ -47,16 +47,16 @@ namespace RemoteControlBot
                 return;
             }
 
-            if (commandType == POWER_LABEL)
+            if (commandType is CommandType.Power)
                 ExecutePowerCommand(commandText);
-            else if (commandType == VOLUME_LABEL)
+            else if (commandType is CommandType.Volume)
                 ExecuteVolumeCommand(commandText);
-            else if (commandType == SCREEN_LABEL)
+            else if (commandType is CommandType.Screen)
                 ExecuteScreenCommand(commandText);
             else
             {
                 if (ENABLE_LOGGING)
-                    Log.FunctionNotImplemented($"{commandType}: {commandText}");
+                    Log.FunctionNotImplemented($"{commandType} -> {commandText}");
 
                 return;
             }
