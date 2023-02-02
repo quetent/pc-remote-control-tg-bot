@@ -42,7 +42,7 @@ namespace RemoteControlBot
 
         internal static void UndefinedCommand(string commandText)
         {
-            ByPattern("Unknown command skipped", commandText, NotImportantColor);
+            ByPattern("Undefined command skipped", commandText, NotImportantColor);
         }
 
         internal static void KeyboardRequest(Command command)
