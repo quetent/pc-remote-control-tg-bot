@@ -86,11 +86,21 @@ namespace RemoteControlBot
                 Log.MessageRecieved(messageText, user);
 
             var command = new Command(messageText);
+            SetUpdateHandler(command);
             
             if (ENABLE_LOGGING)
                 Log.UpdateExecute(command, messageText);
 
-            CommandExecuter.ExecuteCommand(command);
+            if (IsProcessManagerAwaitIndex(command))
+            {
+                command = new Command(CommandType.Process, 
+                                      CommandInfo.Kill,
+                                      command.RawText);
+
+                CommandExecuter.ExecuteCommand(command);
+            }
+            else
+                CommandExecuter.ExecuteCommand(command);
 
             var chatId = GetChatId(message);
             var text = GetTextAnswer(command);
@@ -104,7 +114,6 @@ namespace RemoteControlBot
 
             await SendScreenshotIfNeededAsync(command, chatId, cancellationToken);
 
-            SetUpdateHandler(command);
         }
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient,
@@ -120,10 +129,16 @@ namespace RemoteControlBot
         private void SetUpdateHandler(Command command)
         {
             if (command.Type is CommandType.Process
-             && command.Info is CommandInfo.Kill)
+             && command.Info is CommandInfo.Kill
+             || IsProcessManagerAwaitIndex(command))
                 _updateHandler = UpdateHandler.ProcessManager;
             else
                 _updateHandler = UpdateHandler.Main;
+        }
+
+        private bool IsProcessManagerAwaitIndex(Command command)
+        {
+            return _updateHandler is UpdateHandler.ProcessManager && command.RawText.IsNumber();
         }
 
         private async Task NotifyAboutStartReceivingAsync(long chatId, string text, IReplyMarkup markup, CancellationToken cancellationToken)

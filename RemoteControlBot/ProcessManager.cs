@@ -24,6 +24,15 @@ namespace RemoteControlBot
             }
         }
 
+        internal static void KillProcess(int index)
+        {
+            try
+            {
+                _visibleProcesses[index].Kill();
+            }
+            catch { }
+        }
+
         private static bool IsProcessHidden(Process process)
         {
             return string.IsNullOrEmpty(process.MainWindowTitle);

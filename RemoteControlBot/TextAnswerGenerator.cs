@@ -140,20 +140,15 @@ namespace RemoteControlBot
 
             return command.Info switch
             {
-                CommandInfo.Kill => GetProcessKillRequestedAnswer(),
+                CommandInfo.Kill => GetFormattedVisibleProcessesAnswer(),
                 _ => Throw.CommandNotImplemented<string>(command)
             };
         }
 
-        private static string GetProcessKillRequestedAnswer()
-        {
-            return GetFormattedVisibleProcessesAnswer();
-        }
-
         private static string GetFormattedVisibleProcessesAnswer()
         {
-            var counter = 0;
-            var result = string.Empty;
+            var counter = 1;
+            var result = "./\n";
 
             foreach (var process in ProcessManager.VisibleProcesses)
             {

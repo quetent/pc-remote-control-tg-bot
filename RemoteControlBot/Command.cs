@@ -7,14 +7,24 @@ namespace RemoteControlBot
     {
         private readonly CommandType _type;
         private readonly CommandInfo _info;
+        private readonly string _rawText;
 
         internal CommandType Type => _type;
         internal CommandInfo Info => _info;
+        internal string RawText => _rawText;
 
         internal Command(string commandText)
         {
             _type = DetermineCommandType(commandText);
             _info = DetermineCommandInfo(_type, commandText);
+            _rawText = commandText;
+        }
+
+        internal Command(CommandType commandType, CommandInfo commandInfo, string rawText = "")
+        {
+            _type = commandType;
+            _info = commandInfo;
+            _rawText = rawText;
         }
 
         public override string ToString()

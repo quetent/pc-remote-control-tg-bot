@@ -5,6 +5,8 @@ namespace RemoteControlBot
 {
     internal static class Keyboard
     {
+        internal const int ROW_LENGTH = 5;
+
         internal const string POWER_LABEL = "Power";
         internal const string VOLUME_LABEL = "Volume";
         internal const string SCREEN_LABEL = "Screen";
@@ -98,5 +100,42 @@ namespace RemoteControlBot
                     new KeyboardButton(BACK_LABEL)
                 }
             });
+
+        internal static ReplyKeyboardMarkup GenerateIndexedKeyboard(int index)
+        {
+            var buttonValue = 1;
+            var buttons = new List<List<KeyboardButton>>();
+            var (height, width) = GetKeyboardSize(index);
+
+            for (int i = 0; i < height; i++)
+            {
+                var row = new List<KeyboardButton>();
+
+                for (int j = 0; j < width; j++)
+                {
+                    if (buttonValue == index + 1)
+                        break;
+
+                    row.Add(new KeyboardButton(buttonValue.ToString()));
+                    buttonValue++;
+                }
+
+                buttons.Add(row);
+            }
+
+            buttons.Add(new List<KeyboardButton>() { new KeyboardButton(BACK_LABEL) });
+
+            return new ReplyKeyboardMarkup(buttons);
+        }
+
+        private static (int height, int width) GetKeyboardSize(int index)
+        {
+            var mod = index % ROW_LENGTH;
+            var div = index / ROW_LENGTH;
+
+            var height = mod == 0 ? div : div + 1;
+
+            return (height, ROW_LENGTH);
+        }
     }
 }

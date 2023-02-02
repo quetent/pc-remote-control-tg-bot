@@ -159,7 +159,7 @@ namespace RemoteControlBot
             switch (command.Info)
             {
                 case CommandInfo.Kill:
-                    SetVisibleProcceses();
+                    KillProcess(command);
                     break;
                 default:
                     Throw.CommandNotImplemented(command);
@@ -170,6 +170,14 @@ namespace RemoteControlBot
         private static void SetVisibleProcceses()
         {
             ProcessManager.SetVisibleProcceses();
+        }
+
+        private static void KillProcess(Command command)
+        {
+            if (command.RawText.IsNumber())
+                ProcessManager.KillProcess(int.Parse(command.RawText) - 1);
+            else
+                SetVisibleProcceses();
         }
     }
 }

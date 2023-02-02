@@ -13,4 +13,12 @@ namespace RemoteControlBot
             return new List<T>(list);
         }
     }
+
+    public static class StringExtensions
+    {
+        public static bool IsNumber(this string str)
+        {
+            return str.All(c => char.IsNumber(c));
+        }
+    }
 }
