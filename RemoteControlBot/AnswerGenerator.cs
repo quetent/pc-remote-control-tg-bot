@@ -4,35 +4,25 @@ namespace RemoteControlBot
 {
     internal static class AnswerGenerator
     {
-        internal static string GetBotFunctionNotImplementedAnswer()
+        internal static string GetTextAnswerByPowerCommand(Command command)
         {
-            return "Selected function is not implemented";
-        }
+            Throw.IfIncorrectCommandType(command, CommandType.Power);
 
-        internal static string GetTextAnswerByPowerCommand(CommandInfo commandText)
-        {
-            return commandText switch
+            return command.Info switch
             {
                 CommandInfo.Shutdown => "Shutdown has been requested",
                 CommandInfo.Hibernate => "Hibernate has been requested",
                 CommandInfo.Lock => "Lock has been requested",
                 CommandInfo.Restart => "Restart has been requested",
-                _ => GetBotFunctionNotImplementedAnswer()
+                _ => Throw.CommandNotImplemented<string>(command)
             };
         }
 
-        internal static string GetTextAnswerByScreenCommand(CommandInfo commandInfo)
+        internal static string GetTextAnswerByVolumeCommand(Command command)
         {
-            return commandInfo switch
-            {
-                CommandInfo.Screenshot => "Screenshot was taken",
-                _ => GetBotFunctionNotImplementedAnswer()
-            };
-        }
+            Throw.IfIncorrectCommandType(command, CommandType.Volume);
 
-        internal static string GetTextAnswerByVolumeCommand(CommandInfo commandInfo)
-        {
-            return commandInfo switch
+            return command.Info switch
             {
                 CommandInfo.Louder5 => GetVolumeChangeAnswer("increased", 5),
                 CommandInfo.Quieter5 => GetVolumeChangeAnswer("decreased", -5),
@@ -42,9 +32,21 @@ namespace RemoteControlBot
                 CommandInfo.Min => GetVolumeIsMinAnswer(),
                 CommandInfo.Mute => GetMuteRequestAnswer(MUTE, "already"),
                 CommandInfo.Unmute => GetMuteRequestAnswer(UNMUTE, "is not"),
-                _ => GetBotFunctionNotImplementedAnswer(),
+                _ => throw new NotImplementedException(command.ToString()),
             };
         }
+
+        internal static string GetTextAnswerByScreenCommand(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Screen);
+
+            return command.Info switch
+            {
+                CommandInfo.Screenshot => "Screenshot was taken",
+                _ => throw new NotImplementedException(command.ToString())
+            };
+        }
+
 
         private static string GetVolumeIsMaxAnswer()
         {
