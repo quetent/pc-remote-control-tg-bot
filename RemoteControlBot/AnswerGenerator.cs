@@ -32,7 +32,7 @@ namespace RemoteControlBot
                 CommandInfo.Min => GetVolumeIsMinAnswer(),
                 CommandInfo.Mute => GetMuteRequestAnswer(MUTE, "already"),
                 CommandInfo.Unmute => GetMuteRequestAnswer(UNMUTE, "is not"),
-                _ => throw new NotImplementedException(command.ToString()),
+                _ => Throw.CommandNotImplemented<string>(command)
             };
         }
 
@@ -43,7 +43,7 @@ namespace RemoteControlBot
             return command.Info switch
             {
                 CommandInfo.Screenshot => "Screenshot was taken",
-                _ => throw new NotImplementedException(command.ToString())
+                _ => Throw.CommandNotImplemented<string>(command)
             };
         }
 
