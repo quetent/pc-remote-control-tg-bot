@@ -4,13 +4,13 @@ namespace RemoteControlBot
 {
     public static class VolumeManager
     {
-        private static readonly CoreAudioController _audioController;
-
         private static bool _badMuteRequest;
+
+        private static readonly CoreAudioController _audioController;
 
         static VolumeManager()
         {
-            _audioController = new(); // too slow, remove using PreInit()
+            _audioController = new(); // too slow, to remove it use PreInit()
             _badMuteRequest = false;
         }
 

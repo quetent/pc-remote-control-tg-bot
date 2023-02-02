@@ -31,7 +31,7 @@ namespace RemoteControlBot
                 VolumeManager.PreInit();
         }
 
-        public async void StartAsync()
+        public async Task StartAsync()
         {
             _startupTime = DateTimeManager.GetCurrentDateTime();
 
