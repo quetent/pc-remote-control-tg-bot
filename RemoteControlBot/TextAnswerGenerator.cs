@@ -2,23 +2,57 @@
 
 namespace RemoteControlBot
 {
-    internal static class AnswerGenerator
+    internal static class TextAnswerGenerator
     {
-        internal static string GetTextAnswerByPowerCommand(Command command)
+        internal static string GetAnswerByUndefinedCommand(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Undefined);
+
+            return "Undefined command";
+        }
+
+        internal static string GetAnswerByTransferCommand(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Transfer);
+
+            return "...";
+        }
+
+        internal static string GetAnswerByPowerCommand(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Power);
 
             return command.Info switch
             {
-                CommandInfo.Shutdown => "Shutdown has been requested",
-                CommandInfo.Hibernate => "Hibernate has been requested",
-                CommandInfo.Lock => "Lock has been requested",
-                CommandInfo.Restart => "Restart has been requested",
+                CommandInfo.Shutdown => GetShutdownRequestedAnswer(),
+                CommandInfo.Hibernate => GetHibernateRequestedAnswer(),
+                CommandInfo.Lock => GetLockRequestedAnswer(),
+                CommandInfo.Restart => GetRestartRequestedAnswer(),
                 _ => Throw.CommandNotImplemented<string>(command)
             };
         }
 
-        internal static string GetTextAnswerByVolumeCommand(Command command)
+        private static string GetShutdownRequestedAnswer()
+        {
+            return "Shutdown has been requested";
+        }
+
+        private static string GetHibernateRequestedAnswer()
+        {
+            return "Hibernate has been requested";
+        }
+
+        private static string GetLockRequestedAnswer()
+        {
+            return "Lock has been requested";
+        }
+
+        private static string GetRestartRequestedAnswer()
+        {
+            return "Restart has been requested";
+        }
+
+        internal static string GetAnswerByVolumeCommand(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Volume);
 
@@ -35,18 +69,6 @@ namespace RemoteControlBot
                 _ => Throw.CommandNotImplemented<string>(command)
             };
         }
-
-        internal static string GetTextAnswerByScreenCommand(Command command)
-        {
-            Throw.IfIncorrectCommandType(command, CommandType.Screen);
-
-            return command.Info switch
-            {
-                CommandInfo.Screenshot => "Screenshot was taken",
-                _ => Throw.CommandNotImplemented<string>(command)
-            };
-        }
-
 
         private static string GetVolumeIsMaxAnswer()
         {
@@ -94,6 +116,17 @@ namespace RemoteControlBot
                         + (requestType == UNMUTE ? "un" : string.Empty);
 
             return $"Speakers {insertion}muted";
+        }
+
+        internal static string GetAnswerByScreenCommand(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Screen);
+
+            return command.Info switch
+            {
+                CommandInfo.Screenshot => "Screenshot was taken",
+                _ => Throw.CommandNotImplemented<string>(command)
+            };
         }
     }
 }

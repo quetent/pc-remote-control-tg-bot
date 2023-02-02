@@ -8,10 +8,10 @@ namespace RemoteControlBot
         private readonly CommandType _type;
         private readonly CommandInfo _info;
 
-        public CommandType Type => _type;
-        public CommandInfo Info => _info;
+        internal CommandType Type => _type;
+        internal CommandInfo Info => _info;
 
-        public Command(string commandText)
+        internal Command(string commandText)
         {
             _type = DetermineCommandType(commandText);
             _info = DetermineCommandInfo(_type, commandText);

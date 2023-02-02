@@ -3,9 +3,6 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
-using static RemoteControlBot.AnswerGenerator;
-using static RemoteControlBot.CommandExecuter;
-using static RemoteControlBot.MarkupGenerator;
 
 namespace RemoteControlBot
 {
@@ -29,11 +26,16 @@ namespace RemoteControlBot
             _botClient = new TelegramBotClient(token);
             _receiverOptions = recieverOptions;
             _cancellationToken = cancellationToken;
+
+            if (ENABLE_VOLUME_MANAGER_PRE_INIT)
+                VolumeManager.PreInit();
         }
 
-        public void Start()
+        public async void StartAsync()
         {
             _startupTime = DateTimeManager.GetCurrentDateTime();
+
+            await NotifyAboutStartReceivingAsync(OWNER_ID, "Bot has been started", Keyboard.MainMenu, _cancellationToken);
 
             _botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
@@ -48,12 +50,12 @@ namespace RemoteControlBot
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             var isUpdateValid = UpdateValidator.IsUpdateValid(update);
-            var sendTime = update.Message!.Date.ToLocalTime();
+            var recieveTime = update.Message!.Date.ToLocalTime();
 
             if (!isUpdateValid)
             {
                 if (ENABLE_LOGGING)
-                    Log.MessageSkipped("< no message text >", null);
+                    Log.MessageSkipped("< invalid message >", null);
 
                 return;
             }
@@ -66,7 +68,7 @@ namespace RemoteControlBot
             {
                 isUpdateValid,
                 UpdateValidator.IsAccessAllowed(this, user),
-                UpdateValidator.IsMessageAfterStartup(_startupTime, sendTime)
+                UpdateValidator.IsMessageAfterStartup(_startupTime, recieveTime)
             };
 
             if (!UpdateValidator.IsSequenceValid(sequence))
@@ -82,7 +84,10 @@ namespace RemoteControlBot
 
             var command = new Command(messageText);
 
-            ExecuteCommand(command);
+            if (ENABLE_LOGGING)
+                Log.UpdateExecute(command, messageText);
+
+            CommandExecuter.ExecuteCommand(command);
 
             var chatId = GetChatId(message);
             var text = GetTextAnswer(command);
@@ -94,9 +99,7 @@ namespace RemoteControlBot
                     replyMarkup: markup,
                     cancellationToken: cancellationToken);
 
-            if (command.Type is CommandType.Screen)
-                if (command.Info is CommandInfo.Screenshot)
-                    await SendScreenshotAsync(chatId, PathManager.GetScreenshotAbsolutePath(), cancellationToken);
+            await SendScreenshotIfNeededAsync(command, chatId, cancellationToken);
         }
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient,
@@ -107,6 +110,22 @@ namespace RemoteControlBot
                 Log.UnhandledException(exception);
 
             return Task.CompletedTask;
+        }
+
+        private async Task NotifyAboutStartReceivingAsync(long chatId, string text, IReplyMarkup markup, CancellationToken cancellationToken)
+        {
+            await _botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: text,
+                    replyMarkup: markup,
+                    cancellationToken: cancellationToken);
+        }
+
+        private async Task SendScreenshotIfNeededAsync(Command command, long chatId, CancellationToken cancellationToken)
+        {
+            if (command.Type is CommandType.Screen
+             && command.Info is CommandInfo.Screenshot)
+                await SendScreenshotAsync(chatId, PathManager.GetScreenshotAbsolutePath(), cancellationToken);
         }
 
         private async Task SendScreenshotAsync(long chatId, string filepath, CancellationToken cancellationToken)
@@ -141,27 +160,20 @@ namespace RemoteControlBot
 
         private static string GetTextAnswer(Command command)
         {
-            string answer;
-
-            if (command.Type is CommandType.Undefined)
-                answer = "Unknown command";
-            else if (command.Type is CommandType.Transfer)
-                answer = "...";
-            else if (command.Type is CommandType.Power)
-                answer = GetTextAnswerByPowerCommand(command);
-            else if (command.Type is CommandType.Volume)
-                answer = GetTextAnswerByVolumeCommand(command);
-            else if (command.Type is CommandType.Screen)
-                answer = GetTextAnswerByScreenCommand(command);
-            else
-                throw new NotImplementedException(command.ToString());
-
-            return answer;
+            return command.Type switch
+            {
+                CommandType.Undefined => TextAnswerGenerator.GetAnswerByUndefinedCommand(command),
+                CommandType.Transfer => TextAnswerGenerator.GetAnswerByTransferCommand(command),
+                CommandType.Power => TextAnswerGenerator.GetAnswerByPowerCommand(command),
+                CommandType.Volume => TextAnswerGenerator.GetAnswerByVolumeCommand(command),
+                CommandType.Screen => TextAnswerGenerator.GetAnswerByScreenCommand(command),
+                _ => Throw.CommandNotImplemented<string>(command)
+            };
         }
 
         private static IReplyMarkup GetMarkup(Command command)
         {
-            return GetKeyboard(command);
+            return MarkupGenerator.GetKeyboard(command);
         }
     }
 }
