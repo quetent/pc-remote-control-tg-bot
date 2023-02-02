@@ -50,7 +50,6 @@ namespace RemoteControlBot
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             var isUpdateValid = UpdateValidator.IsUpdateValid(update);
-            var recieveTime = update.Message!.Date.ToLocalTime();
 
             if (!isUpdateValid)
             {
@@ -59,6 +58,8 @@ namespace RemoteControlBot
 
                 return;
             }
+
+            var recieveTime = update.Message!.Date.ToLocalTime();
 
             var message = GetMessage(update);
             var messageText = GetMessageText(message);
