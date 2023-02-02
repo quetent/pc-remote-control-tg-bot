@@ -87,20 +87,18 @@ namespace RemoteControlBot
 
             var command = new Command(messageText);
             SetUpdateHandler(command);
-            
-            if (ENABLE_LOGGING)
-                Log.UpdateExecute(command, messageText);
 
-            if (IsProcessManagerAwaitIndex(command))
-            {
+            var isAwaiting = IsProcessManagerAwaitIndex(command);
+
+            if (ENABLE_LOGGING)
+                Log.UpdateExecute(command, messageText, isAwaiting);
+
+            if (isAwaiting)
                 command = new Command(CommandType.Process, 
                                       CommandInfo.Kill,
                                       command.RawText);
 
-                CommandExecuter.ExecuteCommand(command);
-            }
-            else
-                CommandExecuter.ExecuteCommand(command);
+            CommandExecuter.ExecuteCommand(command);
 
             var chatId = GetChatId(message);
             var text = GetTextAnswer(command);
@@ -136,7 +134,7 @@ namespace RemoteControlBot
                 _updateHandler = UpdateHandler.Main;
         }
 
-        private bool IsProcessManagerAwaitIndex(Command command)
+        internal bool IsProcessManagerAwaitIndex(Command command)
         {
             return _updateHandler is UpdateHandler.ProcessManager && command.RawText.IsNumber();
         }

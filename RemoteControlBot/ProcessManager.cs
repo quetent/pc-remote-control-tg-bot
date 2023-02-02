@@ -5,7 +5,14 @@ namespace RemoteControlBot
     internal static class ProcessManager
     {
         private static readonly List<Process> _visibleProcesses;
-        public static List<Process> VisibleProcesses { get { return _visibleProcesses.Copy(); } }
+        public static List<Process> VisibleProcesses 
+        { 
+            get 
+            {
+                SetVisibleProcceses();
+                return _visibleProcesses.Copy(); 
+            } 
+        }
 
         static ProcessManager()
         {
@@ -28,7 +35,8 @@ namespace RemoteControlBot
         {
             try
             {
-                _visibleProcesses[index].Kill();
+                if (index < _visibleProcesses.Count)
+                    _visibleProcesses[index].Kill();
             }
             catch { }
         }
