@@ -7,5 +7,6 @@
         Power,
         Volume,
         Screen,
+        Process
     }
 }

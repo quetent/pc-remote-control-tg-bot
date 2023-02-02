@@ -22,18 +22,20 @@ namespace RemoteControlBot
             return $"{_type} -> {_info}";
         }
 
-        private static CommandType DetermineCommandType(string command)
+        private static CommandType DetermineCommandType(string commandText)
         {
             CommandType commandType;
 
-            if (MAIN_MENU_LABELS.Contains(command) || command == BACK_LABEL)
+            if (MAIN_MENU_LABELS.Contains(commandText) || commandText == BACK_LABEL)
                 commandType = CommandType.Transfer;
-            else if (POWER_LABELS.Contains(command))
+            else if (POWER_LABELS.Contains(commandText))
                 commandType = CommandType.Power;
-            else if (VOLUME_LABELS.Contains(command))
+            else if (VOLUME_LABELS.Contains(commandText))
                 commandType = CommandType.Volume;
-            else if (SCREEN_LABELS.Contains(command))
+            else if (SCREEN_LABELS.Contains(commandText))
                 commandType = CommandType.Screen;
+            else if (PROCESS_LABELS.Contains(commandText))
+                commandType = CommandType.Process;
             else
                 commandType = CommandType.Undefined;
 
@@ -49,6 +51,7 @@ namespace RemoteControlBot
                 CommandType.Power => DeterminePowerCommandInfo(commandText),
                 CommandType.Volume => DetermineVolumeCommandInfo(commandText),
                 CommandType.Screen => DetermineScreenCommandInfo(commandText),
+                CommandType.Process => DetermineProcessCommandInfo(commandText),
                 _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
             };
         }
@@ -60,6 +63,7 @@ namespace RemoteControlBot
                 POWER_LABEL => CommandInfo.ToPower,
                 VOLUME_LABEL => CommandInfo.ToVolume,
                 SCREEN_LABEL => CommandInfo.ToScreen,
+                PROCESS_LABEL => CommandInfo.ToProcess,
                 BACK_LABEL => CommandInfo.ToMainMenu,
                 _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
             };
@@ -98,6 +102,15 @@ namespace RemoteControlBot
             return commandText switch
             {
                 SCREENSHOT => CommandInfo.Screenshot,
+                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+            };
+        }
+
+        private static CommandInfo DetermineProcessCommandInfo(string commandText)
+        {
+            return commandText switch
+            {
+                KILL => CommandInfo.Kill,
                 _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
             };
         }

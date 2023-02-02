@@ -26,6 +26,9 @@ namespace RemoteControlBot
                 case CommandType.Screen:
                     ExecuteScreenCommand(command);
                     break;
+                case CommandType.Process:
+                    ExecuteProcessCommand(command);
+                    break;
                 default:
                     Throw.CommandNotImplemented(command);
                     break;
@@ -147,6 +150,26 @@ namespace RemoteControlBot
             var fileFormatAsString = fileFormat.ToString().ToLowerInvariant();
 
             ScreenManager.SaveScreenshot(screenshot, fileFormat, filepath);
+        }
+
+        internal static void ExecuteProcessCommand(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Process);
+
+            switch (command.Info)
+            {
+                case CommandInfo.Kill:
+                    SetVisibleProcceses();
+                    break;
+                default:
+                    Throw.CommandNotImplemented(command);
+                    break;
+            }
+        }
+
+        private static void SetVisibleProcceses()
+        {
+            ProcessManager.SetVisibleProcceses();
         }
     }
 }

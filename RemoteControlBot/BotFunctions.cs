@@ -20,5 +20,8 @@
 
         // SCREEN
         internal const string SCREENSHOT = "Screenshot";
+
+        // PROCESS
+        internal const string KILL = "Kill";
     }
 }

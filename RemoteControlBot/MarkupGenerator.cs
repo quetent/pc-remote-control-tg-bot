@@ -12,6 +12,7 @@ namespace RemoteControlBot
                 CommandType.Power => GetPowerKeyboard(),
                 CommandType.Volume => GetVolumeKeyboard(),
                 CommandType.Screen => GetScreenKeyboard(),
+                CommandType.Process => GetProcessKeyboard(),
                 _ => GetMainMenuKeyboard()
             };
         }
@@ -26,6 +27,7 @@ namespace RemoteControlBot
                 CommandInfo.ToPower => GetPowerKeyboard(),
                 CommandInfo.ToVolume => GetVolumeKeyboard(),
                 CommandInfo.ToScreen => GetScreenKeyboard(),
+                CommandInfo.ToProcess => GetProcessKeyboard(),
                 _ => Throw.CommandNotImplemented<IReplyMarkup>(command)
             };
         }
@@ -48,6 +50,11 @@ namespace RemoteControlBot
         private static IReplyMarkup GetScreenKeyboard()
         {
             return Keyboard.Screen;
+        }
+
+        private static IReplyMarkup GetProcessKeyboard()
+        {
+            return Keyboard.Process;
         }
     }
 }

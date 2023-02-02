@@ -124,9 +124,44 @@ namespace RemoteControlBot
 
             return command.Info switch
             {
-                CommandInfo.Screenshot => "Screenshot was taken",
+                CommandInfo.Screenshot => GetScreenshotDoneAnswer(),
                 _ => Throw.CommandNotImplemented<string>(command)
             };
+        }
+
+        private static string GetScreenshotDoneAnswer()
+        {
+            return "Screenshot was taken";
+        }
+
+        internal static string GetAnswerByProcessCommand(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Process);
+
+            return command.Info switch
+            {
+                CommandInfo.Kill => GetProcessKillRequestedAnswer(),
+                _ => Throw.CommandNotImplemented<string>(command)
+            };
+        }
+
+        private static string GetProcessKillRequestedAnswer()
+        {
+            return GetFormattedVisibleProcessesAnswer();
+        }
+
+        private static string GetFormattedVisibleProcessesAnswer()
+        {
+            var counter = 0;
+            var result = string.Empty;
+
+            foreach (var process in ProcessManager.VisibleProcesses)
+            {
+                result += $"{counter}. {process.ProcessName}\n";
+                counter++;
+            }
+
+            return result;
         }
     }
 }

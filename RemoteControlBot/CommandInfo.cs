@@ -8,6 +8,7 @@
         ToPower,
         ToVolume,
         ToScreen,
+        ToProcess,
 
         Shutdown,
         Hibernate,
@@ -23,6 +24,8 @@
         Mute,
         Unmute,
 
-        Screenshot
+        Screenshot,
+
+        Kill
     }
 }

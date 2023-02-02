@@ -16,6 +16,7 @@ namespace RemoteControlBot
         private DateTime _startupTime;
 
         private readonly CancellationToken _cancellationToken;
+        private UpdateHandler _updateHandler;
 
         public Bot(long ownerId,
                    string token,
@@ -26,8 +27,9 @@ namespace RemoteControlBot
             _botClient = new TelegramBotClient(token);
             _receiverOptions = recieverOptions;
             _cancellationToken = cancellationToken;
+            _updateHandler = UpdateHandler.Main;
 
-            if (ENABLE_VOLUME_MANAGER_PRE_INIT)
+            if (ENABLE_PRE_INIT)
                 VolumeManager.PreInit();
         }
 
@@ -50,7 +52,7 @@ namespace RemoteControlBot
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             var isUpdateValid = UpdateValidator.IsUpdateValid(update);
-
+            
             if (!isUpdateValid)
             {
                 if (ENABLE_LOGGING)
@@ -84,7 +86,7 @@ namespace RemoteControlBot
                 Log.MessageRecieved(messageText, user);
 
             var command = new Command(messageText);
-
+            
             if (ENABLE_LOGGING)
                 Log.UpdateExecute(command, messageText);
 
@@ -101,6 +103,8 @@ namespace RemoteControlBot
                     cancellationToken: cancellationToken);
 
             await SendScreenshotIfNeededAsync(command, chatId, cancellationToken);
+
+            SetUpdateHandler(command);
         }
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient,
@@ -111,6 +115,15 @@ namespace RemoteControlBot
                 Log.UnhandledException(exception);
 
             return Task.CompletedTask;
+        }
+
+        private void SetUpdateHandler(Command command)
+        {
+            if (command.Type is CommandType.Process
+             && command.Info is CommandInfo.Kill)
+                _updateHandler = UpdateHandler.ProcessManager;
+            else
+                _updateHandler = UpdateHandler.Main;
         }
 
         private async Task NotifyAboutStartReceivingAsync(long chatId, string text, IReplyMarkup markup, CancellationToken cancellationToken)
@@ -168,6 +181,7 @@ namespace RemoteControlBot
                 CommandType.Power => TextAnswerGenerator.GetAnswerByPowerCommand(command),
                 CommandType.Volume => TextAnswerGenerator.GetAnswerByVolumeCommand(command),
                 CommandType.Screen => TextAnswerGenerator.GetAnswerByScreenCommand(command),
+                CommandType.Process => TextAnswerGenerator.GetAnswerByProcessCommand(command),
                 _ => Throw.CommandNotImplemented<string>(command)
             };
         }
