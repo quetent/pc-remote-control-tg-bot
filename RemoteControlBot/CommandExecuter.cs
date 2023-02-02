@@ -146,8 +146,6 @@ namespace RemoteControlBot
             var fileFormat = imageFormat;
             var fileFormatAsString = fileFormat.ToString().ToLowerInvariant();
 
-            var now = DateTimeManager.GetCurrentDateTime();
-
             ScreenManager.SaveScreenshot(screenshot, fileFormat, filepath);
         }
     }

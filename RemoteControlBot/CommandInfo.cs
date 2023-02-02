@@ -2,22 +2,27 @@
 {
     internal enum CommandInfo
     {
-        Null = 0,
+        Null,
 
-        Shutdown = 2,
-        Hibernate = 4,
-        Lock = 8,
-        Restart = 16,
+        ToMainMenu,
+        ToPower,
+        ToVolume,
+        ToScreen,
 
-        Louder5 = 32,
-        Quieter5 = 64,
-        Louder10 = 128,
-        Quieter10 = 256,
-        Max = 512,
-        Min = 1024,
-        Mute = 2048,
-        Unmute = 4096,
+        Shutdown,
+        Hibernate,
+        Lock,
+        Restart,
 
-        Screenshot = 8192
+        Louder5,
+        Quieter5,
+        Louder10,
+        Quieter10,
+        Max,
+        Min,
+        Mute,
+        Unmute,
+
+        Screenshot
     }
 }

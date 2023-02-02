@@ -1,33 +1,53 @@
 ﻿using Telegram.Bot.Types.ReplyMarkups;
-using static RemoteControlBot.Keyboard;
 
 namespace RemoteControlBot
 {
     internal class MarkupGenerator
     {
-        internal static IReplyMarkup GetKeyboard(string messageText)
+        internal static IReplyMarkup GetKeyboard(Command command)
         {
-            IReplyMarkup markup;
+            return command.Type switch
+            {
+                CommandType.Transfer => GetTransferKeyboard(command),
+                CommandType.Power => GetPowerKeyboard(),
+                CommandType.Volume => GetVolumeKeyboard(),
+                CommandType.Screen => GetScreenKeyboard(),
+                _ => GetMainMenuKeyboard()
+            };
+        }
 
-            if (MAIN_MENU_LABELS.Contains(messageText))
-                if (messageText == POWER_LABEL)
-                    markup = Power;
-                else if (messageText == VOLUME_LABEL)
-                    markup = Volume;
-                else if (messageText == SCREEN_LABEL)
-                    markup = Screen;
-                else
-                    throw new NotImplementedException();
-            else if (POWER_LABELS.Contains(messageText))
-                markup = Power;
-            else if (VOLUME_LABELS.Contains(messageText))
-                markup = Volume;
-            else if (SCREEN_LABELS.Contains(messageText))
-                markup = Screen;
-            else
-                markup = MainMenu;
+        private static IReplyMarkup GetTransferKeyboard(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Transfer);
 
-            return markup;
+            return command.Info switch
+            {
+                CommandInfo.ToMainMenu => GetMainMenuKeyboard(),
+                CommandInfo.ToPower => GetPowerKeyboard(),
+                CommandInfo.ToVolume => GetVolumeKeyboard(),
+                CommandInfo.ToScreen => GetScreenKeyboard(),
+                _ => Throw.CommandNotImplemented<IReplyMarkup>(command)
+            };
+        }
+
+        private static IReplyMarkup GetMainMenuKeyboard()
+        {
+            return Keyboard.MainMenu;
+        }
+
+        private static IReplyMarkup GetPowerKeyboard()
+        {
+            return Keyboard.Power;
+        }
+
+        private static IReplyMarkup GetVolumeKeyboard()
+        {
+            return Keyboard.Volume;
+        }
+
+        private static IReplyMarkup GetScreenKeyboard()
+        {
+            return Keyboard.Screen;
         }
     }
 }

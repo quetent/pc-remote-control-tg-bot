@@ -86,7 +86,7 @@ namespace RemoteControlBot
 
             var chatId = GetChatId(message);
             var text = GetTextAnswer(command);
-            var markup = GetMarkup(messageText);
+            var markup = GetMarkup(command);
 
             await _botClient.SendTextMessageAsync(
                     chatId: chatId,
@@ -159,9 +159,9 @@ namespace RemoteControlBot
             return answer;
         }
 
-        private static IReplyMarkup GetMarkup(string messageText)
+        private static IReplyMarkup GetMarkup(Command command)
         {
-            return GetKeyboard(messageText);
+            return GetKeyboard(command);
         }
     }
 }

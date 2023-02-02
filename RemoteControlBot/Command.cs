@@ -45,10 +45,22 @@ namespace RemoteControlBot
             return commandType switch
             {
                 CommandType.Undefined => CommandInfo.Null,
-                CommandType.Transfer => CommandInfo.Null,
+                CommandType.Transfer => DetermineTranserCommandInfo(commandText),
                 CommandType.Power => DeterminePowerCommandInfo(commandText),
                 CommandType.Volume => DetermineVolumeCommandInfo(commandText),
                 CommandType.Screen => DetermineScreenCommandInfo(commandText),
+                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+            };
+        }
+
+        private static CommandInfo DetermineTranserCommandInfo(string commandText)
+        {
+            return commandText switch
+            {
+                POWER_LABEL => CommandInfo.ToPower,
+                VOLUME_LABEL => CommandInfo.ToVolume,
+                SCREEN_LABEL => CommandInfo.ToScreen,
+                BACK_LABEL => CommandInfo.ToMainMenu,
                 _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
             };
         }
