@@ -42,7 +42,7 @@ namespace RemoteControlBot
 
         internal static void UndefinedCommand(string commandText)
         {
-            ByPattern("Unknown command", commandText, ExecuteCommandColor);
+            ByPattern("Unknown command skipped", commandText, NotImportantColor);
         }
 
         internal static void KeyboardRequest(Command command)
@@ -55,11 +55,6 @@ namespace RemoteControlBot
             ByPattern("Execute", command.ToString(), ExecuteCommandColor);
         }
 
-        internal static void CommandSkipped(string commandText)
-        {
-            ByPattern("Command skipped", commandText, NotImportantColor);
-        }
-
         internal static void UpdateExecute(Command command, string commandText)
         {
             if (command.Type is CommandType.Transfer)
@@ -69,7 +64,7 @@ namespace RemoteControlBot
                 if (command.Type is not CommandType.Undefined)
                     CommandExecute(command);
                 else
-                    CommandSkipped(commandText);
+                    UndefinedCommand(commandText);
             }
         }
 
