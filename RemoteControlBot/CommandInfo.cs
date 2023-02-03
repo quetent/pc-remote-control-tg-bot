@@ -4,7 +4,7 @@
     {
         Null,
 
-        TurnOff,
+        BotTurnOff,
 
         ToMainMenu,
         ToControl,

@@ -46,7 +46,7 @@ namespace RemoteControlBot
             if (IsTransfer(commandText))
                 commandType = CommandType.Transfer;
             else if (IsControl(commandText))
-                commandType = CommandType.Control;
+                commandType = CommandType.AdminPanel;
             else if (IsPower(commandText))
                 commandType = CommandType.Power;
             else if (IsVolume(commandText))
@@ -71,7 +71,7 @@ namespace RemoteControlBot
 
         private static bool IsControl(string commandText)
         {
-            return CONTROL_LABELS.Contains(commandText);
+            return ADMIN_PANEL_LABELS.Contains(commandText);
         }
 
         private static bool IsPower(string commandText)
@@ -100,7 +100,7 @@ namespace RemoteControlBot
             {
                 CommandType.Undefined => CommandInfo.Null,
                 CommandType.Transfer => DetermineTranserCommandInfo(commandText),
-                CommandType.Control => DetermineControlCommandInfo(commandText),
+                CommandType.AdminPanel => DetermineControlCommandInfo(commandText),
                 CommandType.Power => DeterminePowerCommandInfo(commandText),
                 CommandType.Volume => DetermineVolumeCommandInfo(commandText),
                 CommandType.Screen => DetermineScreenCommandInfo(commandText),
@@ -114,7 +114,7 @@ namespace RemoteControlBot
             return commandText switch
             {
                 BACK_LABEL => CommandInfo.ToMainMenu,
-                CONTROL_LABEL => CommandInfo.ToControl,
+                ADMIN_PANEL_LABEL => CommandInfo.ToControl,
                 POWER_LABEL => CommandInfo.ToPower,
                 VOLUME_LABEL => CommandInfo.ToVolume,
                 SCREEN_LABEL => CommandInfo.ToScreen,
@@ -129,7 +129,7 @@ namespace RemoteControlBot
         {
             return commandText switch
             {
-                TURN_OFF => CommandInfo.TurnOff,
+                BOT_TURN_OFF => CommandInfo.BotTurnOff,
                 _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
             };
         }

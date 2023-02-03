@@ -206,7 +206,7 @@ namespace RemoteControlBot
                 CommandType.Volume => TextAnswerGenerator.GetAnswerByVolumeCommand(command),
                 CommandType.Screen => TextAnswerGenerator.GetAnswerByScreenCommand(command),
                 CommandType.Process => TextAnswerGenerator.GetAnswerByProcessCommand(command),
-                CommandType.Control => TextAnswerGenerator.GetAnswerByControlCommand(command),
+                CommandType.AdminPanel => TextAnswerGenerator.GetAnswerByControlCommand(command),
                 _ => Throw.CommandNotImplemented<string>(command)
             };
         }

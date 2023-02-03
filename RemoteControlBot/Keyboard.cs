@@ -11,14 +11,14 @@ namespace RemoteControlBot
         internal const string VOLUME_LABEL = "Volume";
         internal const string SCREEN_LABEL = "Screen";
         internal const string PROCESS_LABEL = "Process";
-        internal const string CONTROL_LABEL = "Control";
+        internal const string ADMIN_PANEL_LABEL = "Admin panel";
 
         internal const string UPDATE_KILL_LIST = "Update";
 
         internal const string BACK_LABEL = "< Back >";
 
-        internal static readonly string[] MAIN_MENU_LABELS = { POWER_LABEL, CONTROL_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL };
-        internal static readonly string[] CONTROL_LABELS = { TURN_OFF };
+        internal static readonly string[] MAIN_MENU_LABELS = { POWER_LABEL, ADMIN_PANEL_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL };
+        internal static readonly string[] ADMIN_PANEL_LABELS = { BOT_TURN_OFF };
         internal static readonly string[] POWER_LABELS = { SHUTDOWN, HIBERNATE, LOCK, RESTART };
         internal static readonly string[] VOLUME_LABELS = { LOUDER_5, QUIETER_5, LOUDER_10, QUIETER_10, MAX, MIN, MUTE, UNMUTE };
         internal static readonly string[] SCREEN_LABELS = { SCREENSHOT };
@@ -37,7 +37,7 @@ namespace RemoteControlBot
                 },
                 new[]
                 {
-                    new KeyboardButton(CONTROL_LABEL)
+                    new KeyboardButton(ADMIN_PANEL_LABEL)
                 }
             });
 
@@ -46,7 +46,7 @@ namespace RemoteControlBot
             {
                 new[]
                 {
-                    new KeyboardButton(TURN_OFF)
+                    new KeyboardButton(BOT_TURN_OFF)
                 },
                 new[]
                 {

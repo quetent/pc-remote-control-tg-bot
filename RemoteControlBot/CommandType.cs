@@ -3,7 +3,7 @@
     internal enum CommandType
     {
         Undefined,
-        Control,
+        AdminPanel,
         Transfer,
         Power,
         Volume,

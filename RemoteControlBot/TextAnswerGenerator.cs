@@ -217,7 +217,7 @@ namespace RemoteControlBot
 
         internal static string GetAnswerByControlCommand(Command command)
         {
-            Throw.IfIncorrectCommandType(command, CommandType.Control);
+            Throw.IfIncorrectCommandType(command, CommandType.AdminPanel);
 
             return command.Info switch
             {

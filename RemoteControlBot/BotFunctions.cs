@@ -3,7 +3,7 @@
     internal static class BotFunctions
     {
         // CONTROL
-        internal const string TURN_OFF = "Turn off";
+        internal const string BOT_TURN_OFF = "Turn off";
 
         // POWER
         internal const string SHUTDOWN = "Shutdown";
