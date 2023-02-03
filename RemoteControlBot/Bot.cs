@@ -117,30 +117,13 @@ namespace RemoteControlBot
             return Task.CompletedTask;
         }
 
-        private static Command GetCommand(string messageText, Command previousCommand)
-        {
-            Command command;
-
-            if (Command.IsNumberForProccesManager(previousCommand, messageText))
-                command = new Command(messageText, CommandType.Process, CommandInfo.Kill);
-            else
-                command = new Command(messageText);
-
-            return command;
-        }
-
-        private void SetPreviousCommand(Command command)
-        {
-            _previousCommand = command;
-        }
-
         private async Task HandleCommandExecuted(Command command, long commandSenderId, CancellationToken cancellationToken)
         {
             switch (command.Type)
             {
                 case CommandType.Screen:
                     if (command.Info is CommandInfo.Screenshot)
-                        await SendScreenshotAsync(command, commandSenderId, cancellationToken);
+                        await SendScreenshotAsync(commandSenderId, cancellationToken);
                     break;
                 default:
                     break;
@@ -156,7 +139,7 @@ namespace RemoteControlBot
                     cancellationToken: cancellationToken);
         }
 
-        private async Task SendScreenshotAsync(Command command, long chatId, CancellationToken cancellationToken)
+        private async Task SendScreenshotAsync(long chatId, CancellationToken cancellationToken)
         {
             await SendScreenshotAsync(chatId, PathManager.GetScreenshotAbsolutePath(), cancellationToken);
         }
@@ -169,6 +152,23 @@ namespace RemoteControlBot
                     chatId: chatId,
                     photo: new InputOnlineFile(stream),
                     cancellationToken: cancellationToken);
+        }
+
+        private static Command GetCommand(string messageText, Command previousCommand)
+        {
+            Command command;
+
+            if (Command.IsNumberForProccesManager(previousCommand, messageText))
+                command = new Command(CommandType.Process, CommandInfo.Kill, messageText);
+            else
+                command = new Command(messageText);
+
+            return command;
+        }
+
+        private void SetPreviousCommand(Command command)
+        {
+            _previousCommand = command;
         }
 
         private static Message GetMessage(Update update)

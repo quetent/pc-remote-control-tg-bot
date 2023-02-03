@@ -1,21 +1,19 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 
 namespace RemoteControlBot
 {
     internal static class ProcessManager
     {
         public static int VisibleProcessesCount { get { return _visibleProcesses.Count; } }
-        public static bool IsSuccessfulKill { get; private set; }
+
+        public static bool IsSuccessfulLastKill { get; private set; }
+        public static bool IsLastKillSystemProcess { get; private set; }
+
+        public static bool IsValidLastIndex { get; private set; }
 
         private static readonly List<Process> _visibleProcesses;
-        public static List<Process> VisibleProcesses
-        {
-            get
-            {
-                SetVisibleProcceses();
-                return _visibleProcesses.Copy();
-            }
-        }
+        public static List<Process> VisibleProcesses { get { return _visibleProcesses.Copy(); } }
 
 
         static ProcessManager()
@@ -35,24 +33,54 @@ namespace RemoteControlBot
             }
         }
 
-        internal static void KillProcess(int index)
+        internal static void TryKillProcessByIndex(int index)
         {
             try
             {
                 if (index < _visibleProcesses.Count)
-                    _visibleProcesses[index].Kill();
+                {
+                    IsValidLastIndex = true;
 
-                IsSuccessfulKill = true;
+                    if (!IsProcessExited(index))
+                    {
+                        KillProcessByIndex(index);
+                        IsSuccessfulLastKill = true;
+                    }
+                    else
+                        IsSuccessfulLastKill = false;
+                }
+                else
+                    IsValidLastIndex = false;
+
+                IsLastKillSystemProcess = false;
             }
-            catch
+            catch (Win32Exception)
             {
-                IsSuccessfulKill = false;
+                IsLastKillSystemProcess = true;
             }
+        }
+
+        private static void KillProcessByIndex(int index)
+        {
+            _visibleProcesses[index].Kill();
         }
 
         private static bool IsProcessHidden(Process process)
         {
             return string.IsNullOrEmpty(process.MainWindowTitle);
+        }
+
+        private static bool IsProcessExited(int index)
+        {
+            try
+            {
+                var process = Process.GetProcessById(_visibleProcesses[index].Id);
+                return process.HasExited;
+            }
+            catch (ArgumentException)
+            {
+                return true;
+            }
         }
     }
 }

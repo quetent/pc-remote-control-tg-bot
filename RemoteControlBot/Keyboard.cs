@@ -13,6 +13,7 @@ namespace RemoteControlBot
         internal const string PROCESS_LABEL = "Process";
 
         internal const string UPDATE_KILL_LIST = "Update";
+
         internal const string BACK_LABEL = "< Back >";
 
         internal static readonly string[] MAIN_MENU_LABELS = { POWER_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL };

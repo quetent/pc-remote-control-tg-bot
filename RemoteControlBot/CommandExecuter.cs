@@ -19,7 +19,7 @@ namespace RemoteControlBot
             task = command.Type switch
             {
                 CommandType.Undefined => Task.CompletedTask,
-                CommandType.Transfer => Task.CompletedTask,
+                CommandType.Transfer => Task.Run(() => ExecuteTransferCommand(command), cancellationToken),
                 CommandType.Power => Task.Run(() => ExecutePowerCommand(command), cancellationToken),
                 CommandType.Volume => Task.Run(() => ExecuteVolumeCommand(command), cancellationToken),
                 CommandType.Screen => Task.Run(() => ExecuteScreenCommand(command), cancellationToken),
@@ -29,6 +29,20 @@ namespace RemoteControlBot
 
             await task;
             CommandExecuted?.Invoke(command, commandSenderId, cancellationToken);
+        }
+
+        private static void ExecuteTransferCommand(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Transfer);
+
+            switch (command.Info)
+            {
+                case CommandInfo.ToKillList:
+                    ProcessManager.SetVisibleProcceses();
+                    break;
+                default:
+                    break;
+            }
         }
 
         private static void ExecutePowerCommand(Command command)
@@ -155,7 +169,7 @@ namespace RemoteControlBot
             switch (command.Info)
             {
                 case CommandInfo.Kill:
-                    ProcessManager.KillProcess(int.Parse(command.RawText) - 1);
+                    ProcessManager.TryKillProcessByIndex(int.Parse(command.RawText) - 1);
                     break;
                 default:
                     Throw.CommandNotImplemented(command);

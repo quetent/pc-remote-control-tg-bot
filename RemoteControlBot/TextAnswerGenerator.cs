@@ -17,7 +17,7 @@ namespace RemoteControlBot
 
             return command.Info switch
             {
-                CommandInfo.ToKillList => GetKillListAnswer(),
+                CommandInfo.ToKillList => GetProcessesListAnswer(),
                 _ => GetTransferDefaultAnswer()
             };
         }
@@ -27,7 +27,7 @@ namespace RemoteControlBot
             return "...";
         }
 
-        private static string GetKillListAnswer()
+        private static string GetProcessesListAnswer()
         {
             var counter = 1;
             var result = string.Empty;
@@ -39,9 +39,14 @@ namespace RemoteControlBot
             }
 
             if (result == string.Empty)
-                result = "No visible processes find";
+                result = GetNoVisibleProccessesFoundAnswer();
 
             return result;
+        }
+
+        private static string GetNoVisibleProccessesFoundAnswer()
+        {
+            return "No visible proccesses found";
         }
 
         internal static string GetAnswerByPowerCommand(Command command)
@@ -166,31 +171,48 @@ namespace RemoteControlBot
 
             return command.Info switch
             {
-                CommandInfo.Kill => GetFormattedVisibleProcessesAnswer(),
+                CommandInfo.Kill => GetProcessKillingResultAnswer(),
                 _ => Throw.CommandNotImplemented<string>(command)
             };
         }
 
-        private static string GetFormattedVisibleProcessesAnswer()
+        private static string GetProcessKillingResultAnswer()
         {
-            var counter = 1;
-            var result = string.Empty;
+            string result;
 
-            foreach (var process in ProcessManager.VisibleProcesses)
+            if (ProcessManager.IsSuccessfulLastKill)
+                result = GetProcessKilledAnswer();
+            else
             {
-                result += $"{counter}. {process.ProcessName}\n";
-                counter++;
+                if (ProcessManager.IsLastKillSystemProcess)
+                    result = GetProcessIsSystemAnwer();
+                else if (ProcessManager.IsValidLastIndex)
+                    result = GetProcessFinishedAnswer();
+                else
+                    result = GetInvalidKillingIndexAnswer();
             }
-
-            if (result == string.Empty)
-                result = GetNoVisibleProccessesFoundAnswer();
 
             return result;
         }
 
-        private static string GetNoVisibleProccessesFoundAnswer()
+        private static string GetInvalidKillingIndexAnswer()
         {
-            return "No visible proccesses found";
+            return "Invalid index";
+        }
+
+        private static string GetProcessKilledAnswer()
+        {
+            return "Process was killed";
+        }
+
+        private static string GetProcessFinishedAnswer()
+        {
+            return "Process already finished";
+        }
+
+        private static string GetProcessIsSystemAnwer()
+        {
+            return "Cannot kill system procces";
         }
     }
 }

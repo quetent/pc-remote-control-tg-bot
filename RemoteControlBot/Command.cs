@@ -20,7 +20,7 @@ namespace RemoteControlBot
             _rawText = commandText;
         }
 
-        internal Command(string commandText, CommandType builderType, CommandInfo builderInfo)
+        internal Command(CommandType builderType, CommandInfo builderInfo, string commandText)
         {
             _type = builderType;
             _info = builderInfo;
