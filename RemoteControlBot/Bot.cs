@@ -13,9 +13,10 @@ namespace RemoteControlBot
 
         private readonly TelegramBotClient _botClient;
         private readonly ReceiverOptions _receiverOptions;
-        private DateTime _startupTime;
 
+        private DateTime _startupTime;
         private readonly CancellationToken _cancellationToken;
+        private Command _previousCommand;
 
         public Bot(long ownerId,
                    string token,
@@ -52,7 +53,7 @@ namespace RemoteControlBot
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             var isUpdateValid = UpdateValidator.IsUpdateValid(update);
-            
+
             if (!isUpdateValid)
             {
                 if (ENABLE_LOGGING)
@@ -85,22 +86,26 @@ namespace RemoteControlBot
             if (ENABLE_LOGGING)
                 Log.MessageRecieved(messageText, user);
 
-            var command = new Command(messageText);
+            var command = GetCommand(messageText, _previousCommand);
 
             if (ENABLE_LOGGING)
                 Log.UpdateExecute(command, messageText);
 
             var chatId = GetChatId(message);
+
+            await CommandExecuter.ExecuteCommandAsync(command, chatId, cancellationToken);
+
             var text = GetTextAnswer(command);
             var markup = GetMarkup(command);
-
-            CommandExecuter.ExecuteCommandAsync(command, chatId, cancellationToken);
 
             await _botClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: text,
                     replyMarkup: markup,
                     cancellationToken: cancellationToken);
+
+
+            _previousCommand = command;
         }
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient,
@@ -113,6 +118,18 @@ namespace RemoteControlBot
             return Task.CompletedTask;
         }
 
+        private static Command GetCommand(string messageText, Command previousCommand)
+        {
+            Command command;
+
+            if (Command.IsNumberForProccesManager(previousCommand, messageText))
+                command = new Command(messageText, CommandType.Process, CommandInfo.Kill);
+            else
+                command = new Command(messageText);
+
+            return command;
+        }
+
         private async Task HandleCommandExecuted(Command command, long commandSenderId, CancellationToken cancellationToken)
         {
             switch (command.Type)
@@ -120,10 +137,6 @@ namespace RemoteControlBot
                 case CommandType.Screen:
                     if (command.Info is CommandInfo.Screenshot)
                         await SendScreenshotAsync(command, commandSenderId, cancellationToken);
-                    break;
-                case CommandType.Process:
-                    if (command.Info is CommandInfo.Kill)
-                        Console.WriteLine("Killing -----------------------------------");
                     break;
                 default:
                     break;

@@ -174,7 +174,7 @@ namespace RemoteControlBot
         private static string GetFormattedVisibleProcessesAnswer()
         {
             var counter = 1;
-            var result = "./\n";
+            var result = string.Empty;
 
             foreach (var process in ProcessManager.VisibleProcesses)
             {
@@ -182,7 +182,15 @@ namespace RemoteControlBot
                 counter++;
             }
 
+            if (result == string.Empty)
+                result = GetNoVisibleProccessesFoundAnswer();
+
             return result;
+        }
+
+        private static string GetNoVisibleProccessesFoundAnswer()
+        {
+            return "No visible proccesses found";
         }
     }
 }

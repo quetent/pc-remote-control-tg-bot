@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using static RemoteControlBot.BotFunctions;
+﻿using static RemoteControlBot.BotFunctions;
 using static RemoteControlBot.Keyboard;
 
 namespace RemoteControlBot
@@ -21,9 +20,23 @@ namespace RemoteControlBot
             _rawText = commandText;
         }
 
+        internal Command(string commandText, CommandType builderType, CommandInfo builderInfo)
+        {
+            _type = builderType;
+            _info = builderInfo;
+            _rawText = commandText;
+        }
+
         public override string ToString()
         {
             return $"{_type} -> {_info}";
+        }
+
+        internal static bool IsNumberForProccesManager(Command previousCommand, string messageText)
+        {
+            return previousCommand.Type is CommandType.Transfer
+                && previousCommand.Info is CommandInfo.ToKillList
+                && messageText.IsNumber();
         }
 
         private static CommandType DetermineCommandType(string commandText)
@@ -48,9 +61,10 @@ namespace RemoteControlBot
 
         private static bool IsTransfer(string commandText)
         {
-            return MAIN_MENU_LABELS.Contains(commandText) 
-                || commandText == BACK_LABEL 
-                || commandText == KILL;
+            return MAIN_MENU_LABELS.Contains(commandText)
+                || commandText == BACK_LABEL
+                || commandText == KILL
+                || commandText == UPDATE_KILL_LIST;
         }
 
         private static bool IsPower(string commandText)
@@ -96,6 +110,7 @@ namespace RemoteControlBot
                 SCREEN_LABEL => CommandInfo.ToScreen,
                 PROCESS_LABEL => CommandInfo.ToProcess,
                 KILL => CommandInfo.ToKillList,
+                UPDATE_KILL_LIST => CommandInfo.ToKillList,
                 BACK_LABEL => CommandInfo.ToMainMenu,
                 _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
             };

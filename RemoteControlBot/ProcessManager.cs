@@ -5,15 +5,16 @@ namespace RemoteControlBot
     internal static class ProcessManager
     {
         public static int VisibleProcessesCount { get { return _visibleProcesses.Count; } }
+        public static bool IsSuccessfulKill { get; private set; }
 
         private static readonly List<Process> _visibleProcesses;
-        public static List<Process> VisibleProcesses 
-        { 
-            get 
+        public static List<Process> VisibleProcesses
+        {
+            get
             {
                 SetVisibleProcceses();
-                return _visibleProcesses.Copy(); 
-            } 
+                return _visibleProcesses.Copy();
+            }
         }
 
 
@@ -26,7 +27,7 @@ namespace RemoteControlBot
         {
             if (_visibleProcesses.Count != 0)
                 _visibleProcesses.Clear();
-            
+
             foreach (var process in Process.GetProcesses())
             {
                 if (!IsProcessHidden(process))
@@ -40,8 +41,13 @@ namespace RemoteControlBot
             {
                 if (index < _visibleProcesses.Count)
                     _visibleProcesses[index].Kill();
+
+                IsSuccessfulKill = true;
             }
-            catch { }
+            catch
+            {
+                IsSuccessfulKill = false;
+            }
         }
 
         private static bool IsProcessHidden(Process process)

@@ -12,6 +12,7 @@ namespace RemoteControlBot
         internal const string SCREEN_LABEL = "Screen";
         internal const string PROCESS_LABEL = "Process";
 
+        internal const string UPDATE_KILL_LIST = "Update";
         internal const string BACK_LABEL = "< Back >";
 
         internal static readonly string[] MAIN_MENU_LABELS = { POWER_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL };
@@ -123,7 +124,8 @@ namespace RemoteControlBot
                 buttons.Add(row);
             }
 
-            buttons.Add(new List<KeyboardButton>() { new KeyboardButton(BACK_LABEL) });
+            buttons.Add(new List<KeyboardButton> { new KeyboardButton(UPDATE_KILL_LIST) });
+            buttons.Add(new List<KeyboardButton> { new KeyboardButton(BACK_LABEL) });
 
             return new ReplyKeyboardMarkup(buttons);
         }
