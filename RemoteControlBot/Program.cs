@@ -7,6 +7,8 @@ namespace RemoteControlBot
     {
         static async Task Main()
         {
+            SetConsoleTitle();
+
             var cts = new CancellationTokenSource();
             var receiverOptions = new ReceiverOptions() { AllowedUpdates = new[] { UpdateType.Message } };
 
@@ -19,6 +21,11 @@ namespace RemoteControlBot
         private static void Wait()
         {
             Console.ReadLine();
+        }
+
+        private static void SetConsoleTitle()
+        {
+            Console.Title = BOT_NAME;
         }
     }
 }
