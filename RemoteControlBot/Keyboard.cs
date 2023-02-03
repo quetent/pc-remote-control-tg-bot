@@ -109,6 +109,9 @@ namespace RemoteControlBot
             var buttons = new List<List<KeyboardButton>>();
             var (height, width) = GetKeyboardSize(index);
 
+            buttons.Add(new List<KeyboardButton> { new KeyboardButton(BACK_LABEL) });
+            buttons.Add(new List<KeyboardButton> { new KeyboardButton(UPDATE_KILL_LIST) });
+
             for (int i = 0; i < height; i++)
             {
                 var row = new List<KeyboardButton>();
@@ -125,20 +128,39 @@ namespace RemoteControlBot
                 buttons.Add(row);
             }
 
-            buttons.Add(new List<KeyboardButton> { new KeyboardButton(UPDATE_KILL_LIST) });
-            buttons.Add(new List<KeyboardButton> { new KeyboardButton(BACK_LABEL) });
-
             return new ReplyKeyboardMarkup(buttons);
         }
 
         private static (int height, int width) GetKeyboardSize(int index)
         {
-            var mod = index % ROW_LENGTH;
-            var div = index / ROW_LENGTH;
+            var minRowLength = GetMinRowLength(index);
+            int height = 0, width = 0;
 
-            var height = mod == 0 ? div : div + 1;
+            for (int i = minRowLength; i <= ROW_LENGTH; i++)
+            {
+                width = i;
+                var remains = index % width;
 
-            return (height, ROW_LENGTH);
+                if (remains == 0)
+                {
+                    height = index / width;
+                    break;
+                }
+
+                height = index / width + remains;
+            }
+
+            return (height, width);
+        }
+
+        private static int GetMinRowLength(int index)
+        {
+            var minSeparateCount = 6;
+
+            var minLengthIfMore = 3;
+            var minLengthIfLess = 2;
+
+            return index > minSeparateCount ? minLengthIfMore : minLengthIfLess;
         }
     }
 }

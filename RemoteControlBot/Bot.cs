@@ -62,7 +62,7 @@ namespace RemoteControlBot
                 return;
             }
 
-            var recieveTime = update.Message!.Date.ToLocalTime();
+            var recieveTime = GetUpdateSendDatetime(update);
 
             var message = GetMessage(update);
             var messageText = GetMessageText(message);
@@ -169,6 +169,11 @@ namespace RemoteControlBot
         private void SetPreviousCommand(Command command)
         {
             _previousCommand = command;
+        }
+
+        private static DateTime GetUpdateSendDatetime(Update update)
+        {
+            return update.Message!.Date.ToLocalTime();
         }
 
         private static Message GetMessage(Update update)
