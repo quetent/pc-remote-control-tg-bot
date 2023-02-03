@@ -20,6 +20,7 @@ namespace RemoteControlBot
             {
                 CommandType.Undefined => Task.CompletedTask,
                 CommandType.Transfer => Task.Run(() => ExecuteTransferCommand(command), cancellationToken),
+                CommandType.Control => Task.Run(() => ExecuteControlCommand(command), cancellationToken),
                 CommandType.Power => Task.Run(() => ExecutePowerCommand(command), cancellationToken),
                 CommandType.Volume => Task.Run(() => ExecuteVolumeCommand(command), cancellationToken),
                 CommandType.Screen => Task.Run(() => ExecuteScreenCommand(command), cancellationToken),
@@ -43,6 +44,26 @@ namespace RemoteControlBot
                 default:
                     break;
             }
+        }
+
+        private static void ExecuteControlCommand(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Control);
+
+            switch (command.Info)
+            {
+                case CommandInfo.TurnOff:
+                    ExitApp();
+                    break;
+                default:
+                    Throw.CommandNotImplemented(command);
+                    break;
+            }
+        }
+
+        private static void ExitApp()
+        {
+            Environment.Exit(0);
         }
 
         private static void ExecutePowerCommand(Command command)

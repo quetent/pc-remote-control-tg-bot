@@ -24,6 +24,7 @@ namespace RemoteControlBot
             return command.Info switch
             {
                 CommandInfo.ToMainMenu => GetMainMenuKeyboard(),
+                CommandInfo.ToControl => GetControlKeyboard(),
                 CommandInfo.ToPower => GetPowerKeyboard(),
                 CommandInfo.ToVolume => GetVolumeKeyboard(),
                 CommandInfo.ToScreen => GetScreenKeyboard(),
@@ -36,6 +37,11 @@ namespace RemoteControlBot
         private static IReplyMarkup GetMainMenuKeyboard()
         {
             return Keyboard.MainMenu;
+        }
+
+        private static IReplyMarkup GetControlKeyboard()
+        {
+            return Keyboard.Control;
         }
 
         private static IReplyMarkup GetPowerKeyboard()

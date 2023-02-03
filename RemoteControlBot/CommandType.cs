@@ -3,6 +3,7 @@
     internal enum CommandType
     {
         Undefined,
+        Control,
         Transfer,
         Power,
         Volume,

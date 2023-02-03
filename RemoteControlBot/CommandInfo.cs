@@ -4,7 +4,10 @@
     {
         Null,
 
+        TurnOff,
+
         ToMainMenu,
+        ToControl,
         ToPower,
         ToVolume,
         ToScreen,

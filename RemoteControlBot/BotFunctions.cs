@@ -2,6 +2,9 @@
 {
     internal static class BotFunctions
     {
+        // CONTROL
+        internal const string TURN_OFF = "Turn off";
+
         // POWER
         internal const string SHUTDOWN = "Shutdown";
         internal const string HIBERNATE = "Hibernate";

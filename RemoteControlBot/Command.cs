@@ -45,6 +45,8 @@ namespace RemoteControlBot
 
             if (IsTransfer(commandText))
                 commandType = CommandType.Transfer;
+            else if (IsControl(commandText))
+                commandType = CommandType.Control;
             else if (IsPower(commandText))
                 commandType = CommandType.Power;
             else if (IsVolume(commandText))
@@ -65,6 +67,11 @@ namespace RemoteControlBot
                 || commandText == BACK_LABEL
                 || commandText == KILL
                 || commandText == UPDATE_KILL_LIST;
+        }
+
+        private static bool IsControl(string commandText)
+        {
+            return CONTROL_LABELS.Contains(commandText);
         }
 
         private static bool IsPower(string commandText)
@@ -93,6 +100,7 @@ namespace RemoteControlBot
             {
                 CommandType.Undefined => CommandInfo.Null,
                 CommandType.Transfer => DetermineTranserCommandInfo(commandText),
+                CommandType.Control => DetermineControlCommandInfo(commandText),
                 CommandType.Power => DeterminePowerCommandInfo(commandText),
                 CommandType.Volume => DetermineVolumeCommandInfo(commandText),
                 CommandType.Screen => DetermineScreenCommandInfo(commandText),
@@ -105,13 +113,23 @@ namespace RemoteControlBot
         {
             return commandText switch
             {
+                BACK_LABEL => CommandInfo.ToMainMenu,
+                CONTROL_LABEL => CommandInfo.ToControl,
                 POWER_LABEL => CommandInfo.ToPower,
                 VOLUME_LABEL => CommandInfo.ToVolume,
                 SCREEN_LABEL => CommandInfo.ToScreen,
                 PROCESS_LABEL => CommandInfo.ToProcess,
                 KILL => CommandInfo.ToKillList,
                 UPDATE_KILL_LIST => CommandInfo.ToKillList,
-                BACK_LABEL => CommandInfo.ToMainMenu,
+                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+            };
+        }
+
+        private static CommandInfo DetermineControlCommandInfo(string commandText)
+        {
+            return commandText switch
+            {
+                TURN_OFF => CommandInfo.TurnOff,
                 _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
             };
         }

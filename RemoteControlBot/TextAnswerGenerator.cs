@@ -212,7 +212,18 @@ namespace RemoteControlBot
 
         private static string GetProcessIsSystemAnwer()
         {
-            return "Cannot kill system procces";
+            return "Cannot kill system process";
+        }
+
+        internal static string GetAnswerByControlCommand(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Control);
+
+            return command.Info switch
+            {
+                CommandInfo.Shutdown => Throw.ShouldBeNotReachable<string>(),
+                _ => Throw.CommandNotImplemented<string>(command)
+            };
         }
     }
 }

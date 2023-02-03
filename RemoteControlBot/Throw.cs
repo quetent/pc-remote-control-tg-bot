@@ -8,6 +8,11 @@
                 throw new ArgumentException(command.ToString(), command.Type.ToString());
         }
 
+        internal static T ShouldBeNotReachable<T>()
+        {
+            throw new InvalidOperationException();
+        }
+
         internal static void CommandNotImplemented(Command command)
         {
             CommandNotImplemented<bool>(command.ToString());
@@ -20,7 +25,7 @@
 
         internal static T CommandNotImplemented<T>(string commandText)
         {
-            throw new NotImplementedException($"Command not implmented {commandText}");
+            throw new NotImplementedException($"Command not implemented {commandText}");
         }
     }
 }
