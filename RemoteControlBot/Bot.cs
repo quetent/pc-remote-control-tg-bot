@@ -104,8 +104,7 @@ namespace RemoteControlBot
                     replyMarkup: markup,
                     cancellationToken: cancellationToken);
 
-
-            _previousCommand = command;
+            SetPreviousCommand(command);
         }
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient,
@@ -128,6 +127,11 @@ namespace RemoteControlBot
                 command = new Command(messageText);
 
             return command;
+        }
+
+        private void SetPreviousCommand(Command command)
+        {
+            _previousCommand = command;
         }
 
         private async Task HandleCommandExecuted(Command command, long commandSenderId, CancellationToken cancellationToken)
