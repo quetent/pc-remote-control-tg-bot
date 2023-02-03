@@ -4,14 +4,14 @@ namespace RemoteControlBot
 {
     public static class VolumeManager
     {
-        private static bool _badMuteRequest;
+        public static bool IsBadMuteRequest { get; private set; }
 
         private static readonly CoreAudioController _audioController;
 
         static VolumeManager()
         {
             _audioController = new(); // too slow, to remove it use PreInit()
-            _badMuteRequest = false;
+            IsBadMuteRequest = false;
         }
 
         public static void PreInit()
@@ -19,10 +19,6 @@ namespace RemoteControlBot
             return;
         }
 
-        public static bool IsBadMuteRequest()
-        {
-            return _badMuteRequest;
-        }
 
         public static int GetCurrentVolumeLevel()
         {
@@ -38,11 +34,11 @@ namespace RemoteControlBot
         {
             if (IsMuted())
             {
-                _badMuteRequest = true;
+                IsBadMuteRequest = true;
                 return;
             }
 
-            _badMuteRequest = false;
+            IsBadMuteRequest = false;
             PlaybackDevice().Mute(true);
         }
 
@@ -50,11 +46,11 @@ namespace RemoteControlBot
         {
             if (!IsMuted())
             {
-                _badMuteRequest = true;
+                IsBadMuteRequest = true;
                 return;
             }
 
-            _badMuteRequest = false;
+            IsBadMuteRequest = false;
             PlaybackDevice().Mute(false);
         }
 

@@ -138,7 +138,7 @@ namespace RemoteControlBot
         private static string GetMuteRequestAnswer(string requestType, string caseBad)
         {
             string insertion;
-            bool isBadMuteRequest = VolumeManager.IsBadMuteRequest();
+            bool isBadMuteRequest = VolumeManager.IsBadMuteRequest;
 
             if (isBadMuteRequest)
                 insertion = $"{caseBad} ";
