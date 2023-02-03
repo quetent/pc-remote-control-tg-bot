@@ -55,13 +55,9 @@ namespace RemoteControlBot
             ByPattern("Execute", command.ToString(), ExecuteCommandColor);
         }
 
-        internal static void UpdateExecute(Command command, 
-                                           string commandText, 
-                                           bool isIndexWaiting)
+        internal static void UpdateExecute(Command command, string commandText)
         {
-            if (isIndexWaiting)
-                ByPattern("Kill index getted", commandText, ExecuteCommandColor);
-            else if (command.Type is CommandType.Transfer)
+            if (command.Type is CommandType.Transfer)
                 KeyboardRequest(command);
             else
             {

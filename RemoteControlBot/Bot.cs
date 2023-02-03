@@ -16,7 +16,6 @@ namespace RemoteControlBot
         private DateTime _startupTime;
 
         private readonly CancellationToken _cancellationToken;
-        private UpdateHandler _updateHandler;
 
         public Bot(long ownerId,
                    string token,
@@ -27,7 +26,8 @@ namespace RemoteControlBot
             _botClient = new TelegramBotClient(token);
             _receiverOptions = recieverOptions;
             _cancellationToken = cancellationToken;
-            _updateHandler = UpdateHandler.Main;
+
+            CommandExecuter.CommandExecuted += HandleCommandExecuted;
 
             if (ENABLE_PRE_INIT)
                 VolumeManager.PreInit();
@@ -86,32 +86,21 @@ namespace RemoteControlBot
                 Log.MessageRecieved(messageText, user);
 
             var command = new Command(messageText);
-            SetUpdateHandler(command);
-
-            var isAwaiting = IsProcessManagerAwaitIndex(command);
 
             if (ENABLE_LOGGING)
-                Log.UpdateExecute(command, messageText, isAwaiting);
-
-            if (isAwaiting)
-                command = new Command(CommandType.Process, 
-                                      CommandInfo.Kill,
-                                      command.RawText);
-
-            CommandExecuter.ExecuteCommand(command);
+                Log.UpdateExecute(command, messageText);
 
             var chatId = GetChatId(message);
             var text = GetTextAnswer(command);
             var markup = GetMarkup(command);
+
+            CommandExecuter.ExecuteCommandAsync(command, chatId, cancellationToken);
 
             await _botClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: text,
                     replyMarkup: markup,
                     cancellationToken: cancellationToken);
-
-            await SendScreenshotIfNeededAsync(command, chatId, cancellationToken);
-
         }
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient,
@@ -124,19 +113,21 @@ namespace RemoteControlBot
             return Task.CompletedTask;
         }
 
-        private void SetUpdateHandler(Command command)
+        private async Task HandleCommandExecuted(Command command, long commandSenderId, CancellationToken cancellationToken)
         {
-            if (command.Type is CommandType.Process
-             && command.Info is CommandInfo.Kill
-             || IsProcessManagerAwaitIndex(command))
-                _updateHandler = UpdateHandler.ProcessManager;
-            else
-                _updateHandler = UpdateHandler.Main;
-        }
-
-        internal bool IsProcessManagerAwaitIndex(Command command)
-        {
-            return _updateHandler is UpdateHandler.ProcessManager && command.RawText.IsNumber();
+            switch (command.Type)
+            {
+                case CommandType.Screen:
+                    if (command.Info is CommandInfo.Screenshot)
+                        await SendScreenshotAsync(command, commandSenderId, cancellationToken);
+                    break;
+                case CommandType.Process:
+                    if (command.Info is CommandInfo.Kill)
+                        Console.WriteLine("Killing -----------------------------------");
+                    break;
+                default:
+                    break;
+            }
         }
 
         private async Task NotifyAboutStartReceivingAsync(long chatId, string text, IReplyMarkup markup, CancellationToken cancellationToken)
@@ -148,11 +139,9 @@ namespace RemoteControlBot
                     cancellationToken: cancellationToken);
         }
 
-        private async Task SendScreenshotIfNeededAsync(Command command, long chatId, CancellationToken cancellationToken)
+        private async Task SendScreenshotAsync(Command command, long chatId, CancellationToken cancellationToken)
         {
-            if (command.Type is CommandType.Screen
-             && command.Info is CommandInfo.Screenshot)
-                await SendScreenshotAsync(chatId, PathManager.GetScreenshotAbsolutePath(), cancellationToken);
+            await SendScreenshotAsync(chatId, PathManager.GetScreenshotAbsolutePath(), cancellationToken);
         }
 
         private async Task SendScreenshotAsync(long chatId, string filepath, CancellationToken cancellationToken)

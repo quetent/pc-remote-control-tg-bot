@@ -15,7 +15,33 @@ namespace RemoteControlBot
         {
             Throw.IfIncorrectCommandType(command, CommandType.Transfer);
 
+            return command.Info switch
+            {
+                CommandInfo.ToKillList => GetKillListAnswer(),
+                _ => GetTransferDefaultAnswer()
+            };
+        }
+
+        private static string GetTransferDefaultAnswer()
+        {
             return "...";
+        }
+
+        private static string GetKillListAnswer()
+        {
+            var counter = 1;
+            var result = string.Empty;
+
+            foreach (var process in ProcessManager.VisibleProcesses)
+            {
+                result += $"{counter}. {process.ProcessName}\n";
+                counter++;
+            }
+
+            if (result == string.Empty)
+                result = "No visible processes find";
+
+            return result;
         }
 
         internal static string GetAnswerByPowerCommand(Command command)

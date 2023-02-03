@@ -1,4 +1,5 @@
-﻿using static RemoteControlBot.BotFunctions;
+﻿using System.Reflection.Metadata.Ecma335;
+using static RemoteControlBot.BotFunctions;
 using static RemoteControlBot.Keyboard;
 
 namespace RemoteControlBot
@@ -20,13 +21,6 @@ namespace RemoteControlBot
             _rawText = commandText;
         }
 
-        internal Command(CommandType commandType, CommandInfo commandInfo, string rawText = "")
-        {
-            _type = commandType;
-            _info = commandInfo;
-            _rawText = rawText;
-        }
-
         public override string ToString()
         {
             return $"{_type} -> {_info}";
@@ -36,20 +30,47 @@ namespace RemoteControlBot
         {
             CommandType commandType;
 
-            if (MAIN_MENU_LABELS.Contains(commandText) || commandText == BACK_LABEL)
+            if (IsTransfer(commandText))
                 commandType = CommandType.Transfer;
-            else if (POWER_LABELS.Contains(commandText))
+            else if (IsPower(commandText))
                 commandType = CommandType.Power;
-            else if (VOLUME_LABELS.Contains(commandText))
+            else if (IsVolume(commandText))
                 commandType = CommandType.Volume;
-            else if (SCREEN_LABELS.Contains(commandText))
+            else if (IsScreen(commandText))
                 commandType = CommandType.Screen;
-            else if (PROCESS_LABELS.Contains(commandText))
+            else if (IsProcess(commandText))
                 commandType = CommandType.Process;
             else
                 commandType = CommandType.Undefined;
 
             return commandType;
+        }
+
+        private static bool IsTransfer(string commandText)
+        {
+            return MAIN_MENU_LABELS.Contains(commandText) 
+                || commandText == BACK_LABEL 
+                || commandText == KILL;
+        }
+
+        private static bool IsPower(string commandText)
+        {
+            return POWER_LABELS.Contains(commandText);
+        }
+
+        private static bool IsVolume(string commandText)
+        {
+            return VOLUME_LABELS.Contains(commandText);
+        }
+
+        private static bool IsScreen(string commandText)
+        {
+            return SCREEN_LABELS.Contains(commandText);
+        }
+
+        private static bool IsProcess(string commandText)
+        {
+            return PROCESS_LABELS.Contains(commandText);
         }
 
         private static CommandInfo DetermineCommandInfo(CommandType commandType, string commandText)
@@ -74,6 +95,7 @@ namespace RemoteControlBot
                 VOLUME_LABEL => CommandInfo.ToVolume,
                 SCREEN_LABEL => CommandInfo.ToScreen,
                 PROCESS_LABEL => CommandInfo.ToProcess,
+                KILL => CommandInfo.ToKillList,
                 BACK_LABEL => CommandInfo.ToMainMenu,
                 _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
             };

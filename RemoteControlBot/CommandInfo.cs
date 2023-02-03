@@ -10,6 +10,8 @@
         ToScreen,
         ToProcess,
 
+        ToKillList,
+
         Shutdown,
         Hibernate,
         Lock,

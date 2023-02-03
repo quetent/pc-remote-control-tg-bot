@@ -5,13 +5,13 @@ namespace RemoteControlBot
 {
     internal class Program
     {
-        static void Main()
+        static async Task Main()
         {
             var cts = new CancellationTokenSource();
             var receiverOptions = new ReceiverOptions() { AllowedUpdates = new[] { UpdateType.Message } };
 
             var bot = new Bot(OWNER_ID, TOKEN, receiverOptions, cts.Token);
-            bot.StartAsync();
+            await bot.StartAsync();
 
             Wait();
         }

@@ -20,7 +20,7 @@
 
         internal static T CommandNotImplemented<T>(string commandText)
         {
-            throw new NotImplementedException(commandText);
+            throw new NotImplementedException($"Command not implmented {commandText}");
         }
     }
 }

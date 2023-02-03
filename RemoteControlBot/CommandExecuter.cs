@@ -6,33 +6,29 @@ namespace RemoteControlBot
 {
     internal static class CommandExecuter
     {
+        internal delegate Task CommandHandler(Command command, long commandSenderId, CancellationToken cancellation);
+        internal static event CommandHandler? CommandExecuted;
+
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool LockWorkStation();
 
-        internal static void ExecuteCommand(Command command)
+        internal static async Task ExecuteCommandAsync(Command command, long commandSenderId, CancellationToken cancellationToken)
         {
-            switch (command.Type)
+            Task task;
+
+            task = command.Type switch
             {
-                case CommandType.Undefined:
-                    break;
-                case CommandType.Transfer:
-                    break;
-                case CommandType.Power:
-                    ExecutePowerCommand(command);
-                    break;
-                case CommandType.Volume:
-                    ExecuteVolumeCommand(command);
-                    break;
-                case CommandType.Screen:
-                    ExecuteScreenCommand(command);
-                    break;
-                case CommandType.Process:
-                    ExecuteProcessCommand(command);
-                    break;
-                default:
-                    Throw.CommandNotImplemented(command);
-                    break;
-            }
+                CommandType.Undefined => Task.CompletedTask,
+                CommandType.Transfer => Task.CompletedTask,
+                CommandType.Power => Task.Run(() => ExecutePowerCommand(command), cancellationToken),
+                CommandType.Volume => Task.Run(() => ExecuteVolumeCommand(command), cancellationToken),
+                CommandType.Screen => Task.Run(() => ExecuteScreenCommand(command), cancellationToken),
+                CommandType.Process => Task.Run(() => ExecuteProcessCommand(command), cancellationToken),
+                _ => Throw.CommandNotImplemented<Task>(command)
+            };
+
+            await task;
+            CommandExecuted?.Invoke(command, commandSenderId, cancellationToken);
         }
 
         private static void ExecutePowerCommand(Command command)
@@ -159,7 +155,7 @@ namespace RemoteControlBot
             switch (command.Info)
             {
                 case CommandInfo.Kill:
-                    KillProcess(command);
+                    ProcessManager.KillProcess(int.Parse(command.RawText));
                     break;
                 default:
                     Throw.CommandNotImplemented(command);
@@ -170,14 +166,6 @@ namespace RemoteControlBot
         private static void SetVisibleProcceses()
         {
             ProcessManager.SetVisibleProcceses();
-        }
-
-        private static void KillProcess(Command command)
-        {
-            if (command.RawText.IsNumber())
-                ProcessManager.KillProcess(int.Parse(command.RawText) - 1);
-            else
-                SetVisibleProcceses();
         }
     }
 }
