@@ -1,66 +1,66 @@
-﻿using AudioSwitcher.AudioApi.CoreAudio;
+﻿
+using NAudio.CoreAudioApi;
 
 namespace RemoteControlBot
 {
     public static class VolumeManager
     {
         public static bool IsBadMuteRequest { get; private set; }
+        public static bool IsMuted { get; private set; }
 
-        private static readonly CoreAudioController _audioController;
+        private static AudioEndpointVolume AudioEndpointVolume { get { return PlaybackDevice.AudioEndpointVolume; } }
 
-        static VolumeManager()
+        public static int VolumeLevel
         {
-            _audioController = new(); // too slow, to remove it use PreInit()
-            IsBadMuteRequest = false;
+            get
+            {
+                return GetVolumeLevel();
+            }
+            private set
+            {
+                ChangeVolumeLevel(value);
+            }
         }
 
-        public static void PreInit()
-        {
-            return;
-        }
+        private static MMDevice PlaybackDevice { get { return GetDefaultPlaybackDevice(); } }
 
-        public static int GetCurrentVolumeLevel()
+        public static void ChangeVolumeLevel(int changeLevel)
         {
-            return (int)PlaybackDevice().Volume;
-        }
-
-        public static void ChangeVolume(int level)
-        {
-            PlaybackDevice().Volume += level;
+            AudioEndpointVolume.MasterVolumeLevelScalar = (float)(VolumeLevel + changeLevel) / 100;
         }
 
         public static void Mute()
         {
-            if (IsMuted())
+            if (IsMuted)
             {
                 IsBadMuteRequest = true;
                 return;
             }
 
             IsBadMuteRequest = false;
-            PlaybackDevice().Mute(true);
+            AudioEndpointVolume.Mute = IsMuted = true;
         }
 
         public static void UnMute()
         {
-            if (!IsMuted())
+            if (!IsMuted)
             {
                 IsBadMuteRequest = true;
                 return;
             }
 
             IsBadMuteRequest = false;
-            PlaybackDevice().Mute(false);
+            AudioEndpointVolume.Mute = IsMuted = false;
         }
 
-        private static bool IsMuted()
+        private static MMDevice GetDefaultPlaybackDevice()
         {
-            return PlaybackDevice().IsMuted;
+            return new MMDeviceEnumerator().GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
         }
 
-        private static CoreAudioDevice PlaybackDevice()
+        private static int GetVolumeLevel()
         {
-            return _audioController.DefaultPlaybackDevice;
+            return (int)(AudioEndpointVolume.MasterVolumeLevelScalar * 100);
         }
     }
 }

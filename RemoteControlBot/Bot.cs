@@ -3,7 +3,6 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
-using System.Management;
 
 namespace RemoteControlBot
 {
@@ -30,9 +29,6 @@ namespace RemoteControlBot
             _cancellationToken = cancellationToken;
 
             CommandExecuter.CommandExecuted += HandleCommandExecuted;
-
-            //if (ENABLE_PRE_INIT)
-            //    VolumeManager.PreInit();
         }
 
         public async Task StartAsync()

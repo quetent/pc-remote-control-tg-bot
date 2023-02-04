@@ -128,22 +128,22 @@ namespace RemoteControlBot
             switch (command.Info)
             {
                 case CommandInfo.Louder5:
-                    VolumeManager.ChangeVolume(5);
+                    VolumeManager.ChangeVolumeLevel(5);
                     break;
                 case CommandInfo.Quieter5:
-                    VolumeManager.ChangeVolume(-5);
+                    VolumeManager.ChangeVolumeLevel(-5);
                     break;
                 case CommandInfo.Louder10:
-                    VolumeManager.ChangeVolume(10);
+                    VolumeManager.ChangeVolumeLevel(10);
                     break;
                 case CommandInfo.Quieter10:
-                    VolumeManager.ChangeVolume(-10);
+                    VolumeManager.ChangeVolumeLevel(-10);
                     break;
                 case CommandInfo.Max:
-                    VolumeManager.ChangeVolume(100);
+                    VolumeManager.ChangeVolumeLevel(100);
                     break;
                 case CommandInfo.Min:
-                    VolumeManager.ChangeVolume(-100);
+                    VolumeManager.ChangeVolumeLevel(-100);
                     break;
                 case CommandInfo.Mute:
                     VolumeManager.Mute();

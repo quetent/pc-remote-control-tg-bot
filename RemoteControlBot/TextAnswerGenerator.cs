@@ -113,7 +113,7 @@ namespace RemoteControlBot
 
         private static string GetVolumeChangeAnswer(string change, int changeLevel)
         {
-            var volumeLevel = VolumeManager.GetCurrentVolumeLevel();
+            var volumeLevel = VolumeManager.VolumeLevel;
             string answer;
 
             if (volumeLevel == 100)
