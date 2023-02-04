@@ -8,8 +8,6 @@ namespace RemoteControlBot
         public static bool IsBadMuteRequest { get; private set; }
         public static bool IsMuted { get; private set; }
 
-        private static AudioEndpointVolume AudioEndpointVolume { get { return PlaybackDevice.AudioEndpointVolume; } }
-
         public static int VolumeLevel
         {
             get
@@ -23,10 +21,18 @@ namespace RemoteControlBot
         }
 
         private static MMDevice PlaybackDevice { get { return GetDefaultPlaybackDevice(); } }
+        private static AudioEndpointVolume AudioEndpointVolume { get { return PlaybackDevice.AudioEndpointVolume; } }
 
         public static void ChangeVolumeLevel(int changeLevel)
         {
-            AudioEndpointVolume.MasterVolumeLevelScalar = (float)(VolumeLevel + changeLevel) / 100;
+            var newVolumeLevel = VolumeLevel + changeLevel;
+
+            if (newVolumeLevel > 100)
+                newVolumeLevel = 100;
+            else if (newVolumeLevel < 0)
+                newVolumeLevel = 0;
+
+            AudioEndpointVolume.MasterVolumeLevelScalar = newVolumeLevel / 100f;
         }
 
         public static void Mute()
@@ -60,7 +66,7 @@ namespace RemoteControlBot
 
         private static int GetVolumeLevel()
         {
-            return (int)(AudioEndpointVolume.MasterVolumeLevelScalar * 100);
+            return (int)(Math.Round(AudioEndpointVolume.MasterVolumeLevelScalar, 2) * 100f);
         }
     }
 }

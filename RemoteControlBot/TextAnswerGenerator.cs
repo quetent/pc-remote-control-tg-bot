@@ -122,12 +122,7 @@ namespace RemoteControlBot
                 answer = GetVolumeIsMinAnswer();
             else
             {
-                int previous, current;
-
-                if (changeLevel > 0)
-                    (previous, current) = (volumeLevel - changeLevel, volumeLevel);
-                else
-                    (previous, current) = (volumeLevel - changeLevel, volumeLevel);
+                var (previous, current) = (volumeLevel - changeLevel, volumeLevel);
 
                 answer = $"Volume {change} ({previous} -> {current})";
             }
