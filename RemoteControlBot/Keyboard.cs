@@ -46,11 +46,11 @@ namespace RemoteControlBot
             {
                 new[]
                 {
-                    new KeyboardButton(BOT_TURN_OFF)
+                    new KeyboardButton(BACK_LABEL)
                 },
                 new[]
                 {
-                    new KeyboardButton(BACK_LABEL)
+                    new KeyboardButton(BOT_TURN_OFF)
                 }
             });
 
@@ -59,21 +59,25 @@ namespace RemoteControlBot
             {
                 new[]
                 {
+                    new KeyboardButton(BACK_LABEL)
+                },
+                new[]
+                {
                     new KeyboardButton(SHUTDOWN), new KeyboardButton(HIBERNATE),
                 },
                 new[]
                 {
                     new KeyboardButton(RESTART), new KeyboardButton(LOCK)
-                },
-                new[]
-                {
-                    new KeyboardButton(BACK_LABEL)
                 }
             });
 
         internal static ReplyKeyboardMarkup Volume = new(
             new[]
             {
+                new[]
+                {
+                    new KeyboardButton(BACK_LABEL)
+                },
                 new[]
                 {
                     new KeyboardButton(LOUDER_5), new KeyboardButton(QUIETER_5)
@@ -89,10 +93,6 @@ namespace RemoteControlBot
                 new[]
                 {
                     new KeyboardButton(MUTE), new KeyboardButton(UNMUTE)
-                },
-                new[]
-                {
-                    new KeyboardButton(BACK_LABEL)
                 }
             });
 
@@ -101,11 +101,11 @@ namespace RemoteControlBot
             {
                 new[]
                 {
-                    new KeyboardButton(SCREENSHOT)
+                    new KeyboardButton(BACK_LABEL)
                 },
                 new[]
                 {
-                    new KeyboardButton(BACK_LABEL)
+                    new KeyboardButton(SCREENSHOT)
                 }
             });
 
@@ -114,11 +114,11 @@ namespace RemoteControlBot
             {
                 new[]
                 {
-                    new KeyboardButton(KILL)
+                    new KeyboardButton(BACK_LABEL)
                 },
                 new[]
                 {
-                    new KeyboardButton(BACK_LABEL)
+                    new KeyboardButton(KILL)
                 }
             });
 
