@@ -19,7 +19,6 @@ namespace RemoteControlBot
             return;
         }
 
-
         public static int GetCurrentVolumeLevel()
         {
             return (int)PlaybackDevice().Volume;

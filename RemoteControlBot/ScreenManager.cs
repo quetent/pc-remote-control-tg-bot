@@ -1,17 +1,11 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
+using System.Management;
 
 namespace RemoteControlBot
 {
     public static class ScreenManager
     {
-        [DllImport("user32.dll")]
-        private static extern bool SetProcessDPIAware();
-
-        private static bool _isDPIAwareSet = false;
-
         public static Bitmap DoScreenshot(Size size)
         {
             var bitmap = new Bitmap(size.Width, size.Height);
@@ -30,21 +24,26 @@ namespace RemoteControlBot
 
         public static Size GetMonitorSize()
         {
-            SetProcessDPI();
+            uint width = 0, height = 0;
 
-            var hwnd = Process.GetCurrentProcess().MainWindowHandle;
-            using var desktop = Graphics.FromHwnd(hwnd);
+            var query = "SELECT * FROM Win32_VideoController";
 
-            return new Size((int)desktop.VisibleClipBounds.Width, (int)desktop.VisibleClipBounds.Height);
-        }
-
-        private static void SetProcessDPI()
-        {
-            if (!_isDPIAwareSet)
+            using (var wmiSearcher = new ManagementObjectSearcher(query))
             {
-                SetProcessDPIAware();
-                _isDPIAwareSet = true;
+                foreach (var videoController in wmiSearcher.Get())
+                {
+                    var horizontalRes = videoController["CurrentHorizontalResolution"];
+                    var verticalRes = videoController["CurrentVerticalResolution"];
+
+                    if (horizontalRes is not null && verticalRes is not null)
+                    {
+                        width = (uint)horizontalRes;
+                        height = (uint)verticalRes;
+                    }
+                }
             }
+
+            return new Size((int)width, (int)height);
         }
     }
 }
