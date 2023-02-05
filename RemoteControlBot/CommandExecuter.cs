@@ -20,7 +20,7 @@ namespace RemoteControlBot
             {
                 CommandType.Undefined => Task.CompletedTask,
                 CommandType.Transfer => Task.Run(() => ExecuteTransferCommand(command), cancellationToken),
-                CommandType.AdminPanel => Task.Run(() => ExecuteControlCommand(command), cancellationToken),
+                CommandType.AdminPanel => Task.Run(() => ExecuteAdminPanelCommand(command), cancellationToken),
                 CommandType.Power => Task.Run(() => ExecutePowerCommand(command), cancellationToken),
                 CommandType.Volume => Task.Run(() => ExecuteVolumeCommand(command), cancellationToken),
                 CommandType.Screen => Task.Run(() => ExecuteScreenCommand(command), cancellationToken),
@@ -46,7 +46,7 @@ namespace RemoteControlBot
             }
         }
 
-        private static void ExecuteControlCommand(Command command)
+        private static void ExecuteAdminPanelCommand(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.AdminPanel);
 
@@ -54,6 +54,9 @@ namespace RemoteControlBot
             {
                 case CommandInfo.BotTurnOff:
                     ExitApp();
+                    break;
+                case CommandInfo.BotRestart:
+                    RestartApp();
                     break;
                 default:
                     Throw.CommandNotImplemented(command);
@@ -64,6 +67,13 @@ namespace RemoteControlBot
         private static void ExitApp()
         {
             Environment.Exit(0);
+        }
+
+        private static void RestartApp()
+        {
+            Process.Start(Environment.ProcessPath!);
+
+            ExitApp();
         }
 
         private static void ExecutePowerCommand(Command command)

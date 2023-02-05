@@ -130,6 +130,7 @@ namespace RemoteControlBot
             return commandText switch
             {
                 BOT_TURN_OFF => CommandInfo.BotTurnOff,
+                BOT_RESTART => CommandInfo.BotRestart,
                 _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
             };
         }

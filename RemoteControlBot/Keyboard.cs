@@ -18,7 +18,7 @@ namespace RemoteControlBot
         internal const string BACK_LABEL = "< Back >";
 
         internal static readonly string[] MAIN_MENU_LABELS = { POWER_LABEL, ADMIN_PANEL_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL };
-        internal static readonly string[] ADMIN_PANEL_LABELS = { BOT_TURN_OFF };
+        internal static readonly string[] ADMIN_PANEL_LABELS = { BOT_TURN_OFF, BOT_RESTART };
         internal static readonly string[] POWER_LABELS = { SHUTDOWN, HIBERNATE, LOCK, RESTART };
         internal static readonly string[] VOLUME_LABELS = { LOUDER_5, QUIETER_5, LOUDER_10, QUIETER_10, MAX, MIN, MUTE, UNMUTE };
         internal static readonly string[] SCREEN_LABELS = { SCREENSHOT };
@@ -41,12 +41,16 @@ namespace RemoteControlBot
                 }
             });
 
-        internal static ReplyKeyboardMarkup Control = new(
+        internal static ReplyKeyboardMarkup AdminPanel = new(
             new[]
             {
                 new[]
                 {
                     new KeyboardButton(BACK_LABEL)
+                },
+                new[]
+                {
+                    new KeyboardButton(BOT_RESTART)
                 },
                 new[]
                 {

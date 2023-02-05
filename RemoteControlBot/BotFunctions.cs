@@ -2,8 +2,9 @@
 {
     internal static class BotFunctions
     {
-        // CONTROL
-        internal const string BOT_TURN_OFF = "Turn off";
+        // ADMIN PANEL
+        internal const string BOT_TURN_OFF = "Bot turn off";
+        internal const string BOT_RESTART = "Bot restart";
 
         // POWER
         internal const string SHUTDOWN = "Shutdown";

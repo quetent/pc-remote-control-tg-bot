@@ -5,6 +5,7 @@
         Null,
 
         BotTurnOff,
+        BotRestart,
 
         ToMainMenu,
         ToControl,

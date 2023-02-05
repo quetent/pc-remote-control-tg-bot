@@ -1,11 +1,12 @@
-﻿using Telegram.Bot.Polling;
+﻿using System.Diagnostics;
+using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
 
 namespace RemoteControlBot
 {
     internal class Program
     {
-        static async Task Main()
+        static async Task Main(string[] args)
         {
             SetConsoleTitle();
 

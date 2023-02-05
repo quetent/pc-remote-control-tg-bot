@@ -210,13 +210,14 @@ namespace RemoteControlBot
             return "Cannot kill system process";
         }
 
-        internal static string GetAnswerByControlCommand(Command command)
+        internal static string GetAnswerByAdminPanelCommand(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.AdminPanel);
 
             return command.Info switch
             {
                 CommandInfo.Shutdown => Throw.ShouldBeNotReachable<string>(),
+                CommandInfo.BotRestart => Throw.ShouldBeNotReachable<string>(),
                 _ => Throw.CommandNotImplemented<string>(command)
             };
         }

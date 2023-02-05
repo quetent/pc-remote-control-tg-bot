@@ -41,7 +41,7 @@ namespace RemoteControlBot
 
         private static IReplyMarkup GetControlKeyboard()
         {
-            return Keyboard.Control;
+            return Keyboard.AdminPanel;
         }
 
         private static IReplyMarkup GetPowerKeyboard()
