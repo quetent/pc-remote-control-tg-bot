@@ -35,7 +35,7 @@ namespace RemoteControlBot
         {
             _startupTime = DateTimeManager.GetCurrentDateTime();
 
-            await NotifyAboutStartReceivingAsync(OWNER_ID, "Bot has been started", Keyboard.MainMenu, _cancellationToken);
+            await NotifyOwnerAboutStartReceivingAsync();
 
             _botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
@@ -95,11 +95,7 @@ namespace RemoteControlBot
             var text = GetTextAnswer(command);
             var markup = GetMarkup(command);
 
-            await _botClient.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: text,
-                    replyMarkup: markup,
-                    cancellationToken: cancellationToken);
+            await SendTextMessageAsync(chatId, text, markup, cancellationToken);
 
             SetPreviousCommand(command);
         }
@@ -127,13 +123,18 @@ namespace RemoteControlBot
             }
         }
 
-        private async Task NotifyAboutStartReceivingAsync(long chatId, string text, IReplyMarkup markup, CancellationToken cancellationToken)
+        private async Task SendTextMessageAsync(long chatId, string text, IReplyMarkup markup, CancellationToken cancellationToken)
         {
             await _botClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: text,
                     replyMarkup: markup,
                     cancellationToken: cancellationToken);
+        }
+
+        private async Task NotifyOwnerAboutStartReceivingAsync()
+        {
+            await SendTextMessageAsync(OwnerId, "Bot has been started", Keyboard.MainMenu, _cancellationToken);
         }
 
         private async Task SendScreenshotAsync(long chatId, CancellationToken cancellationToken)
