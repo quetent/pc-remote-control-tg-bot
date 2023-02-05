@@ -71,7 +71,7 @@ namespace RemoteControlBot
 
         private static void RestartApp()
         {
-            Process.Start(Environment.ProcessPath!);
+            StartCommandLineProcess(Environment.ProcessPath!, string.Empty, false);
 
             ExitApp();
         }
@@ -100,11 +100,11 @@ namespace RemoteControlBot
             }
         }
 
-        private static void StartCommandLineProcess(string command, string args)
+        private static void StartCommandLineProcess(string filepath, string args, bool createNoWindow)
         {
-            var processInfo = new ProcessStartInfo(command, args)
+            var processInfo = new ProcessStartInfo(filepath, args)
             {
-                CreateNoWindow = true,
+                CreateNoWindow = createNoWindow,
                 UseShellExecute = false
             };
 
@@ -113,17 +113,17 @@ namespace RemoteControlBot
 
         private static void ShutdownPC()
         {
-            StartCommandLineProcess("shutdown.exe", "/s /f /t 0");
+            StartCommandLineProcess("shutdown.exe", "/s /f /t 0", true);
         }
 
         private static void HibernatePC()
         {
-            StartCommandLineProcess("shutdown.exe", "/h");
+            StartCommandLineProcess("shutdown.exe", "/h", true);
         }
 
         private static void RestartPC()
         {
-            StartCommandLineProcess("shutdown.exe", "/r /f /t 0");
+            StartCommandLineProcess("shutdown.exe", "/r /f /t 0", true);
         }
 
         private static void LockPC()
