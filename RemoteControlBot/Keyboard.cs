@@ -179,7 +179,7 @@ namespace RemoteControlBot
             var minLengthIfMore = 3;
             var minLengthIfLess = 2;
 
-            return index > minSeparateCount ? minLengthIfMore : minLengthIfLess;
+            return index >= minSeparateCount ? minLengthIfMore : minLengthIfLess;
         }
     }
 }

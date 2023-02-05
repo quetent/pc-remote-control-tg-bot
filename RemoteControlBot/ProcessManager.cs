@@ -5,7 +5,7 @@ namespace RemoteControlBot
 {
     internal static class ProcessManager
     {
-        public static int VisibleProcessesCount { get { return _visibleProcesses.Count; } }
+        public static int VisibleProcessesCount => _visibleProcesses.Count;
 
         public static bool IsSuccessfulLastKill { get; private set; }
         public static bool IsLastKillSystemProcess { get; private set; }
@@ -13,7 +13,7 @@ namespace RemoteControlBot
         public static bool IsValidLastIndex { get; private set; }
 
         private static readonly List<Process> _visibleProcesses;
-        public static List<Process> VisibleProcesses { get { return _visibleProcesses.Copy(); } }
+        public static List<Process> VisibleProcesses => _visibleProcesses.Copy();
 
         static ProcessManager()
         {

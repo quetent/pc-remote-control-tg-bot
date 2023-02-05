@@ -20,8 +20,8 @@ namespace RemoteControlBot
             }
         }
 
-        private static MMDevice PlaybackDevice { get { return GetDefaultPlaybackDevice(); } }
-        private static AudioEndpointVolume AudioEndpointVolume { get { return PlaybackDevice.AudioEndpointVolume; } }
+        private static MMDevice PlaybackDevice => GetDefaultPlaybackDevice();
+        private static AudioEndpointVolume AudioEndpointVolume => PlaybackDevice.AudioEndpointVolume;
 
         public static void ChangeVolumeLevel(int changeLevel)
         {
