@@ -12,9 +12,9 @@ namespace RemoteControlBot
         public static ConsoleColor NeutralColor { get; set; } = ConsoleColor.White;
         public static ConsoleColor NewMessageColor { get; set; } = ConsoleColor.DarkGreen;
 
-        internal static void BotStartup()
+        internal static void BotStartup(string text)
         {
-            ByPattern("Startup", "Bot has been started", InfoColor);
+            ByPattern("Startup", text, InfoColor);
         }
 
         internal static void MessageRecieved(string messageText, User? user)

@@ -1,6 +1,6 @@
 ﻿namespace RemoteControlBot
 {
-    internal interface IAnswerable
+    interface IAnswerable
     {
         string GetAnswer();
     }

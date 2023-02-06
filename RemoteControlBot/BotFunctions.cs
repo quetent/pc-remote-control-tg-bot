@@ -1,31 +1,31 @@
 ﻿namespace RemoteControlBot
 {
-    internal static class BotFunctions
+    public static class BotFunctions
     {
         // ADMIN PANEL
-        internal const string BOT_TURN_OFF = "Bot turn off";
-        internal const string BOT_RESTART = "Bot restart";
+        public const string BOT_TURN_OFF = "Bot turn off";
+        public const string BOT_RESTART = "Bot restart";
 
         // POWER
-        internal const string SHUTDOWN = "Shutdown";
-        internal const string HIBERNATE = "Hibernate";
-        internal const string LOCK = "Lock";
-        internal const string RESTART = "Restart";
+        public const string SHUTDOWN = "Shutdown";
+        public const string HIBERNATE = "Hibernate";
+        public const string LOCK = "Lock";
+        public const string RESTART = "Restart";
 
         // VOLUME
-        internal const string LOUDER_5 = "Up (+5)";
-        internal const string QUIETER_5 = "Down (-5)";
-        internal const string LOUDER_10 = "Up (+10)";
-        internal const string QUIETER_10 = "Down (-10)";
-        internal const string MAX = "Max";
-        internal const string MIN = "Min";
-        internal const string MUTE = "Mute";
-        internal const string UNMUTE = "Unmute";
+        public const string LOUDER_5 = "Up (+5)";
+        public const string QUIETER_5 = "Down (-5)";
+        public const string LOUDER_10 = "Up (+10)";
+        public const string QUIETER_10 = "Down (-10)";
+        public const string MAX = "Max";
+        public const string MIN = "Min";
+        public const string MUTE = "Mute";
+        public const string UNMUTE = "Unmute";
 
         // SCREEN
-        internal const string SCREENSHOT = "Screenshot";
+        public const string SCREENSHOT = "Screenshot";
 
         // PROCESS
-        internal const string KILL = "Kill";
+        public const string KILL = "Kill";
     }
 }

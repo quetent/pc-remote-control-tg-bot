@@ -2,6 +2,42 @@
 
 namespace RemoteControlBot
 {
+    public class StartUpAnswerGenerator : IAnswerable
+    {
+        private readonly StartUpCode _startUpCode;
+
+        public StartUpAnswerGenerator(StartUpCode startUpCode)
+        {
+            _startUpCode = startUpCode;
+        }
+
+        public string GetAnswer()
+        {
+            return _startUpCode switch
+            {
+                StartUpCode.Null => GetBotStartedAnswer(),
+                StartUpCode.Crashed => GetAppCrashedAnwer(),
+                StartUpCode.RestartRequested => GetAppRestartedAnswer(),
+                _ => Throw.NotImplemented<string>($"{typeof(StartUpAnswerGenerator)} -> {_startUpCode}")
+            };
+        }
+
+        private string GetBotStartedAnswer()
+        {
+            return "Bot was started";
+        }
+
+        private string GetAppCrashedAnwer()
+        {
+            return "Bot was restarted due unhandled error";
+        }
+
+        private string GetAppRestartedAnswer()
+        {
+            return "Bot was restarted";
+        }
+    }
+
     public class TextAnswerGenerator : IAnswerable
     {
         private readonly Command _command;

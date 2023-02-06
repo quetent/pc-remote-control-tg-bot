@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace RemoteControlBot
 {
-    internal static class ProcessManager
+    public static class ProcessManager
     {
         public static int VisibleProcessesCount => _visibleProcesses.Count;
 
@@ -20,7 +20,7 @@ namespace RemoteControlBot
             _visibleProcesses = new List<Process>();
         }
 
-        internal static void StartProcess(string filepath, string args, bool createNoWindow)
+        public static void StartProcess(string filepath, string args, bool createNoWindow)
         {
             var processInfo = new ProcessStartInfo(filepath, args)
             {
@@ -31,7 +31,7 @@ namespace RemoteControlBot
             Process.Start(processInfo);
         }
 
-        internal static void SetVisibleProcceses()
+        public static void SetVisibleProcceses()
         {
             if (_visibleProcesses.Count != 0)
                 _visibleProcesses.Clear();
@@ -41,7 +41,7 @@ namespace RemoteControlBot
                     _visibleProcesses.Add(process);
         }
 
-        internal static void TryKillProcessByIndex(int index)
+        public static void TryKillProcessByIndex(int index)
         {
             try
             {

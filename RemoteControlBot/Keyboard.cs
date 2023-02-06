@@ -3,28 +3,28 @@ using static RemoteControlBot.BotFunctions;
 
 namespace RemoteControlBot
 {
-    internal static class Keyboard
+    public static class Keyboard
     {
-        internal const int ROW_LENGTH = 5;
+        public const int ROW_LENGTH = 5;
 
-        internal const string POWER_LABEL = "Power";
-        internal const string VOLUME_LABEL = "Volume";
-        internal const string SCREEN_LABEL = "Screen";
-        internal const string PROCESS_LABEL = "Process";
-        internal const string ADMIN_PANEL_LABEL = "Admin panel";
+        public const string POWER_LABEL = "Power";
+        public const string VOLUME_LABEL = "Volume";
+        public const string SCREEN_LABEL = "Screen";
+        public const string PROCESS_LABEL = "Process";
+        public const string ADMIN_PANEL_LABEL = "Admin panel";
 
-        internal const string UPDATE_KILL_LIST = "Update";
+        public const string UPDATE_KILL_LIST = "Update";
 
-        internal const string BACK_LABEL = "< Back >";
+        public const string BACK_LABEL = "< Back >";
 
-        internal static readonly string[] MAIN_MENU_LABELS = { POWER_LABEL, ADMIN_PANEL_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL };
-        internal static readonly string[] ADMIN_PANEL_LABELS = { BOT_TURN_OFF, BOT_RESTART };
-        internal static readonly string[] POWER_LABELS = { SHUTDOWN, HIBERNATE, LOCK, RESTART };
-        internal static readonly string[] VOLUME_LABELS = { LOUDER_5, QUIETER_5, LOUDER_10, QUIETER_10, MAX, MIN, MUTE, UNMUTE };
-        internal static readonly string[] SCREEN_LABELS = { SCREENSHOT };
-        internal static readonly string[] PROCESS_LABELS = { KILL };
+        public static readonly string[] MAIN_MENU_LABELS = { POWER_LABEL, ADMIN_PANEL_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL };
+        public static readonly string[] ADMIN_PANEL_LABELS = { BOT_TURN_OFF, BOT_RESTART };
+        public static readonly string[] POWER_LABELS = { SHUTDOWN, HIBERNATE, LOCK, RESTART };
+        public static readonly string[] VOLUME_LABELS = { LOUDER_5, QUIETER_5, LOUDER_10, QUIETER_10, MAX, MIN, MUTE, UNMUTE };
+        public static readonly string[] SCREEN_LABELS = { SCREENSHOT };
+        public static readonly string[] PROCESS_LABELS = { KILL };
 
-        internal static ReplyKeyboardMarkup MainMenu = new(
+        public static ReplyKeyboardMarkup MainMenu = new(
             new[]
             {
                 new[]
@@ -41,7 +41,7 @@ namespace RemoteControlBot
                 }
             });
 
-        internal static ReplyKeyboardMarkup AdminPanel = new(
+        public static ReplyKeyboardMarkup AdminPanel = new(
             new[]
             {
                 new[]
@@ -58,7 +58,7 @@ namespace RemoteControlBot
                 }
             });
 
-        internal static ReplyKeyboardMarkup Power = new(
+        public static ReplyKeyboardMarkup Power = new(
             new[]
             {
                 new[]
@@ -75,7 +75,7 @@ namespace RemoteControlBot
                 }
             });
 
-        internal static ReplyKeyboardMarkup Volume = new(
+        public static ReplyKeyboardMarkup Volume = new(
             new[]
             {
                 new[]
@@ -100,7 +100,7 @@ namespace RemoteControlBot
                 }
             });
 
-        internal static ReplyKeyboardMarkup Screen = new(
+        public static ReplyKeyboardMarkup Screen = new(
             new[]
             {
                 new[]
@@ -113,7 +113,7 @@ namespace RemoteControlBot
                 }
             });
 
-        internal static ReplyKeyboardMarkup Process = new(
+        public static ReplyKeyboardMarkup Process = new(
             new[]
             {
                 new[]
@@ -126,7 +126,7 @@ namespace RemoteControlBot
                 }
             });
 
-        internal static ReplyKeyboardMarkup GenerateIndexedKeyboard(int index)
+        public static ReplyKeyboardMarkup GenerateIndexedKeyboard(int index)
         {
             var buttonValue = 1;
             var buttons = new List<List<KeyboardButton>>();

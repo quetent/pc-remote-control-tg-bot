@@ -32,11 +32,13 @@ namespace RemoteControlBot
             Execute.CommandExecuted += HandleCommandExecuted;
         }
 
-        public async Task StartAsync()
+        public async Task StartAsync(StartUpCode startUpCode)
         {
             _startupTime = DateTimeManager.GetCurrentDateTime();
 
-            await NotifyOwnerAboutStartReceivingAsync();
+            var message = new StartUpAnswerGenerator(startUpCode).GetAnswer();
+
+            await NotifyOwnerAboutStartUp(message);
 
             _botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
@@ -45,7 +47,7 @@ namespace RemoteControlBot
                 cancellationToken: _cancellationToken);
 
             if (ENABLE_LOGGING)
-                Log.BotStartup();
+                Log.BotStartup(message);
         }
 
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
@@ -61,7 +63,6 @@ namespace RemoteControlBot
             }
 
             var updateSendTime = GetUpdateSendDatetime(update);
-
             var message = GetMessage(update);
             var messageText = GetMessageText(message);
             var user = GetMessageSender(message);
@@ -102,10 +103,20 @@ namespace RemoteControlBot
                                                          Exception exception,
                                                          CancellationToken cancellationToken)
         {
+            HandleManagedException(exception);
+
             if (ENABLE_LOGGING)
                 Log.UnhandledException(exception);
 
             return Task.CompletedTask;
+        }
+
+        private static void HandleManagedException(Exception exception)
+        {
+            if (exception is AppRestartRequested)
+                App.Restart(StartUpCode.RestartRequested);
+            else if (exception is AppExitRequested)
+                App.Exit();
         }
 
         private async Task HandleCommandExecuted(Command command, long commandSenderId, CancellationToken cancellationToken)
@@ -130,9 +141,9 @@ namespace RemoteControlBot
                     cancellationToken: cancellationToken);
         }
 
-        private async Task NotifyOwnerAboutStartReceivingAsync()
+        private async Task NotifyOwnerAboutStartUp(string message)
         {
-            await SendMessageAsync(OwnerId, "Bot has been started", Keyboard.MainMenu, _cancellationToken);
+            await SendMessageAsync(OwnerId, message, Keyboard.MainMenu, _cancellationToken);
         }
 
         private async Task SendScreenshotAsync(long chatId, CancellationToken cancellationToken)

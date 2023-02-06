@@ -84,7 +84,7 @@ namespace RemoteControlBot
             switch (_commandInfo)
             {
                 case CommandInfo.BotTurnOff:
-                    ExitApp();
+                    RequestAppExit();
                     break;
                 case CommandInfo.BotRestart:
                     RequestAppRestart();
@@ -95,16 +95,14 @@ namespace RemoteControlBot
             }
         }
 
-        private static void ExitApp()
+        private static void RequestAppExit()
         {
-            Environment.Exit(0);
+            throw new AppExitRequested();
         }
 
         private static void RequestAppRestart()
         {
-            ProcessManager.StartProcess(Environment.ProcessPath!, "LastError=Restart", false);
-
-            ExitApp();
+            throw new AppRestartRequested();
         }
     }
 
