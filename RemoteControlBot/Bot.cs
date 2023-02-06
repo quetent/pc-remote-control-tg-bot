@@ -94,7 +94,7 @@ namespace RemoteControlBot
 
             var text = GetTextAnswer(command);
             var markup = GetMarkup(command);
-
+            Thread.Sleep(4000);
             await SendTextMessageAsync(chatId, text, markup, cancellationToken);
 
             SetPreviousCommand(command);
@@ -205,7 +205,7 @@ namespace RemoteControlBot
                 CommandType.Screen => TextAnswerGenerator.GetAnswerByScreenCommand(command),
                 CommandType.Process => TextAnswerGenerator.GetAnswerByProcessCommand(command),
                 CommandType.AdminPanel => TextAnswerGenerator.GetAnswerByAdminPanelCommand(command),
-                _ => Throw.CommandNotImplemented<string>(command)
+                _ => Throw.NotImplemented<string>(command)
             };
         }
 

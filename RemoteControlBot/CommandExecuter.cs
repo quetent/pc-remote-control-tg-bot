@@ -25,7 +25,7 @@ namespace RemoteControlBot
                 CommandType.Volume => Task.Run(() => ExecuteVolumeCommand(command), cancellationToken),
                 CommandType.Screen => Task.Run(() => ExecuteScreenCommand(command), cancellationToken),
                 CommandType.Process => Task.Run(() => ExecuteProcessCommand(command), cancellationToken),
-                _ => Throw.CommandNotImplemented<Task>(command)
+                _ => Throw.NotImplemented<Task>(command)
             };
 
             await task;
@@ -59,7 +59,7 @@ namespace RemoteControlBot
                     RestartApp();
                     break;
                 default:
-                    Throw.CommandNotImplemented(command);
+                    Throw.NotImplemented(command);
                     break;
             }
         }
@@ -71,7 +71,7 @@ namespace RemoteControlBot
 
         private static void RestartApp()
         {
-            StartCommandLineProcess(Environment.ProcessPath!, string.Empty, false);
+            StartCommandLineProcess(Environment.ProcessPath!, "LastError=Restart", false);
 
             ExitApp();
         }
@@ -95,7 +95,7 @@ namespace RemoteControlBot
                     RestartPC();
                     break;
                 default:
-                    Throw.CommandNotImplemented(command);
+                    Throw.NotImplemented(command);
                     break;
             }
         }
@@ -162,7 +162,7 @@ namespace RemoteControlBot
                     VolumeManager.UnMute();
                     break;
                 default:
-                    Throw.CommandNotImplemented(command);
+                    Throw.NotImplemented(command);
                     break;
             }
         }
@@ -177,7 +177,7 @@ namespace RemoteControlBot
                     DoAndSaveScreenshot(PathManager.GetScreenshotAbsolutePath(), SCREENSHOT_FORMAT);
                     break;
                 default:
-                    Throw.CommandNotImplemented(command);
+                    Throw.NotImplemented(command);
                     break;
             }
         }
@@ -203,7 +203,7 @@ namespace RemoteControlBot
                     ProcessManager.TryKillProcessByIndex(int.Parse(command.RawText) - 1);
                     break;
                 default:
-                    Throw.CommandNotImplemented(command);
+                    Throw.NotImplemented(command);
                     break;
             }
         }

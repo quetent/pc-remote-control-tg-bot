@@ -105,7 +105,7 @@ namespace RemoteControlBot
                 CommandType.Volume => DetermineVolumeCommandInfo(commandText),
                 CommandType.Screen => DetermineScreenCommandInfo(commandText),
                 CommandType.Process => DetermineProcessCommandInfo(commandText),
-                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+                _ => Throw.NotImplemented<CommandInfo>(commandText)
             };
         }
 
@@ -121,7 +121,7 @@ namespace RemoteControlBot
                 PROCESS_LABEL => CommandInfo.ToProcess,
                 KILL => CommandInfo.ToKillList,
                 UPDATE_KILL_LIST => CommandInfo.ToKillList,
-                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+                _ => Throw.NotImplemented<CommandInfo>(commandText)
             };
         }
 
@@ -131,7 +131,7 @@ namespace RemoteControlBot
             {
                 BOT_TURN_OFF => CommandInfo.BotTurnOff,
                 BOT_RESTART => CommandInfo.BotRestart,
-                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+                _ => Throw.NotImplemented<CommandInfo>(commandText)
             };
         }
 
@@ -143,7 +143,7 @@ namespace RemoteControlBot
                 HIBERNATE => CommandInfo.Hibernate,
                 LOCK => CommandInfo.Lock,
                 RESTART => CommandInfo.Restart,
-                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+                _ => Throw.NotImplemented<CommandInfo>(commandText)
             };
         }
 
@@ -159,7 +159,7 @@ namespace RemoteControlBot
                 MIN => CommandInfo.Min,
                 MUTE => CommandInfo.Mute,
                 UNMUTE => CommandInfo.Unmute,
-                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+                _ => Throw.NotImplemented<CommandInfo>(commandText)
             };
         }
 
@@ -168,7 +168,7 @@ namespace RemoteControlBot
             return commandText switch
             {
                 SCREENSHOT => CommandInfo.Screenshot,
-                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+                _ => Throw.NotImplemented<CommandInfo>(commandText)
             };
         }
 
@@ -177,7 +177,7 @@ namespace RemoteControlBot
             return commandText switch
             {
                 KILL => CommandInfo.Kill,
-                _ => Throw.CommandNotImplemented<CommandInfo>(commandText)
+                _ => Throw.NotImplemented<CommandInfo>(commandText)
             };
         }
     }

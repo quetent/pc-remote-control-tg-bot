@@ -59,7 +59,7 @@ namespace RemoteControlBot
                 CommandInfo.Hibernate => GetHibernateRequestedAnswer(),
                 CommandInfo.Lock => GetLockRequestedAnswer(),
                 CommandInfo.Restart => GetRestartRequestedAnswer(),
-                _ => Throw.CommandNotImplemented<string>(command)
+                _ => Throw.NotImplemented<string>(command)
             };
         }
 
@@ -97,7 +97,7 @@ namespace RemoteControlBot
                 CommandInfo.Min => GetVolumeIsMinAnswer(),
                 CommandInfo.Mute => GetMuteRequestAnswer(MUTE, "already"),
                 CommandInfo.Unmute => GetMuteRequestAnswer(UNMUTE, "is not"),
-                _ => Throw.CommandNotImplemented<string>(command)
+                _ => Throw.NotImplemented<string>(command)
             };
         }
 
@@ -151,7 +151,7 @@ namespace RemoteControlBot
             return command.Info switch
             {
                 CommandInfo.Screenshot => GetScreenshotDoneAnswer(),
-                _ => Throw.CommandNotImplemented<string>(command)
+                _ => Throw.NotImplemented<string>(command)
             };
         }
 
@@ -167,7 +167,7 @@ namespace RemoteControlBot
             return command.Info switch
             {
                 CommandInfo.Kill => GetProcessKillingResultAnswer(),
-                _ => Throw.CommandNotImplemented<string>(command)
+                _ => Throw.NotImplemented<string>(command)
             };
         }
 
@@ -218,7 +218,7 @@ namespace RemoteControlBot
             {
                 CommandInfo.Shutdown => Throw.ShouldBeNotReachable<string>(),
                 CommandInfo.BotRestart => Throw.ShouldBeNotReachable<string>(),
-                _ => Throw.CommandNotImplemented<string>(command)
+                _ => Throw.NotImplemented<string>(command)
             };
         }
     }

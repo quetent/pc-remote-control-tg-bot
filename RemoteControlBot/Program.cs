@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Telegram.Bot.Polling;
+﻿using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
 
 namespace RemoteControlBot
