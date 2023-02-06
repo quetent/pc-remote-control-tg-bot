@@ -2,6 +2,6 @@
 {
     public interface IAsyncExecutable
     {
-        public Task ExecuteAsync(long commandSenderId, CancellationToken cancellationToken);
+        public Task ExecuteAsync(CancellationToken cancellationToken);
     }
 }

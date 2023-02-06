@@ -84,14 +84,13 @@ namespace RemoteControlBot
             if (ENABLE_LOGGING)
                 Log.MessageRecieved(messageText, user);
 
-            var command = GetCommand(messageText, PreviousExecutedCommand);
+            var chatId = GetChatId(message);
+            var command = GetCommand(messageText, chatId, PreviousExecutedCommand);
 
             if (ENABLE_LOGGING)
                 Log.UpdateExecute(command, messageText);
 
-            var chatId = GetChatId(message);
-
-            await new Execute(command).ExecuteAsync(chatId, cancellationToken);
+            await new Execute(command).ExecuteAsync(cancellationToken);
 
             var text = GetTextAnswer(command);
             var markup = GetMarkup(command);
@@ -151,14 +150,14 @@ namespace RemoteControlBot
                     cancellationToken: cancellationToken);
         }
 
-        private static Command GetCommand(string messageText, Command previousCommand)
+        private static Command GetCommand(string messageText, long senderId, Command previousCommand)
         {
             Command command;
 
             if (Command.IsNumberForProccesManager(previousCommand, messageText))
-                command = new Command(CommandType.Process, CommandInfo.Kill, messageText);
+                command = new Command(CommandType.Process, CommandInfo.Kill, messageText, senderId);
             else
-                command = new Command(messageText);
+                command = new Command(messageText, senderId);
 
             return command;
         }

@@ -7,23 +7,27 @@ namespace RemoteControlBot
     {
         private readonly CommandType _type;
         private readonly CommandInfo _info;
+        private readonly long _senderId;
         private readonly string _rawText;
 
-        internal CommandType Type => _type;
-        internal CommandInfo Info => _info;
-        internal string RawText => _rawText;
+        public CommandType Type => _type;
+        public CommandInfo Info => _info;
+        public long SenderId => _senderId;
+        public string RawText => _rawText;
 
-        public Command(string commandText)
+        public Command(string commandText, long senderId)
         {
             _type = DefineCommandType(commandText);
             _info = DefineCommandInfo(_type, commandText);
+            _senderId = senderId;
             _rawText = commandText;
         }
 
-        public Command(CommandType builderType, CommandInfo builderInfo, string commandText)
+        public Command(CommandType builderType, CommandInfo builderInfo, string commandText, long senderId)
         {
             _type = builderType;
             _info = builderInfo;
+            _senderId = senderId;
             _rawText = commandText;
         }
 

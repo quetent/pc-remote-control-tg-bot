@@ -16,7 +16,7 @@ namespace RemoteControlBot
             _command = command;
         }
 
-        public async Task ExecuteAsync(long commandSenderId, CancellationToken cancellationToken)
+        public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             Task task;
 
@@ -35,7 +35,7 @@ namespace RemoteControlBot
             await task;
 
             SetLastExecutedCommand(_command);
-            CommandExecuted?.Invoke(_command, commandSenderId, cancellationToken);
+            CommandExecuted?.Invoke(_command, _command.SenderId, cancellationToken);
         }
 
         private static void SetLastExecutedCommand(Command command)
