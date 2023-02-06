@@ -16,7 +16,8 @@ namespace RemoteControlBot
 
         private DateTime _startupTime;
         private readonly CancellationToken _cancellationToken;
-        private Command _previousCommand;
+
+        private static Command PreviousExecutedCommand => Execute.LastExecutedCommand;
 
         public Bot(long ownerId,
                    string token,
@@ -83,21 +84,19 @@ namespace RemoteControlBot
             if (ENABLE_LOGGING)
                 Log.MessageRecieved(messageText, user);
 
-            var command = GetCommand(messageText, _previousCommand);
+            var command = GetCommand(messageText, PreviousExecutedCommand);
 
             if (ENABLE_LOGGING)
                 Log.UpdateExecute(command, messageText);
 
             var chatId = GetChatId(message);
 
-            await Execute.ExecuteAsync(command, chatId, cancellationToken);
+            await new Execute(command).ExecuteAsync(chatId, cancellationToken);
 
             var text = GetTextAnswer(command);
             var markup = GetMarkup(command);
 
-            await SendTextMessageAsync(chatId, text, markup, cancellationToken);
-
-            SetPreviousCommand(command);
+            await SendMessageAsync(chatId, text, markup, cancellationToken);
         }
 
         private async Task<Task> HandlePollingErrorAsync(ITelegramBotClient botClient,
@@ -123,7 +122,7 @@ namespace RemoteControlBot
             }
         }
 
-        private async Task SendTextMessageAsync(long chatId, string text, IReplyMarkup markup, CancellationToken cancellationToken)
+        private async Task SendMessageAsync(long chatId, string text, IReplyMarkup markup, CancellationToken cancellationToken)
         {
             await _botClient.SendTextMessageAsync(
                     chatId: chatId,
@@ -134,7 +133,7 @@ namespace RemoteControlBot
 
         private async Task NotifyOwnerAboutStartReceivingAsync()
         {
-            await SendTextMessageAsync(OwnerId, "Bot has been started", Keyboard.MainMenu, _cancellationToken);
+            await SendMessageAsync(OwnerId, "Bot has been started", Keyboard.MainMenu, _cancellationToken);
         }
 
         private async Task SendScreenshotAsync(long chatId, CancellationToken cancellationToken)
@@ -164,11 +163,6 @@ namespace RemoteControlBot
             return command;
         }
 
-        private void SetPreviousCommand(Command command)
-        {
-            _previousCommand = command;
-        }
-
         private static DateTime GetUpdateSendDatetime(Update update)
         {
             return update.Message!.Date.ToLocalTime();
@@ -196,17 +190,7 @@ namespace RemoteControlBot
 
         private static string GetTextAnswer(Command command)
         {
-            return command.Type switch
-            {
-                CommandType.Undefined => TextAnswerGenerator.GetAnswerByUndefinedCommand(command),
-                CommandType.Transfer => TextAnswerGenerator.GetAnswerByTransferCommand(command),
-                CommandType.Power => TextAnswerGenerator.GetAnswerByPowerCommand(command),
-                CommandType.Volume => TextAnswerGenerator.GetAnswerByVolumeCommand(command),
-                CommandType.Screen => TextAnswerGenerator.GetAnswerByScreenCommand(command),
-                CommandType.Process => TextAnswerGenerator.GetAnswerByProcessCommand(command),
-                CommandType.AdminPanel => TextAnswerGenerator.GetAnswerByAdminPanelCommand(command),
-                _ => Throw.NotImplemented<string>(command.ToString())
-            };
+            return new TextAnswerGenerator(command).GetAnswer();
         }
 
         private static IReplyMarkup GetMarkup(Command command)

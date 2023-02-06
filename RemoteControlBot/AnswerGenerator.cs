@@ -2,27 +2,65 @@
 
 namespace RemoteControlBot
 {
-    internal static class TextAnswerGenerator
+    public class TextAnswerGenerator : IAnswerable
     {
-        internal static string GetAnswerByUndefinedCommand(Command command)
-        {
-            Throw.IfIncorrectCommandType(command, CommandType.Undefined);
+        private readonly Command _command;
 
-            return "Undefined command";
+        public TextAnswerGenerator(Command command)
+        {
+            _command = command;
         }
 
-        internal static string GetAnswerByTransferCommand(Command command)
+        public string GetAnswer()
+        {
+            return _command.Type switch
+            {
+                CommandType.Undefined => new UndefinedAnswerGenerator(_command).GetAnswer(),
+                CommandType.Transfer => new TransferAnswerGenerator(_command).GetAnswer(),
+                CommandType.AdminPanel => new AdminPanelAnswerGenerator(_command).GetAnswer(),
+                CommandType.Power => new PowerAnswerGenerator(_command).GetAnswer(),
+                CommandType.Volume => new VolumeAnswerGenerator(_command).GetAnswer(),
+                CommandType.Screen => new ScreenAnswerGenerator(_command).GetAnswer(),
+                CommandType.Process => new ProcessAnswerGenerator(_command).GetAnswer(),
+                _ => Throw.NotImplemented<string>($"{nameof(TextAnswerGenerator)} -> {_command}")
+            };
+        }
+    }
+
+    public class UndefinedAnswerGenerator : IAnswerable
+    {
+        public UndefinedAnswerGenerator(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Undefined);
+        }
+
+        public string GetAnswer()
+        {
+            return "Undefined command";
+        }
+    }
+
+    public class TransferAnswerGenerator
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public TransferAnswerGenerator(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Transfer);
 
-            return command.Info switch
+            _commandInfo = command.Info;
+        }
+
+        public string GetAnswer()
+        {
+            return _commandInfo switch
             {
                 CommandInfo.ToKillList => GetProcessesListAnswer(),
-                _ => GetTransferDefaultAnswer()
+                _ => GetDefaultAnswer()
             };
         }
 
-        private static string GetTransferDefaultAnswer()
+        private static string GetDefaultAnswer()
         {
             return "...";
         }
@@ -48,18 +86,50 @@ namespace RemoteControlBot
         {
             return "No visible proccesses found";
         }
+    }
 
-        internal static string GetAnswerByPowerCommand(Command command)
+    public class AdminPanelAnswerGenerator : IAnswerable
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public AdminPanelAnswerGenerator(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Process);
+
+            _commandInfo = command.Info;
+        }
+
+        public string GetAnswer()
+        {
+            return _commandInfo switch
+            {
+                CommandInfo.Shutdown => Throw.ShouldBeNotReachable<string>(),
+                CommandInfo.BotRestart => Throw.ShouldBeNotReachable<string>(),
+                _ => Throw.NotImplemented<string>($"{nameof(AdminPanelAnswerGenerator)} -> {_commandInfo}")
+            };
+        }
+    }
+
+    public class PowerAnswerGenerator : IAnswerable
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public PowerAnswerGenerator(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Power);
 
-            return command.Info switch
+            _commandInfo = command.Info;
+        }
+
+        public string GetAnswer()
+        {
+            return _commandInfo switch
             {
                 CommandInfo.Shutdown => GetShutdownRequestedAnswer(),
                 CommandInfo.Hibernate => GetHibernateRequestedAnswer(),
                 CommandInfo.Lock => GetLockRequestedAnswer(),
                 CommandInfo.Restart => GetRestartRequestedAnswer(),
-                _ => Throw.NotImplemented<string>(command.ToString())
+                _ => Throw.NotImplemented<string>($"{nameof(PowerAnswerGenerator)} -> {_commandInfo}")
             };
         }
 
@@ -82,12 +152,22 @@ namespace RemoteControlBot
         {
             return "Restart has been requested";
         }
+    }
 
-        internal static string GetAnswerByVolumeCommand(Command command)
+    public class VolumeAnswerGenerator : IAnswerable
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public VolumeAnswerGenerator(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Volume);
 
-            return command.Info switch
+            _commandInfo = command.Info;
+        }
+
+        public string GetAnswer()
+        {
+            return _commandInfo switch
             {
                 CommandInfo.Louder5 => GetVolumeChangeAnswer("increased", 5),
                 CommandInfo.Quieter5 => GetVolumeChangeAnswer("decreased", -5),
@@ -97,7 +177,7 @@ namespace RemoteControlBot
                 CommandInfo.Min => GetVolumeIsMinAnswer(),
                 CommandInfo.Mute => GetMuteRequestAnswer(MUTE, "already"),
                 CommandInfo.Unmute => GetMuteRequestAnswer(UNMUTE, "is not"),
-                _ => Throw.NotImplemented<string>(command.ToString())
+                _ => Throw.NotImplemented<string>($"{nameof(VolumeAnswerGenerator)} -> {_commandInfo}")
             };
         }
 
@@ -143,15 +223,25 @@ namespace RemoteControlBot
 
             return $"Speakers {insertion}muted";
         }
+    }
 
-        internal static string GetAnswerByScreenCommand(Command command)
+    public class ScreenAnswerGenerator : IAnswerable
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public ScreenAnswerGenerator(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Screen);
 
-            return command.Info switch
+            _commandInfo = command.Info;
+        }
+
+        public string GetAnswer()
+        {
+            return _commandInfo switch
             {
                 CommandInfo.Screenshot => GetScreenshotDoneAnswer(),
-                _ => Throw.NotImplemented<string>(command.ToString())
+                _ => Throw.NotImplemented<string>($"{nameof(ScreenAnswerGenerator)} -> {_commandInfo}")
             };
         }
 
@@ -159,15 +249,25 @@ namespace RemoteControlBot
         {
             return "Screenshot was taken";
         }
+    }
 
-        internal static string GetAnswerByProcessCommand(Command command)
+    public class ProcessAnswerGenerator : IAnswerable
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public ProcessAnswerGenerator(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Process);
 
-            return command.Info switch
+            _commandInfo = command.Info;
+        }
+
+        public string GetAnswer()
+        {
+            return _commandInfo switch
             {
                 CommandInfo.Kill => GetProcessKillingResultAnswer(),
-                _ => Throw.NotImplemented<string>(command.ToString())
+                _ => Throw.NotImplemented<string>($"{nameof(ProcessAnswerGenerator)} -> {_commandInfo}")
             };
         }
 
@@ -208,18 +308,6 @@ namespace RemoteControlBot
         private static string GetProcessIsSystemAnwer()
         {
             return "Cannot kill system process";
-        }
-
-        internal static string GetAnswerByAdminPanelCommand(Command command)
-        {
-            Throw.IfIncorrectCommandType(command, CommandType.AdminPanel);
-
-            return command.Info switch
-            {
-                CommandInfo.Shutdown => Throw.ShouldBeNotReachable<string>(),
-                CommandInfo.BotRestart => Throw.ShouldBeNotReachable<string>(),
-                _ => Throw.NotImplemented<string>(command.ToString())
-            };
         }
     }
 }

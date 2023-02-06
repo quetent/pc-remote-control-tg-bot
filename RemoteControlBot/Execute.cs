@@ -2,29 +2,45 @@
 
 namespace RemoteControlBot
 {
-    internal static class Execute
+    public class Execute : IAsyncExecutable
     {
-        internal delegate Task CommandHandler(Command command, long commandSenderId, CancellationToken cancellation);
-        internal static event CommandHandler? CommandExecuted;
+        private readonly Command _command;
 
-        internal static async Task ExecuteAsync(Command command, long commandSenderId, CancellationToken cancellationToken)
+        public static Command LastExecutedCommand { get; private set; }
+
+        public delegate Task CommandHandler(Command command, long commandSenderId, CancellationToken cancellation);
+        public static event CommandHandler? CommandExecuted;
+
+        public Execute(Command command)
+        {
+            _command = command;
+        }
+
+        public async Task ExecuteAsync(long commandSenderId, CancellationToken cancellationToken)
         {
             Task task;
 
-            task = command.Type switch
+            task = _command.Type switch
             {
                 CommandType.Undefined => Task.CompletedTask,
-                CommandType.Transfer => Task.Run(() => new TransferExecute(command).Execute(), cancellationToken),
-                CommandType.AdminPanel => Task.Run(() => new AdminPanelExecute(command).Execute(), cancellationToken),
-                CommandType.Power => Task.Run(() => new PowerExecute(command).Execute(), cancellationToken),
-                CommandType.Volume => Task.Run(() => new VolumeExecute(command).Execute(), cancellationToken),
-                CommandType.Screen => Task.Run(() => new ScreenExecute(command).Execute(), cancellationToken),
-                CommandType.Process => Task.Run(() => new ProcessExecute(command).Execute(), cancellationToken),
-                _ => Throw.NotImplemented<Task>(command.ToString())
+                CommandType.Transfer => Task.Run(() => new TransferExecute(_command).Execute(), cancellationToken),
+                CommandType.AdminPanel => Task.Run(() => new AdminPanelExecute(_command).Execute(), cancellationToken),
+                CommandType.Power => Task.Run(() => new PowerExecute(_command).Execute(), cancellationToken),
+                CommandType.Volume => Task.Run(() => new VolumeExecute(_command).Execute(), cancellationToken),
+                CommandType.Screen => Task.Run(() => new ScreenExecute(_command).Execute(), cancellationToken),
+                CommandType.Process => Task.Run(() => new ProcessExecute(_command).Execute(), cancellationToken),
+                _ => Throw.NotImplemented<Task>($"{nameof(Execute)} -> {_command}")
             };
 
             await task;
-            CommandExecuted?.Invoke(command, commandSenderId, cancellationToken);
+
+            SetLastExecutedCommand(_command);
+            CommandExecuted?.Invoke(_command, commandSenderId, cancellationToken);
+        }
+
+        private static void SetLastExecutedCommand(Command command)
+        {
+            LastExecutedCommand = command;
         }
     }
 
