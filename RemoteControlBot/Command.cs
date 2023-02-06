@@ -13,14 +13,14 @@ namespace RemoteControlBot
         internal CommandInfo Info => _info;
         internal string RawText => _rawText;
 
-        internal Command(string commandText)
+        public Command(string commandText)
         {
-            _type = DetermineCommandType(commandText);
-            _info = DetermineCommandInfo(_type, commandText);
+            _type = DefineCommandType(commandText);
+            _info = DefineCommandInfo(_type, commandText);
             _rawText = commandText;
         }
 
-        internal Command(CommandType builderType, CommandInfo builderInfo, string commandText)
+        public Command(CommandType builderType, CommandInfo builderInfo, string commandText)
         {
             _type = builderType;
             _info = builderInfo;
@@ -39,7 +39,7 @@ namespace RemoteControlBot
                 && messageText.IsNumber();
         }
 
-        private static CommandType DetermineCommandType(string commandText)
+        private static CommandType DefineCommandType(string commandText)
         {
             CommandType commandType;
 
@@ -94,22 +94,22 @@ namespace RemoteControlBot
             return PROCESS_LABELS.Contains(commandText);
         }
 
-        private static CommandInfo DetermineCommandInfo(CommandType commandType, string commandText)
+        private static CommandInfo DefineCommandInfo(CommandType commandType, string commandText)
         {
             return commandType switch
             {
                 CommandType.Undefined => CommandInfo.Null,
-                CommandType.Transfer => DetermineTranserCommandInfo(commandText),
-                CommandType.AdminPanel => DetermineControlCommandInfo(commandText),
-                CommandType.Power => DeterminePowerCommandInfo(commandText),
-                CommandType.Volume => DetermineVolumeCommandInfo(commandText),
-                CommandType.Screen => DetermineScreenCommandInfo(commandText),
-                CommandType.Process => DetermineProcessCommandInfo(commandText),
+                CommandType.Transfer => DefineTranserCommandInfo(commandText),
+                CommandType.AdminPanel => DefineControlCommandInfo(commandText),
+                CommandType.Power => DefinePowerCommandInfo(commandText),
+                CommandType.Volume => DefineVolumeCommandInfo(commandText),
+                CommandType.Screen => DefineScreenCommandInfo(commandText),
+                CommandType.Process => DefineProcessCommandInfo(commandText),
                 _ => Throw.NotImplemented<CommandInfo>(commandText)
             };
         }
 
-        private static CommandInfo DetermineTranserCommandInfo(string commandText)
+        private static CommandInfo DefineTranserCommandInfo(string commandText)
         {
             return commandText switch
             {
@@ -125,7 +125,7 @@ namespace RemoteControlBot
             };
         }
 
-        private static CommandInfo DetermineControlCommandInfo(string commandText)
+        private static CommandInfo DefineControlCommandInfo(string commandText)
         {
             return commandText switch
             {
@@ -135,7 +135,7 @@ namespace RemoteControlBot
             };
         }
 
-        private static CommandInfo DeterminePowerCommandInfo(string commandText)
+        private static CommandInfo DefinePowerCommandInfo(string commandText)
         {
             return commandText switch
             {
@@ -147,7 +147,7 @@ namespace RemoteControlBot
             };
         }
 
-        private static CommandInfo DetermineVolumeCommandInfo(string commandText)
+        private static CommandInfo DefineVolumeCommandInfo(string commandText)
         {
             return commandText switch
             {
@@ -163,7 +163,7 @@ namespace RemoteControlBot
             };
         }
 
-        private static CommandInfo DetermineScreenCommandInfo(string commandText)
+        private static CommandInfo DefineScreenCommandInfo(string commandText)
         {
             return commandText switch
             {
@@ -172,7 +172,7 @@ namespace RemoteControlBot
             };
         }
 
-        private static CommandInfo DetermineProcessCommandInfo(string commandText)
+        private static CommandInfo DefineProcessCommandInfo(string commandText)
         {
             return commandText switch
             {

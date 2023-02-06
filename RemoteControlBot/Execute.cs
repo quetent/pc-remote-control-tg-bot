@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
+﻿using System.Drawing.Imaging;
 
 namespace RemoteControlBot
 {
@@ -194,7 +192,7 @@ namespace RemoteControlBot
         }
     }
 
-    public class ScreenExecute : IExecutable 
+    public class ScreenExecute : IExecutable
     {
         private readonly CommandInfo _commandInfo;
 
@@ -230,11 +228,11 @@ namespace RemoteControlBot
         }
     }
 
-    public class ProcessExecute : IExecutable 
+    public class ProcessExecute : IExecutable
     {
         private readonly CommandInfo _commandInfo;
         private readonly string _commandText;
-    
+
         public ProcessExecute(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Process);
