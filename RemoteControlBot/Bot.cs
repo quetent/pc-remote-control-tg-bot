@@ -117,6 +117,11 @@ namespace RemoteControlBot
                 App.Restart(StartUpCode.RestartRequested);
             else if (exception is AppExitRequested)
                 App.Exit();
+            else
+            {
+                // todo
+                App.Restart(StartUpCode.Crashed);
+            }
         }
 
         private async Task HandleCommandExecuted(Command command, long commandSenderId, CancellationToken cancellationToken)
