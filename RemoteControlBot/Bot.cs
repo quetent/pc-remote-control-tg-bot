@@ -60,7 +60,7 @@ namespace RemoteControlBot
                 return;
             }
 
-            var recieveTime = GetUpdateSendDatetime(update);
+            var updateSendTime = GetUpdateSendDatetime(update);
 
             var message = GetMessage(update);
             var messageText = GetMessageText(message);
@@ -70,7 +70,7 @@ namespace RemoteControlBot
             {
                 isUpdateValid,
                 UpdateValidator.IsAccessAllowed(this, user),
-                UpdateValidator.IsMessageAfterStartup(_startupTime, recieveTime)
+                UpdateValidator.IsMessageAfterStartup(_startupTime, updateSendTime)
             };
 
             if (!UpdateValidator.IsSequenceValid(sequence))
