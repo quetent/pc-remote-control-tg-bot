@@ -3,7 +3,7 @@ using static RemoteControlBot.Keyboard;
 
 namespace RemoteControlBot
 {
-    internal readonly struct Command
+    public readonly struct Command
     {
         private readonly CommandType _type;
         private readonly CommandInfo _info;

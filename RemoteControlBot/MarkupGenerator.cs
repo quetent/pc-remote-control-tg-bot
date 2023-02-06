@@ -30,7 +30,7 @@ namespace RemoteControlBot
                 CommandInfo.ToScreen => GetScreenKeyboard(),
                 CommandInfo.ToProcess => GetProcessKeyboard(),
                 CommandInfo.ToKillList => GetKillListKeyboard(),
-                _ => Throw.NotImplemented<IReplyMarkup>(command)
+                _ => Throw.NotImplemented<IReplyMarkup>(command.ToString())
             };
         }
 

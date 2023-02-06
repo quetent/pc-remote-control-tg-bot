@@ -28,7 +28,7 @@ namespace RemoteControlBot
             _receiverOptions = recieverOptions;
             _cancellationToken = cancellationToken;
 
-            CommandExecuter.CommandExecuted += HandleCommandExecuted;
+            Execute.CommandExecuted += HandleCommandExecuted;
         }
 
         public async Task StartAsync()
@@ -90,11 +90,11 @@ namespace RemoteControlBot
 
             var chatId = GetChatId(message);
 
-            await CommandExecuter.ExecuteCommandAsync(command, chatId, cancellationToken);
+            await Execute.ExecuteAsync(command, chatId, cancellationToken);
 
             var text = GetTextAnswer(command);
             var markup = GetMarkup(command);
-            Thread.Sleep(4000);
+
             await SendTextMessageAsync(chatId, text, markup, cancellationToken);
 
             SetPreviousCommand(command);
@@ -205,7 +205,7 @@ namespace RemoteControlBot
                 CommandType.Screen => TextAnswerGenerator.GetAnswerByScreenCommand(command),
                 CommandType.Process => TextAnswerGenerator.GetAnswerByProcessCommand(command),
                 CommandType.AdminPanel => TextAnswerGenerator.GetAnswerByAdminPanelCommand(command),
-                _ => Throw.NotImplemented<string>(command)
+                _ => Throw.NotImplemented<string>(command.ToString())
             };
         }
 

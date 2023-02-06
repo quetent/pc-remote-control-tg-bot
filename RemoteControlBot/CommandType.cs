@@ -1,6 +1,6 @@
 ﻿namespace RemoteControlBot
 {
-    internal enum CommandType
+    public enum CommandType
     {
         Undefined,
         AdminPanel,

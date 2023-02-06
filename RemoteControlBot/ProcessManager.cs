@@ -20,6 +20,17 @@ namespace RemoteControlBot
             _visibleProcesses = new List<Process>();
         }
 
+        internal static void StartProcess(string filepath, string args, bool createNoWindow)
+        {
+            var processInfo = new ProcessStartInfo(filepath, args)
+            {
+                CreateNoWindow = createNoWindow,
+                UseShellExecute = false
+            };
+
+            Process.Start(processInfo);
+        }
+
         internal static void SetVisibleProcceses()
         {
             if (_visibleProcesses.Count != 0)

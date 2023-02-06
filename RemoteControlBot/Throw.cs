@@ -13,19 +13,14 @@
             throw new InvalidOperationException();
         }
 
-        internal static void NotImplemented(Command command)
+        internal static void NotImplemented(string message)
         {
-            NotImplemented<bool>(command.ToString());
-        }
-
-        internal static T NotImplemented<T>(Command command)
-        {
-            return NotImplemented<T>($"Command not implemented {command}");
+            NotImplemented<bool>(message);
         }
 
         internal static T NotImplemented<T>(string message)
         {
-            throw new NotImplementedException(message);
+            throw new NotImplementedException($"Not implemented: {message}");
         }
     }
 }

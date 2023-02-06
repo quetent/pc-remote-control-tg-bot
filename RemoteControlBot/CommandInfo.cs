@@ -1,6 +1,6 @@
 ﻿namespace RemoteControlBot
 {
-    internal enum CommandInfo
+    public enum CommandInfo
     {
         Null,
 

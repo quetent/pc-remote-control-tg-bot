@@ -4,39 +4,46 @@ using System.Runtime.InteropServices;
 
 namespace RemoteControlBot
 {
-    internal static class CommandExecuter
+    internal static class Execute
     {
         internal delegate Task CommandHandler(Command command, long commandSenderId, CancellationToken cancellation);
         internal static event CommandHandler? CommandExecuted;
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern bool LockWorkStation();
-
-        internal static async Task ExecuteCommandAsync(Command command, long commandSenderId, CancellationToken cancellationToken)
+        internal static async Task ExecuteAsync(Command command, long commandSenderId, CancellationToken cancellationToken)
         {
             Task task;
 
             task = command.Type switch
             {
                 CommandType.Undefined => Task.CompletedTask,
-                CommandType.Transfer => Task.Run(() => ExecuteTransferCommand(command), cancellationToken),
-                CommandType.AdminPanel => Task.Run(() => ExecuteAdminPanelCommand(command), cancellationToken),
-                CommandType.Power => Task.Run(() => ExecutePowerCommand(command), cancellationToken),
-                CommandType.Volume => Task.Run(() => ExecuteVolumeCommand(command), cancellationToken),
-                CommandType.Screen => Task.Run(() => ExecuteScreenCommand(command), cancellationToken),
-                CommandType.Process => Task.Run(() => ExecuteProcessCommand(command), cancellationToken),
-                _ => Throw.NotImplemented<Task>(command)
+                CommandType.Transfer => Task.Run(() => new TransferExecute(command).Execute(), cancellationToken),
+                CommandType.AdminPanel => Task.Run(() => new AdminPanelExecute(command).Execute(), cancellationToken),
+                CommandType.Power => Task.Run(() => new PowerExecute(command).Execute(), cancellationToken),
+                CommandType.Volume => Task.Run(() => new VolumeExecute(command).Execute(), cancellationToken),
+                CommandType.Screen => Task.Run(() => new ScreenExecute(command).Execute(), cancellationToken),
+                CommandType.Process => Task.Run(() => new ProcessExecute(command).Execute(), cancellationToken),
+                _ => Throw.NotImplemented<Task>(command.ToString())
             };
 
             await task;
             CommandExecuted?.Invoke(command, commandSenderId, cancellationToken);
         }
+    }
 
-        private static void ExecuteTransferCommand(Command command)
+    public class TransferExecute : IExecutable
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public TransferExecute(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Transfer);
 
-            switch (command.Info)
+            _commandInfo = command.Info;
+        }
+
+        public void Execute()
+        {
+            switch (_commandInfo)
             {
                 case CommandInfo.ToKillList:
                     ProcessManager.SetVisibleProcceses();
@@ -45,21 +52,31 @@ namespace RemoteControlBot
                     break;
             }
         }
+    }
 
-        private static void ExecuteAdminPanelCommand(Command command)
+    public class AdminPanelExecute : IExecutable
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public AdminPanelExecute(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.AdminPanel);
 
-            switch (command.Info)
+            _commandInfo = command.Info;
+        }
+
+        public void Execute()
+        {
+            switch (_commandInfo)
             {
                 case CommandInfo.BotTurnOff:
                     ExitApp();
                     break;
                 case CommandInfo.BotRestart:
-                    RestartApp();
+                    RequestAppRestart();
                     break;
                 default:
-                    Throw.NotImplemented(command);
+                    Throw.NotImplemented($"{nameof(AdminPanelExecute)} -> {_commandInfo}");
                     break;
             }
         }
@@ -69,18 +86,28 @@ namespace RemoteControlBot
             Environment.Exit(0);
         }
 
-        private static void RestartApp()
+        private static void RequestAppRestart()
         {
-            StartCommandLineProcess(Environment.ProcessPath!, "LastError=Restart", false);
+            ProcessManager.StartProcess(Environment.ProcessPath!, "LastError=Restart", false);
 
             ExitApp();
         }
+    }
 
-        private static void ExecutePowerCommand(Command command)
+    public class PowerExecute : IExecutable
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public PowerExecute(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Power);
 
-            switch (command.Info)
+            _commandInfo = command.Info;
+        }
+
+        public void Execute()
+        {
+            switch (_commandInfo)
             {
                 case CommandInfo.Shutdown:
                     ShutdownPC();
@@ -95,47 +122,46 @@ namespace RemoteControlBot
                     RestartPC();
                     break;
                 default:
-                    Throw.NotImplemented(command);
+                    Throw.NotImplemented($"{nameof(PowerExecute)} -> {_commandInfo}");
                     break;
             }
         }
 
-        private static void StartCommandLineProcess(string filepath, string args, bool createNoWindow)
-        {
-            var processInfo = new ProcessStartInfo(filepath, args)
-            {
-                CreateNoWindow = createNoWindow,
-                UseShellExecute = false
-            };
-
-            Process.Start(processInfo);
-        }
-
         private static void ShutdownPC()
         {
-            StartCommandLineProcess("shutdown.exe", "/s /f /t 0", true);
+            ProcessManager.StartProcess("shutdown.exe", "/s /f /t 0", true);
         }
 
         private static void HibernatePC()
         {
-            StartCommandLineProcess("shutdown.exe", "/h", true);
+            ProcessManager.StartProcess("shutdown.exe", "/h", true);
         }
 
         private static void RestartPC()
         {
-            StartCommandLineProcess("shutdown.exe", "/r /f /t 0", true);
+            ProcessManager.StartProcess("shutdown.exe", "/r /f /t 0", true);
         }
 
         private static void LockPC()
         {
-            LockWorkStation();
+            NativeMethods.LockPC();
         }
+    }
 
-        private static void ExecuteVolumeCommand(Command command)
+    public class VolumeExecute : IExecutable
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public VolumeExecute(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Volume);
 
-            switch (command.Info)
+            _commandInfo = command.Info;
+        }
+
+        public void Execute()
+        {
+            switch (_commandInfo)
             {
                 case CommandInfo.Louder5:
                     VolumeManager.ChangeVolumeLevel(5);
@@ -162,22 +188,32 @@ namespace RemoteControlBot
                     VolumeManager.UnMute();
                     break;
                 default:
-                    Throw.NotImplemented(command);
+                    Throw.NotImplemented($"{nameof(VolumeExecute)} -> {_commandInfo}");
                     break;
             }
         }
+    }
 
-        private static void ExecuteScreenCommand(Command command)
+    public class ScreenExecute : IExecutable 
+    {
+        private readonly CommandInfo _commandInfo;
+
+        public ScreenExecute(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Screen);
 
-            switch (command.Info)
+            _commandInfo = command.Info;
+        }
+
+        public void Execute()
+        {
+            switch (_commandInfo)
             {
                 case CommandInfo.Screenshot:
                     DoAndSaveScreenshot(PathManager.GetScreenshotAbsolutePath(), SCREENSHOT_FORMAT);
                     break;
                 default:
-                    Throw.NotImplemented(command);
+                    Throw.NotImplemented($"{nameof(VolumeExecute)} -> {_commandInfo}");
                     break;
             }
         }
@@ -192,18 +228,30 @@ namespace RemoteControlBot
 
             ScreenManager.SaveScreenshot(screenshot, fileFormat, filepath);
         }
+    }
 
-        internal static void ExecuteProcessCommand(Command command)
+    public class ProcessExecute : IExecutable 
+    {
+        private readonly CommandInfo _commandInfo;
+        private readonly string _commandText;
+    
+        public ProcessExecute(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Process);
 
-            switch (command.Info)
+            _commandInfo = command.Info;
+            _commandText = command.RawText;
+        }
+
+        public void Execute()
+        {
+            switch (_commandInfo)
             {
                 case CommandInfo.Kill:
-                    ProcessManager.TryKillProcessByIndex(int.Parse(command.RawText) - 1);
+                    ProcessManager.TryKillProcessByIndex(int.Parse(_commandText) - 1);
                     break;
                 default:
-                    Throw.NotImplemented(command);
+                    Throw.NotImplemented($"{nameof(ProcessExecute)} -> {_commandInfo}");
                     break;
             }
         }
