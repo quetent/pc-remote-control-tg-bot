@@ -1,28 +1,34 @@
-﻿using Telegram.Bot.Types;
+﻿using System.Text;
+using Telegram.Bot.Types;
 using static System.Console;
 
 namespace RemoteControlBot
 {
-    internal static class Log
+    public static class Log
     {
         public static ConsoleColor ExceptionColor { get; set; } = ConsoleColor.DarkRed;
-        public static ConsoleColor ExecuteCommandColor { get; set; } = ConsoleColor.DarkBlue;
+        public static ConsoleColor ExecuteColor { get; set; } = ConsoleColor.DarkBlue;
         public static ConsoleColor InfoColor { get; set; } = ConsoleColor.DarkYellow;
-        public static ConsoleColor NotImportantColor { get; set; } = ConsoleColor.DarkGray;
         public static ConsoleColor NeutralColor { get; set; } = ConsoleColor.White;
         public static ConsoleColor NewMessageColor { get; set; } = ConsoleColor.DarkGreen;
+        public static ConsoleColor NotImportantColor { get; set; } = ConsoleColor.DarkGray;
 
-        internal static void BotStartup(string text)
+        public static void BotStartup(string text)
         {
             ByPattern("Startup", text, InfoColor);
         }
 
-        internal static void MessageRecieved(string messageText, User? user)
+        public static void ScreenshotSending()
+        {
+            ByPattern("Send screenshot", "Sending screenshot", ExecuteColor);
+        }
+
+        public static void MessageRecieved(string messageText, User? user)
         {
             NewMessage(messageText, user, "Message recieved", NewMessageColor);
         }
 
-        internal static void MessageSkipped(string messageText, User? user)
+        public static void MessageSkipped(string messageText, User? user)
         {
             NewMessage(messageText, user, "Message skipped", NotImportantColor);
         }
@@ -35,27 +41,29 @@ namespace RemoteControlBot
             ByPattern(eventText, $"\"{messageText}\" from {messageFrom}", color);
         }
 
-        internal static void UnhandledException(Exception exception)
+        public static void UnhandledException(Exception exception)
         {
-            ByPattern("Unhandled exception", exception.Message, ExceptionColor);
+            var exceptionData = $"{exception.GetType()}:\n{exception.Message}";
+
+            ByPattern("Unhandled exception", exceptionData, ExceptionColor, true);
         }
 
-        internal static void UndefinedCommand(string commandText)
+        public static void UndefinedCommand(string commandText)
         {
             ByPattern("Undefined command skipped", commandText, NotImportantColor);
         }
 
-        internal static void KeyboardRequest(Command command)
+        public static void KeyboardRequest(Command command)
         {
             ByPattern("Keyboard request", command.ToString(), NotImportantColor);
         }
 
-        internal static void CommandExecute(Command command)
+        public static void CommandExecute(Command command)
         {
-            ByPattern("Execute", command.ToString(), ExecuteCommandColor);
+            ByPattern("Execute", command.ToString(), ExecuteColor);
         }
 
-        internal static void UpdateExecute(Command command, string commandText)
+        public static void UpdateExecute(Command command, string commandText)
         {
             if (command.Type is CommandType.Transfer)
                 KeyboardRequest(command);
@@ -68,10 +76,15 @@ namespace RemoteControlBot
             }
         }
 
-        private static void ByPattern(string eventType, string eventText, ConsoleColor eventColor)
+        public static void LogToFile(StreamWriter stream, DateTime now, string eventType, string eventText)
         {
-            var now = DateTimeManager.GetCurrentDateTime();
+            var logString = $"({now})\n[ {eventType} ]\n{eventText}\n";
 
+            stream.WriteLine(logString);
+        }
+
+        private static void LogToConsole(DateTime now, string eventType, string eventText, ConsoleColor eventColor)
+        {
             WriteLine($"({now})");
             SetForegroundColor(eventColor);
             WriteLine($"[ {eventType} ]");
@@ -79,6 +92,22 @@ namespace RemoteControlBot
             WriteLine($"{eventText}");
 
             WriteLine();
+        }
+
+        private static void ByPattern(string eventType, string eventText, ConsoleColor eventColor, bool isException = false)
+        {
+            var now = DateTimeManager.GetCurrentDateTime();
+
+            if (LOG_TO_CONSOLE)
+                LogToConsole(now, eventType, eventText, eventColor);
+
+            if (LOG_TO_FILE)
+            {
+                var filename = isException ? BUG_REPORT_FILENAME : LOG_FILENAME;
+                using var stream = new StreamWriter(filename, true, Encoding.UTF8);
+
+                LogToFile(stream, now, eventType, eventText);
+            }
         }
 
         private static void SetForegroundColor(ConsoleColor color)

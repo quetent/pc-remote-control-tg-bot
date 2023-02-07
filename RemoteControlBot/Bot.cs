@@ -103,25 +103,20 @@ namespace RemoteControlBot
                                                          Exception exception,
                                                          CancellationToken cancellationToken)
         {
-            HandleManagedException(exception);
-
-            if (ENABLE_LOGGING)
-                Log.UnhandledException(exception);
-
-            return Task.CompletedTask;
-        }
-
-        private static void HandleManagedException(Exception exception)
-        {
             if (exception is AppRestartRequested)
                 App.Restart(StartUpCode.RestartRequested);
             else if (exception is AppExitRequested)
                 App.Exit();
             else
             {
-                // todo
-                App.Restart(StartUpCode.Crashed);
+                if (ENABLE_LOGGING)
+                    Log.UnhandledException(exception);
+
+                if (AUTO_RESTART_IF_CRASHED)
+                    App.Restart(StartUpCode.Crashed);
             }
+
+            return Task.CompletedTask;
         }
 
         private async Task HandleCommandExecuted(Command command, long commandSenderId, CancellationToken cancellationToken)
@@ -130,7 +125,12 @@ namespace RemoteControlBot
             {
                 case CommandType.Screen:
                     if (command.Info is CommandInfo.Screenshot)
+                    {
+                        if (ENABLE_LOGGING)
+                            Log.ScreenshotSending();
+
                         await SendScreenshotAsync(commandSenderId, cancellationToken);
+                    }
                     break;
                 default:
                     break;

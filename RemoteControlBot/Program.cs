@@ -5,8 +5,6 @@ namespace RemoteControlBot
 {
     internal class Program
     {
-        private const int FINALIZE_WAITING_TIME_MS = 1000;
-
         static async Task Main(string[] args)
         {
             SetConsoleTitle();
