@@ -18,23 +18,29 @@ namespace RemoteControlBot
                 StartUpCode.Null => GetBotStartedAnswer(),
                 StartUpCode.Crashed => GetAppCrashedAnwer(),
                 StartUpCode.RestartRequested => GetAppRestartedAnswer(),
+                StartUpCode.ConnectionLost => GetAppConnectionLostAnswer(),
                 _ => Throw.NotImplemented<string>($"{nameof(StartUpAnswerGenerator)} -> {_startUpCode}")
             };
         }
 
-        private string GetBotStartedAnswer()
+        private static string GetBotStartedAnswer()
         {
             return "Bot was started";
         }
 
-        private string GetAppCrashedAnwer()
+        private static string GetAppCrashedAnwer()
         {
             return "Bot was restarted due unhandled error";
         }
 
-        private string GetAppRestartedAnswer()
+        private static string GetAppRestartedAnswer()
         {
             return "Bot was restarted";
+        }
+
+        private static string GetAppConnectionLostAnswer()
+        {
+            return "Bot was restarted due connection lost";
         }
     }
 

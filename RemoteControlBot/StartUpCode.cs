@@ -4,7 +4,8 @@
     {
         Null,
         Crashed,
-        RestartRequested
+        RestartRequested,
+        ConnectionLost
     }
 
     public class StartUpCodeUtilities
@@ -24,6 +25,7 @@
                         "Null" => StartUpCode.Null,
                         "Crashed" => StartUpCode.Crashed,
                         "RestartRequested" => StartUpCode.RestartRequested,
+                        "ConnectionLost" => StartUpCode.ConnectionLost,
                         _ => Throw.NotImplemented<StartUpCode>($"{typeof(StartUpCodeUtilities)} -> {argData[1]}")
                     };
 

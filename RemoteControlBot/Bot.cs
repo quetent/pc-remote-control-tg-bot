@@ -1,4 +1,5 @@
 ﻿using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
@@ -107,16 +108,29 @@ namespace RemoteControlBot
                 App.Restart(StartUpCode.RestartRequested);
             else if (exception is AppExitRequested)
                 App.Exit();
-            else
-            {
-                if (ENABLE_LOGGING)
-                    Log.UnhandledException(exception);
+            else if (exception is RequestException)
+                await HandleConnectionLost();
 
-                if (AUTO_RESTART_IF_CRASHED)
-                    App.Restart(StartUpCode.Crashed);
-            }
+            if (ENABLE_LOGGING)
+                Log.UnhandledException(exception);
+
+            if (AUTO_RESTART_IF_CRASHED)
+                App.Restart(StartUpCode.Crashed);
 
             return Task.CompletedTask;
+        }
+
+        private static async Task HandleConnectionLost()
+        {
+            if (AUTO_RESTART_IF_NO_INTERNET)
+            {
+                await HttpClientUtilities.WaitForInternetConnectionAsync(
+                        INTERNET_CHECKING_URL,
+                        3000,
+                        1000);
+
+                App.Restart(StartUpCode.ConnectionLost);
+            }
         }
 
         private async Task HandleCommandExecuted(Command command, long commandSenderId, CancellationToken cancellationToken)
