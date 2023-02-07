@@ -210,7 +210,7 @@ namespace RemoteControlBot
 
         private static IReplyMarkup GetMarkup(Command command)
         {
-            return MarkupGenerator.GetKeyboard(command);
+            return new MarkupGenerator(command).GetMarkup();
         }
     }
 }

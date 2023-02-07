@@ -18,7 +18,7 @@ namespace RemoteControlBot
                 StartUpCode.Null => GetBotStartedAnswer(),
                 StartUpCode.Crashed => GetAppCrashedAnwer(),
                 StartUpCode.RestartRequested => GetAppRestartedAnswer(),
-                _ => Throw.NotImplemented<string>($"{typeof(StartUpAnswerGenerator)} -> {_startUpCode}")
+                _ => Throw.NotImplemented<string>($"{nameof(StartUpAnswerGenerator)} -> {_startUpCode}")
             };
         }
 

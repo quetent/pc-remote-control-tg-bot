@@ -24,7 +24,7 @@ namespace RemoteControlBot
         public static readonly string[] SCREEN_LABELS = { SCREENSHOT };
         public static readonly string[] PROCESS_LABELS = { KILL };
 
-        public static ReplyKeyboardMarkup MainMenu = new(
+        public static readonly ReplyKeyboardMarkup MainMenu = new(
             new[]
             {
                 new[]
@@ -41,7 +41,7 @@ namespace RemoteControlBot
                 }
             });
 
-        public static ReplyKeyboardMarkup AdminPanel = new(
+        public static readonly ReplyKeyboardMarkup AdminPanel = new(
             new[]
             {
                 new[]
@@ -58,7 +58,7 @@ namespace RemoteControlBot
                 }
             });
 
-        public static ReplyKeyboardMarkup Power = new(
+        public static readonly ReplyKeyboardMarkup Power = new(
             new[]
             {
                 new[]
@@ -75,7 +75,7 @@ namespace RemoteControlBot
                 }
             });
 
-        public static ReplyKeyboardMarkup Volume = new(
+        public static readonly ReplyKeyboardMarkup Volume = new(
             new[]
             {
                 new[]
@@ -100,7 +100,7 @@ namespace RemoteControlBot
                 }
             });
 
-        public static ReplyKeyboardMarkup Screen = new(
+        public static readonly ReplyKeyboardMarkup Screen = new(
             new[]
             {
                 new[]
@@ -113,7 +113,7 @@ namespace RemoteControlBot
                 }
             });
 
-        public static ReplyKeyboardMarkup Process = new(
+        public static readonly ReplyKeyboardMarkup Process = new(
             new[]
             {
                 new[]

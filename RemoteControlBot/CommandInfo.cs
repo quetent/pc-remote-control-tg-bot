@@ -8,7 +8,7 @@
         BotRestart,
 
         ToMainMenu,
-        ToControl,
+        ToAdminPanel,
         ToPower,
         ToVolume,
         ToScreen,

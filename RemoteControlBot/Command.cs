@@ -118,7 +118,7 @@ namespace RemoteControlBot
             return commandText switch
             {
                 BACK_LABEL => CommandInfo.ToMainMenu,
-                ADMIN_PANEL_LABEL => CommandInfo.ToControl,
+                ADMIN_PANEL_LABEL => CommandInfo.ToAdminPanel,
                 POWER_LABEL => CommandInfo.ToPower,
                 VOLUME_LABEL => CommandInfo.ToVolume,
                 SCREEN_LABEL => CommandInfo.ToScreen,

@@ -2,71 +2,136 @@
 
 namespace RemoteControlBot
 {
-    internal class MarkupGenerator
+    public class MarkupGenerator : IMarkupGetable
     {
-        internal static IReplyMarkup GetKeyboard(Command command)
+        private readonly Command _command;
+
+        public MarkupGenerator(Command command)
         {
-            return command.Type switch
-            {
-                CommandType.Transfer => GetTransferKeyboard(command),
-                CommandType.Power => GetPowerKeyboard(),
-                CommandType.Volume => GetVolumeKeyboard(),
-                CommandType.Screen => GetScreenKeyboard(),
-                CommandType.Process => GetProcessKeyboard(),
-                _ => GetMainMenuKeyboard()
-            };
+            _command = command;
         }
 
-        private static IReplyMarkup GetTransferKeyboard(Command command)
+        public IReplyMarkup GetMarkup()
         {
-            Throw.IfIncorrectCommandType(command, CommandType.Transfer);
-
-            return command.Info switch
+            return _command.Type switch
             {
-                CommandInfo.ToMainMenu => GetMainMenuKeyboard(),
-                CommandInfo.ToControl => GetControlKeyboard(),
-                CommandInfo.ToPower => GetPowerKeyboard(),
-                CommandInfo.ToVolume => GetVolumeKeyboard(),
-                CommandInfo.ToScreen => GetScreenKeyboard(),
-                CommandInfo.ToProcess => GetProcessKeyboard(),
-                CommandInfo.ToKillList => GetKillListKeyboard(),
-                _ => Throw.NotImplemented<IReplyMarkup>(command.ToString())
+                CommandType.Transfer => new TransferMarkup(_command).GetMarkup(),
+                CommandType.Power => new PowerMarkup().GetMarkup(),
+                CommandType.Volume => new VolumeMarkup().GetMarkup(),
+                CommandType.Screen => new ScreenMarkup().GetMarkup(),
+                CommandType.Process => new ProcessMarkup().GetMarkup(),
+                _ => new MainMenuMarkup().GetMarkup()
             };
+        }
+    }
+
+    public class MainMenuMarkup : IMarkupGetable
+    {
+        public IReplyMarkup GetMarkup()
+        {
+            return GetMainMenuKeyboard();
         }
 
         private static IReplyMarkup GetMainMenuKeyboard()
         {
             return Keyboard.MainMenu;
         }
+    }
 
-        private static IReplyMarkup GetControlKeyboard()
+    public class TransferMarkup : IMarkupGetable
+    {
+        private readonly Command _command;
+
+        public TransferMarkup(Command command)
+        {
+            Throw.IfIncorrectCommandType(command, CommandType.Transfer);
+
+            _command = command;
+        }
+
+        public IReplyMarkup GetMarkup()
+        {
+            return _command.Info switch
+            {
+                CommandInfo.ToMainMenu => new MainMenuMarkup().GetMarkup(),
+                CommandInfo.ToAdminPanel => new AdminPanelMarkup().GetMarkup(),
+                CommandInfo.ToPower => new PowerMarkup().GetMarkup(),
+                CommandInfo.ToVolume => new VolumeMarkup().GetMarkup(),
+                CommandInfo.ToScreen => new ScreenMarkup().GetMarkup(),
+                CommandInfo.ToProcess => new ProcessMarkup().GetMarkup(),
+                CommandInfo.ToKillList => GetKillListKeyboard(),
+                _ => Throw.NotImplemented<IReplyMarkup>($"{nameof(TransferMarkup)} -> {_command}")
+            };
+        }
+
+        private static IReplyMarkup GetKillListKeyboard()
+        {
+            return Keyboard.GenerateIndexedKeyboard(ProcessManager.VisibleProcesses.Count);
+        }
+    }
+
+    public class AdminPanelMarkup : IMarkupGetable
+    {
+        public IReplyMarkup GetMarkup()
+        {
+            return GetKeyboard();
+        }
+
+        private static IReplyMarkup GetKeyboard()
         {
             return Keyboard.AdminPanel;
+        }
+    }
+
+    public class PowerMarkup : IMarkupGetable
+    {
+        public IReplyMarkup GetMarkup()
+        {
+            return GetPowerKeyboard();
         }
 
         private static IReplyMarkup GetPowerKeyboard()
         {
             return Keyboard.Power;
         }
+    }
+
+    public class VolumeMarkup : IMarkupGetable
+    {
+        public IReplyMarkup GetMarkup()
+        {
+            return GetVolumeKeyboard();
+        }
 
         private static IReplyMarkup GetVolumeKeyboard()
         {
             return Keyboard.Volume;
+        }
+    }
+
+    public class ScreenMarkup : IMarkupGetable
+    {
+        public IReplyMarkup GetMarkup()
+        {
+            return GetScreenKeyboard();
         }
 
         private static IReplyMarkup GetScreenKeyboard()
         {
             return Keyboard.Screen;
         }
+    }
+
+    public class ProcessMarkup : IMarkupGetable
+    {
+        public IReplyMarkup GetMarkup()
+        {
+            return GetProcessKeyboard();
+        }
 
         private static IReplyMarkup GetProcessKeyboard()
         {
             return Keyboard.Process;
-        }
-
-        private static IReplyMarkup GetKillListKeyboard()
-        {
-            return Keyboard.GenerateIndexedKeyboard(ProcessManager.VisibleProcesses.Count);
         }
     }
 }

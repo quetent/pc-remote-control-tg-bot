@@ -1,6 +1,6 @@
 ﻿namespace RemoteControlBot
 {
-    interface IExecutable
+    public interface IExecutable
     {
         void Execute();
     }

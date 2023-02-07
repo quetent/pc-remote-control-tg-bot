@@ -1,6 +1,6 @@
 ﻿namespace RemoteControlBot
 {
-    interface IAsyncExecutable
+    public interface IAsyncExecutable
     {
         public Task ExecuteAsync(CancellationToken cancellationToken);
     }
