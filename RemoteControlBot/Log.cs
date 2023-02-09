@@ -18,9 +18,39 @@ namespace RemoteControlBot
             ByPattern("Startup", text, InfoColor);
         }
 
+        public static void AppRestart()
+        {
+            ByPattern("Restart", "Restarting app", InfoColor);
+        }
+
+        public static void AppExit()
+        {
+            ByPattern("Exit", "Exiting app", InfoColor);
+        }
+
+        public static void ConnectionLost()
+        {
+            ByPattern("Connection", "Internet connection lost", ExceptionColor);
+        }
+
+        public static void NoConnection()
+        {
+            ByPattern("Connection", "No internet connection", InfoColor);
+        }
+
+        public static void WaitingForInternetConnection()
+        {
+            ByPattern("Connection", "Waiting for internet connection", InfoColor);
+        }
+
+        public static void ConnectionRestored()
+        {
+            ByPattern("Connection", "Internet connection restored", InfoColor);
+        }
+
         public static void ScreenshotSending()
         {
-            ByPattern("Send screenshot", "Sending screenshot", ExecuteColor);
+            ByPattern("Screenshot", "Sending screenshot", ExecuteColor);
         }
 
         public static void MessageRecieved(string messageText, User? user)

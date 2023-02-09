@@ -1,4 +1,5 @@
-﻿using Telegram.Bot.Polling;
+﻿using Telegram.Bot.Exceptions;
+using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
 
 namespace RemoteControlBot
@@ -17,7 +18,27 @@ namespace RemoteControlBot
             var receiverOptions = new ReceiverOptions() { AllowedUpdates = new[] { UpdateType.Message } };
 
             var bot = new Bot(OWNER_ID, TOKEN, receiverOptions, cts.Token);
-            await bot.StartAsync(startUpCode);
+
+            while (true)
+            {
+                try
+                {
+                    await bot.StartAsync(startUpCode);
+                    break;
+                }
+                catch (RequestException)
+                {
+                    if (ENABLE_LOGGING)
+                        Log.NoConnection();
+
+                    await HttpClientUtilities.WaitForInternetConnectionAsync(
+                            INTERNET_CHECKING_URL,
+                            5000, 3000);
+
+                    if (ENABLE_LOGGING)
+                        Log.ConnectionRestored();
+                }
+            }
 
             WaitKeyboard();
         }

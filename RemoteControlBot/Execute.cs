@@ -8,7 +8,7 @@ namespace RemoteControlBot
 
         public static Command LastExecutedCommand { get; private set; }
 
-        public delegate Task CommandHandler(Command command, long commandSenderId, CancellationToken cancellation);
+        public delegate Task CommandHandler(Command command, CancellationToken cancellation);
         public static event CommandHandler? CommandExecuted;
 
         public Execute(Command command)
@@ -35,7 +35,7 @@ namespace RemoteControlBot
             await task;
 
             SetLastExecutedCommand(_command);
-            CommandExecuted?.Invoke(_command, _command.SenderId, cancellationToken);
+            CommandExecuted?.Invoke(_command, cancellationToken);
         }
 
         private static void SetLastExecutedCommand(Command command)

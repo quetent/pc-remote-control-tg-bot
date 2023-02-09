@@ -105,9 +105,19 @@ namespace RemoteControlBot
                                                          CancellationToken cancellationToken)
         {
             if (exception is AppRestartRequested)
+            {
+                if (ENABLE_LOGGING)
+                    Log.AppRestart();
+
                 App.Restart(StartUpCode.RestartRequested);
+            }
             else if (exception is AppExitRequested)
+            {
+                if (ENABLE_LOGGING)
+                    Log.AppExit();
+
                 App.Exit();
+            }
             else if (exception is RequestException)
                 await HandleConnectionLost();
 
@@ -115,25 +125,42 @@ namespace RemoteControlBot
                 Log.UnhandledException(exception);
 
             if (AUTO_RESTART_IF_CRASHED)
+            {
+                if (ENABLE_LOGGING)
+                    Log.AppRestart();
+
                 App.Restart(StartUpCode.Crashed);
+            }
 
             return Task.CompletedTask;
         }
 
         private static async Task HandleConnectionLost()
         {
-            if (AUTO_RESTART_IF_NO_INTERNET)
+            if (ENABLE_LOGGING)
+                Log.ConnectionLost();
+
+            if (AUTO_RESTART_IF_CONNECTION_LOST)
             {
+                if (ENABLE_LOGGING)
+                    Log.WaitingForInternetConnection();
+
                 await HttpClientUtilities.WaitForInternetConnectionAsync(
                         INTERNET_CHECKING_URL,
-                        3000,
-                        1000);
+                        5000,
+                        3000);
+
+                if (ENABLE_LOGGING)
+                {
+                    Log.ConnectionRestored();
+                    Log.AppRestart();
+                }
 
                 App.Restart(StartUpCode.ConnectionLost);
             }
         }
 
-        private async Task HandleCommandExecuted(Command command, long commandSenderId, CancellationToken cancellationToken)
+        private async Task HandleCommandExecuted(Command command, CancellationToken cancellationToken)
         {
             switch (command.Type)
             {
@@ -143,7 +170,7 @@ namespace RemoteControlBot
                         if (ENABLE_LOGGING)
                             Log.ScreenshotSending();
 
-                        await SendScreenshotAsync(commandSenderId, cancellationToken);
+                        await SendScreenshotAsync(command.SenderId, cancellationToken);
                     }
                     break;
                 default:
