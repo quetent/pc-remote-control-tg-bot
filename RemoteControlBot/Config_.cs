@@ -14,10 +14,12 @@ namespace RemoteControlBot
         internal const bool LOG_TO_CONSOLE = default;
         internal const bool LOG_TO_FILE = default;
 
+        internal const bool COMPILE_BACKGROUND = default;
+
         internal const string INTERNET_CHECKING_URL = default;
 
-        internal const string BOT_NAME = default;
         internal const string TOKEN = default;
+        internal const string BOT_NAME = default;
 
         internal const string SCREENSHOT_SAVE_DIR = default;
         internal const string SCREENSHOT_FILENAME = default;

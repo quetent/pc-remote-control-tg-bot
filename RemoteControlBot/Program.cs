@@ -8,7 +8,8 @@ namespace RemoteControlBot
     {
         static async Task Main(string[] args)
         {
-            SetConsoleTitle();
+            if (!COMPILE_BACKGROUND)
+                SetConsoleTitle();
 
             var startUpCode = StartUpCodeUtilities.ParseStartUpCode(args);
 
@@ -40,7 +41,7 @@ namespace RemoteControlBot
                 }
             }
 
-            WaitKeyboard();
+            Wait();
         }
 
         private static void WaitForPreviousAppFinalize(StartUpCode startUpCode, int milliseconds)
@@ -49,9 +50,13 @@ namespace RemoteControlBot
                 Thread.Sleep(milliseconds);
         }
 
-        private static void WaitKeyboard()
+        private static void Wait()
         {
-            Console.ReadLine();
+            if (COMPILE_BACKGROUND)
+                while (true)
+                    Thread.Sleep((int)10e6);
+            else
+                Console.ReadLine();
         }
 
         private static void SetConsoleTitle()
