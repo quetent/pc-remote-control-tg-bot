@@ -29,6 +29,9 @@ namespace RemoteControlBot
                 }
                 catch (RequestException)
                 {
+                    if (!WAIT_INTERNET_TO_START)
+                        throw;
+
                     if (ENABLE_LOGGING)
                         Log.NoConnection();
 

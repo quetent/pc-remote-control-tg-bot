@@ -14,6 +14,8 @@ namespace RemoteControlBot
         internal const bool LOG_TO_CONSOLE = default;
         internal const bool LOG_TO_FILE = default;
 
+        internal const bool WAIT_INTERNET_TO_START = default;
+
         internal const bool COMPILE_BACKGROUND = default;
 
         internal const string INTERNET_CHECKING_URL = default;
