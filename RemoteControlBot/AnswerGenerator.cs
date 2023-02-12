@@ -1,4 +1,5 @@
-﻿using static RemoteControlBot.BotFunctions;
+﻿using System.Text;
+using static RemoteControlBot.BotFunctions;
 
 namespace RemoteControlBot
 {
@@ -110,18 +111,18 @@ namespace RemoteControlBot
         private static string GetProcessesListAnswer()
         {
             var counter = 1;
-            var result = string.Empty;
+            var result = new StringBuilder();
 
             foreach (var process in ProcessManager.VisibleProcesses)
             {
-                result += $"{counter}. {process.ProcessName}\n";
+                result.AppendLine($"{counter}. {process.ProcessName}");
                 counter++;
             }
 
-            if (result == string.Empty)
-                result = GetNoVisibleProccessesFoundAnswer();
+            if (result.ToString() == string.Empty)
+                result.Append(GetNoVisibleProccessesFoundAnswer());
 
-            return result;
+            return result.ToString();
         }
 
         private static string GetNoVisibleProccessesFoundAnswer()
