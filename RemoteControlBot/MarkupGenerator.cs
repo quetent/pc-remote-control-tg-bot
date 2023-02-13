@@ -66,7 +66,7 @@ namespace RemoteControlBot
 
         private static IReplyMarkup GetKillListKeyboard()
         {
-            return Keyboard.GenerateIndexedKeyboard(ProcessManager.VisibleProcesses.Count);
+            return Keyboard.GenerateIndexedKeyboard(ProcessManager.VisibleProcessesCount, Keyboard.UPDATE_KILL_LIST);
         }
     }
 

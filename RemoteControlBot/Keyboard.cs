@@ -5,7 +5,7 @@ namespace RemoteControlBot
 {
     public static class Keyboard
     {
-        public const int ROW_LENGTH = 5;
+        public const int MAX_ROW_LENGTH = 5;
 
         public const string POWER_LABEL = "Power";
         public const string VOLUME_LABEL = "Volume";
@@ -13,7 +13,7 @@ namespace RemoteControlBot
         public const string PROCESS_LABEL = "Process";
         public const string ADMIN_PANEL_LABEL = "Admin panel";
 
-        public const string UPDATE_KILL_LIST = "Update";
+        public const string UPDATE_KILL_LIST = "Update kill list";
 
         public const string BACK_LABEL = "< Back >";
 
@@ -126,14 +126,14 @@ namespace RemoteControlBot
                 }
             });
 
-        public static ReplyKeyboardMarkup GenerateIndexedKeyboard(int index)
+        public static ReplyKeyboardMarkup GenerateIndexedKeyboard(int index, string updateButtonLabel)
         {
             var buttonValue = 1;
             var buttons = new List<List<KeyboardButton>>();
             var (height, width) = GetKeyboardSize(index);
 
             buttons.Add(new List<KeyboardButton> { new KeyboardButton(BACK_LABEL) });
-            buttons.Add(new List<KeyboardButton> { new KeyboardButton(UPDATE_KILL_LIST) });
+            buttons.Add(new List<KeyboardButton> { new KeyboardButton(updateButtonLabel) });
 
             for (int i = 0; i < height; i++)
             {
@@ -159,7 +159,7 @@ namespace RemoteControlBot
             var minRowLength = GetMinRowLength(index);
             int height = 0, width = 0;
 
-            for (int i = minRowLength; i <= ROW_LENGTH; i++)
+            for (int i = minRowLength; i <= MAX_ROW_LENGTH; i++)
             {
                 width = i;
                 var remains = index % width;

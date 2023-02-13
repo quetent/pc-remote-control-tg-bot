@@ -1,8 +1,8 @@
 ﻿namespace RemoteControlBot
 {
-    internal static class PathManager
+    public static class PathManager
     {
-        internal static string GetScreenshotAbsolutePath()
+        public static string GetScreenshotAbsolutePath()
         {
             var filename = $"{SCREENSHOT_FILENAME}.{SCREENSHOT_FORMAT.ToString().ToLowerInvariant()}";
 

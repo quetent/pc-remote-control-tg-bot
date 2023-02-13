@@ -232,13 +232,10 @@ namespace RemoteControlBot
 
         private static void DoAndSaveScreenshot(string filepath, ImageFormat imageFormat)
         {
-            var size = ScreenManager.GetMonitorSize();
+            var size = ScreenManager.GetPrimaryScreenSize();
             using var screenshot = ScreenManager.DoScreenshot(size);
 
-            var fileFormat = imageFormat;
-            var fileFormatAsString = fileFormat.ToString().ToLowerInvariant();
-
-            ScreenManager.SaveScreenshot(screenshot, fileFormat, filepath);
+            ScreenManager.SaveScreenshot(screenshot, imageFormat, filepath);
         }
     }
 

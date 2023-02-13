@@ -1,11 +1,16 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Management;
+using System.Windows.Forms;
 
 namespace RemoteControlBot
 {
     public static class ScreenManager
     {
+        static ScreenManager()
+        {
+            NativeMethods.SetAppDPIAware();
+        }
+
         public static Bitmap DoScreenshot(Size size)
         {
             var bitmap = new Bitmap(size.Width, size.Height);
@@ -22,28 +27,9 @@ namespace RemoteControlBot
             bitmap.Save(filepath, format);
         }
 
-        public static Size GetMonitorSize()
+        public static Size GetPrimaryScreenSize()
         {
-            uint width = 0, height = 0;
-
-            var query = "SELECT * FROM Win32_VideoController";
-
-            using (var wmiSearcher = new ManagementObjectSearcher(query))
-            {
-                foreach (var videoController in wmiSearcher.Get())
-                {
-                    var horizontalRes = videoController["CurrentHorizontalResolution"];
-                    var verticalRes = videoController["CurrentVerticalResolution"];
-
-                    if (horizontalRes is not null && verticalRes is not null)
-                    {
-                        width = (uint)horizontalRes;
-                        height = (uint)verticalRes;
-                    }
-                }
-            }
-
-            return new Size((int)width, (int)height);
+            return new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         }
     }
 }
