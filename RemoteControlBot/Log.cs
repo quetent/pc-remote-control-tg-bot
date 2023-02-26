@@ -15,7 +15,7 @@ namespace RemoteControlBot
 
         public static void If(Func<bool> condition, Action logMethod)
         {
-            if (condition())
+            if (condition.Invoke())
                 logMethod.Invoke();
         }
 

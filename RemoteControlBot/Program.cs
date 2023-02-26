@@ -8,8 +8,7 @@ namespace RemoteControlBot
     {
         static async Task Main(string[] args)
         {
-            if (!COMPILE_BACKGROUND)
-                SetConsoleTitle();
+            await Execute.ExecuteIfAsync(() => !COMPILE_BACKGROUND, () => SetConsoleTitle());
 
             var startUpCode = StartUpCodeUtilities.ParseStartUpCode(args);
 
@@ -27,24 +26,21 @@ namespace RemoteControlBot
                     await bot.StartAsync(startUpCode);
                     break;
                 }
-                catch (RequestException)
+                catch (RequestException e)
                 {
-                    if (!WAIT_INTERNET_TO_START)
-                        throw;
+                    await Execute.ExecuteIfAsync(() => !WAIT_INTERNET_TO_START, () => throw new RequestException(e.Message));
 
-                    if (ENABLE_LOGGING)
-                        Log.NoConnection();
+                    Log.If(() => ENABLE_LOGGING, () => Log.NoConnection());
 
                     await HttpClientUtilities.WaitForInternetConnectionAsync(
                             INTERNET_CHECKING_URL,
                             5000, 3000);
 
-                    if (ENABLE_LOGGING)
-                        Log.ConnectionRestored();
+                    Log.If(() => ENABLE_LOGGING, () => Log.ConnectionRestored());
                 }
             }
 
-            Wait();
+            await Wait();
         }
 
         private static void WaitForPreviousAppFinalize(StartUpCode startUpCode, int milliseconds)
@@ -53,13 +49,15 @@ namespace RemoteControlBot
                 Thread.Sleep(milliseconds);
         }
 
-        private static void Wait()
+        private static async Task Wait()
         {
-            if (COMPILE_BACKGROUND)
+            await Execute.ExecuteIfAsync(() => COMPILE_BACKGROUND, () =>
+            {
                 while (true)
                     Thread.Sleep((int)10e6);
-            else
-                Console.ReadLine();
+            });
+
+            Console.ReadLine();
         }
 
         private static void SetConsoleTitle()

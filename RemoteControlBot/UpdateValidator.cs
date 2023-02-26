@@ -4,7 +4,7 @@ namespace RemoteControlBot
 {
     public static class UpdateValidator
     {
-        public static bool IsSequenceValid(IEnumerable<bool> sequence)
+        public static bool IsValid(params bool[] sequence)
         {
             return sequence.All(x => x);
         }

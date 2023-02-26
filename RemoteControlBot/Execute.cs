@@ -16,6 +16,12 @@ namespace RemoteControlBot
             _command = command;
         }
 
+        public static async Task ExecuteIfAsync(Func<bool> condition, Action instructions)
+        {
+            if (condition.Invoke())
+                await Task.Run(() => instructions.Invoke());
+        }
+
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             Task task;
