@@ -13,6 +13,12 @@ namespace RemoteControlBot
         public static ConsoleColor NewMessageColor { get; set; } = ConsoleColor.DarkGreen;
         public static ConsoleColor NotImportantColor { get; set; } = ConsoleColor.DarkGray;
 
+        public static void If(Func<bool> condition, Action logMethod)
+        {
+            if (condition())
+                logMethod.Invoke();
+        }
+
         public static void BotStartup(string text)
         {
             ByPattern("Startup", text, InfoColor);
