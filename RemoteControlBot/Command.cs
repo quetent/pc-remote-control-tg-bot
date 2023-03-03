@@ -71,9 +71,10 @@ namespace RemoteControlBot
         {
             return MAIN_MENU_LABELS.Contains(commandText)
                 || commandText == BACK_LABEL
+                || commandText == SCREENSHOT
+                || commandText == UPDATE_SCREENS_LIST
                 || commandText == KILL
-                || commandText == UPDATE_KILL_LIST
-                || commandText == SCREENSHOT;
+                || commandText == UPDATE_KILL_LIST;
         }
 
         private static bool IsControl(string commandText)
@@ -127,6 +128,7 @@ namespace RemoteControlBot
                 SCREEN_LABEL => CommandInfo.ToScreen,
                 PROCESS_LABEL => CommandInfo.ToProcess,
                 SCREENSHOT => CommandInfo.ToScreensList,
+                UPDATE_SCREENS_LIST => CommandInfo.ToScreensList,
                 KILL => CommandInfo.ToKillList,
                 UPDATE_KILL_LIST => CommandInfo.ToKillList,
                 _ => Throw.NotImplemented<CommandInfo>(commandText)
