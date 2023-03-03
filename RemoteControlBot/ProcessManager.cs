@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace RemoteControlBot
@@ -13,7 +14,7 @@ namespace RemoteControlBot
         public static bool IsValidLastIndex { get; private set; }
 
         private static readonly List<Process> _visibleProcesses;
-        public static List<Process> VisibleProcesses => _visibleProcesses.Copy();
+        public static ReadOnlyCollection<Process> VisibleProcesses => _visibleProcesses.AsReadOnly();
 
         static ProcessManager()
         {

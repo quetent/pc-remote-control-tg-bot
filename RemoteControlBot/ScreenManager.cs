@@ -11,7 +11,7 @@ namespace RemoteControlBot
         public static bool IsValidLastIndex { get; private set; }
 
         private static readonly List<Screen> _visibleScreens;
-        public static List<Screen> VisibleScreens => _visibleScreens.Copy();
+        public static IReadOnlyCollection<Screen> VisibleScreens => _visibleScreens.AsReadOnly();
 
         static ScreenManager()
         {

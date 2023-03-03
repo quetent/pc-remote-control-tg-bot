@@ -1,4 +1,5 @@
-﻿using Telegram.Bot.Types.ReplyMarkups;
+﻿using System.Collections.ObjectModel;
+using Telegram.Bot.Types.ReplyMarkups;
 using static RemoteControlBot.BotFunctions;
 
 namespace RemoteControlBot
@@ -18,12 +19,18 @@ namespace RemoteControlBot
 
         public const string BACK_LABEL = "< Back >";
 
-        public static readonly string[] MAIN_MENU_LABELS = { POWER_LABEL, ADMIN_PANEL_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL };
-        public static readonly string[] ADMIN_PANEL_LABELS = { BOT_TURN_OFF, BOT_RESTART };
-        public static readonly string[] POWER_LABELS = { SHUTDOWN, HIBERNATE, LOCK, RESTART };
-        public static readonly string[] VOLUME_LABELS = { LOUDER_5, QUIETER_5, LOUDER_10, QUIETER_10, MAX, MIN, MUTE, UNMUTE };
-        public static readonly string[] SCREEN_LABELS = { SCREENSHOT };
-        public static readonly string[] PROCESS_LABELS = { KILL };
+        public static readonly ReadOnlyCollection<string> MAIN_MENU_LABELS 
+            = new List<string>() { POWER_LABEL, ADMIN_PANEL_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL }.AsReadOnly();
+        public static readonly ReadOnlyCollection<string> ADMIN_PANEL_LABELS 
+            = new List<string>() { BOT_TURN_OFF, BOT_RESTART }.AsReadOnly();
+        public static readonly ReadOnlyCollection<string> POWER_LABELS 
+            = new List<string>() { SHUTDOWN, HIBERNATE, LOCK, RESTART }.AsReadOnly();
+        public static readonly ReadOnlyCollection<string> VOLUME_LABELS 
+            = new List<string>() { LOUDER_5, QUIETER_5, LOUDER_10, QUIETER_10, MAX, MIN, MUTE, UNMUTE }.AsReadOnly();
+        public static readonly ReadOnlyCollection<string> SCREEN_LABELS 
+            = new List<string>() { SCREENSHOT }.AsReadOnly();
+        public static readonly ReadOnlyCollection<string> PROCESS_LABELS 
+            = new List<string>() { KILL }.AsReadOnly();
 
         public static readonly ReplyKeyboardMarkup MainMenu = new(
             new[]
