@@ -290,7 +290,14 @@ namespace RemoteControlBot
 
         private static string GetScreenshotDoneAnswer()
         {
-            return "Screenshot was taken";
+            var answer = string.Empty;
+
+            if (ScreenManager.IsValidLastIndex)
+                answer = "Screenshot was taken";
+            else
+                answer = "Invalid index";
+
+            return answer;
         }
     }
 
