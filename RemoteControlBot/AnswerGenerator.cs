@@ -111,21 +111,12 @@ namespace RemoteControlBot
 
         private static string GetScreensListAnswer()
         {
-            var counter = 1;
-            var result = new StringBuilder();
-
-            foreach (var screen in ScreenManager.VisibleScreens)
+            return GenerateNumeratedAnswerFromCollection(ScreenManager.Screens, (screen, counter, sb) =>
             {
                 var primaryAddition = screen.Primary ? " (Primary)" : string.Empty;
-
-                result.AppendLine($"{counter}. {screen.Bounds.Width}x{screen.Bounds.Height}{primaryAddition}");
-                counter++;
-            }
-
-            if (result.ToString() == string.Empty)
-                result.Append(GetNoScreensFoundAnswer());
-
-            return result.ToString();
+                sb.AppendLine($"{counter}. {screen.Bounds.Width}x{screen.Bounds.Height}{primaryAddition}");
+            },
+            GetNoScreensFoundAnswer);
         }
 
         private static string GetNoScreensFoundAnswer()
@@ -135,24 +126,36 @@ namespace RemoteControlBot
 
         private static string GetProcessesListAnswer()
         {
-            var counter = 1;
-            var result = new StringBuilder();
-
-            foreach (var process in ProcessManager.VisibleProcesses)
+            return GenerateNumeratedAnswerFromCollection(ProcessManager.VisibleProcesses, (process, counter, sb) =>
             {
-                result.AppendLine($"{counter}. {process.ProcessName}");
-                counter++;
-            }
-
-            if (result.ToString() == string.Empty)
-                result.Append(GetNoVisibleProccessesFoundAnswer());
-
-            return result.ToString();
+                sb.AppendLine($"{counter}. {process.ProcessName}");
+            },
+            GetNoVisibleProccessesFoundAnswer);
         }
 
         private static string GetNoVisibleProccessesFoundAnswer()
         {
             return "No visible proccesses found";
+        }
+
+        private static string GenerateNumeratedAnswerFromCollection<T>(
+            IEnumerable<T> collection,
+            Action<T, int, StringBuilder> answerBuild,
+            Func<string>? emptyAnswerHandle)
+        {
+            var counter = 1;
+            var answer = new StringBuilder();
+
+            foreach (var item in collection)
+            {
+                answerBuild.Invoke(item, counter, answer);
+                counter++;
+            }
+
+            if (answer.ToString() == string.Empty)
+                answer.Append(emptyAnswerHandle?.Invoke());
+
+            return answer.ToString();
         }
     }
 

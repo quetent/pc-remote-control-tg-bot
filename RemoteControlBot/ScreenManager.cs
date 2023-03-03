@@ -6,33 +6,33 @@ namespace RemoteControlBot
 {
     public static class ScreenManager
     {
-        public static int ScreensCount => _Screens.Count;
+        public static int ScreensCount => _screens.Count;
 
         public static bool IsValidLastIndex { get; private set; }
 
-        private static readonly List<Screen> _Screens;
-        public static IReadOnlyCollection<Screen> VisibleScreens => _Screens.AsReadOnly();
+        private static readonly List<Screen> _screens;
+        public static IReadOnlyCollection<Screen> Screens => _screens.AsReadOnly();
 
         static ScreenManager()
         {
-            _Screens = new List<Screen>();
+            _screens = new List<Screen>();
         }
 
         public static void SetVisibleScreen()
         {
-            if (_Screens.Count != 0)
-                _Screens.Clear();
+            if (_screens.Count != 0)
+                _screens.Clear();
 
             foreach (var screen in Screen.AllScreens)
-                _Screens.Add(screen);
+                _screens.Add(screen);
         }
 
         public static bool TryDoScreenshotByIndex(int index, out Bitmap screenshot)
         {
-            if (index < _Screens.Count)
+            if (index < _screens.Count)
             {
                 IsValidLastIndex = true;
-                screenshot = DoScreenshot(_Screens[index]);
+                screenshot = DoScreenshot(_screens[index]);
             }
             else
             {

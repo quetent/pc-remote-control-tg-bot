@@ -19,17 +19,17 @@ namespace RemoteControlBot
 
         public const string BACK_LABEL = "< Back >";
 
-        public static readonly ReadOnlyCollection<string> MAIN_MENU_LABELS 
+        public static readonly ReadOnlyCollection<string> MAIN_MENU_LABELS
             = new List<string>() { POWER_LABEL, ADMIN_PANEL_LABEL, VOLUME_LABEL, SCREEN_LABEL, PROCESS_LABEL }.AsReadOnly();
-        public static readonly ReadOnlyCollection<string> ADMIN_PANEL_LABELS 
+        public static readonly ReadOnlyCollection<string> ADMIN_PANEL_LABELS
             = new List<string>() { BOT_TURN_OFF, BOT_RESTART }.AsReadOnly();
-        public static readonly ReadOnlyCollection<string> POWER_LABELS 
+        public static readonly ReadOnlyCollection<string> POWER_LABELS
             = new List<string>() { SHUTDOWN, HIBERNATE, LOCK, RESTART }.AsReadOnly();
-        public static readonly ReadOnlyCollection<string> VOLUME_LABELS 
+        public static readonly ReadOnlyCollection<string> VOLUME_LABELS
             = new List<string>() { LOUDER_5, QUIETER_5, LOUDER_10, QUIETER_10, MAX, MIN, MUTE, UNMUTE }.AsReadOnly();
-        public static readonly ReadOnlyCollection<string> SCREEN_LABELS 
+        public static readonly ReadOnlyCollection<string> SCREEN_LABELS
             = new List<string>() { SCREENSHOT }.AsReadOnly();
-        public static readonly ReadOnlyCollection<string> PROCESS_LABELS 
+        public static readonly ReadOnlyCollection<string> PROCESS_LABELS
             = new List<string>() { KILL }.AsReadOnly();
 
         public static readonly ReplyKeyboardMarkup MainMenu = new(
