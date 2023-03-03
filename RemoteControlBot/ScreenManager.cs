@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
@@ -11,7 +12,7 @@ namespace RemoteControlBot
         public static bool IsValidLastIndex { get; private set; }
 
         private static readonly List<Screen> _screens;
-        public static IReadOnlyCollection<Screen> Screens => _screens.AsReadOnly();
+        public static ReadOnlyCollection<Screen> Screens => _screens.AsReadOnly();
 
         static ScreenManager()
         {
