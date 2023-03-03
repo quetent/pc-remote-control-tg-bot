@@ -134,16 +134,18 @@ namespace RemoteControlBot
         {
             var now = DateTimeManager.GetCurrentDateTime();
 
-            if (LOG_TO_CONSOLE)
+            If(() => LOG_TO_CONSOLE, () =>
+            {
                 LogToConsole(now, eventType, eventText, eventColor);
+            });
 
-            if (LOG_TO_FILE)
+            If(() => LOG_TO_FILE, () =>
             {
                 var filename = isException ? BUG_REPORT_FILENAME : LOG_FILENAME;
                 using var stream = new StreamWriter(filename, true, Encoding.UTF8);
 
                 LogToFile(stream, now, eventType, eventText);
-            }
+            });
         }
 
         private static void SetForegroundColor(ConsoleColor color)

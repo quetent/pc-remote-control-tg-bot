@@ -13,6 +13,7 @@ namespace RemoteControlBot
         public const string PROCESS_LABEL = "Process";
         public const string ADMIN_PANEL_LABEL = "Admin panel";
 
+        public const string UPDATE_SCREENS_LIST = "Update screens list";
         public const string UPDATE_KILL_LIST = "Update kill list";
 
         public const string BACK_LABEL = "< Back >";

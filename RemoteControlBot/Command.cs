@@ -5,41 +5,43 @@ namespace RemoteControlBot
 {
     public readonly struct Command
     {
-        private readonly CommandType _type;
-        private readonly CommandInfo _info;
-        private readonly long _senderId;
-        private readonly string _rawText;
-
-        public CommandType Type => _type;
-        public CommandInfo Info => _info;
-        public long SenderId => _senderId;
-        public string RawText => _rawText;
+        public readonly CommandType Type;
+        public readonly CommandInfo Info;
+        public readonly long SenderId;
+        public readonly string RawText;
 
         public Command(string commandText, long senderId)
         {
-            _type = DefineCommandType(commandText);
-            _info = DefineCommandInfo(_type, commandText);
-            _senderId = senderId;
-            _rawText = commandText;
+            Type = DefineCommandType(commandText);
+            Info = DefineCommandInfo(Type, commandText);
+            SenderId = senderId;
+            RawText = commandText;
         }
 
         public Command(CommandType builderType, CommandInfo builderInfo, string commandText, long senderId)
         {
-            _type = builderType;
-            _info = builderInfo;
-            _senderId = senderId;
-            _rawText = commandText;
+            Type = builderType;
+            Info = builderInfo;
+            SenderId = senderId;
+            RawText = commandText;
         }
 
         public override string ToString()
         {
-            return $"{_type} -> {_info}";
+            return $"{Type} -> {Info}";
         }
 
-        internal static bool IsNumberForProccesManager(Command previousCommand, string messageText)
+        public static bool IsNumberForProccesManager(Command previousCommand, string messageText)
         {
             return previousCommand.Type is CommandType.Transfer
                 && previousCommand.Info is CommandInfo.ToKillList
+                && messageText.IsNumber();
+        }
+
+        public static bool IsNumberForScreenshotManager(Command previousCommand, string messageText)
+        {
+            return previousCommand.Type is CommandType.Transfer
+                && previousCommand.Info is CommandInfo.ToScreensList
                 && messageText.IsNumber();
         }
 
@@ -70,7 +72,8 @@ namespace RemoteControlBot
             return MAIN_MENU_LABELS.Contains(commandText)
                 || commandText == BACK_LABEL
                 || commandText == KILL
-                || commandText == UPDATE_KILL_LIST;
+                || commandText == UPDATE_KILL_LIST
+                || commandText == SCREENSHOT;
         }
 
         private static bool IsControl(string commandText)
@@ -123,6 +126,7 @@ namespace RemoteControlBot
                 VOLUME_LABEL => CommandInfo.ToVolume,
                 SCREEN_LABEL => CommandInfo.ToScreen,
                 PROCESS_LABEL => CommandInfo.ToProcess,
+                SCREENSHOT => CommandInfo.ToScreensList,
                 KILL => CommandInfo.ToKillList,
                 UPDATE_KILL_LIST => CommandInfo.ToKillList,
                 _ => Throw.NotImplemented<CommandInfo>(commandText)

@@ -143,7 +143,7 @@ namespace RemoteControlBot
             switch (command.Type)
             {
                 case CommandType.Screen:
-                    if (command.Info is CommandInfo.Screenshot)
+                    if (command.Info is CommandInfo.Screenshot && ScreenManager.IsValidLastIndex)
                     {
                         Log.If(() => ENABLE_LOGGING, () => Log.ScreenshotSending());
                         await SendScreenshotAsync(command.SenderId, cancellationToken);
@@ -189,6 +189,8 @@ namespace RemoteControlBot
 
             if (Command.IsNumberForProccesManager(previousCommand, messageText))
                 command = new Command(CommandType.Process, CommandInfo.Kill, messageText, senderId);
+            else if (Command.IsNumberForScreenshotManager(previousCommand, messageText))
+                command = new Command(CommandType.Screen, CommandInfo.Screenshot, messageText, senderId);
             else
                 command = new Command(messageText, senderId);
 

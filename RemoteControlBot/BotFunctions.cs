@@ -26,7 +26,7 @@
         #endregion
 
         #region Screen
-        public const string SCREENSHOT = "Screenshot primary screen";
+        public const string SCREENSHOT = "Screenshot";
         #endregion
 
         #region Process

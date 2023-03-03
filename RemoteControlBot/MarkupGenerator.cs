@@ -59,9 +59,15 @@ namespace RemoteControlBot
                 CommandInfo.ToVolume => new VolumeMarkup().GetMarkup(),
                 CommandInfo.ToScreen => new ScreenMarkup().GetMarkup(),
                 CommandInfo.ToProcess => new ProcessMarkup().GetMarkup(),
+                CommandInfo.ToScreensList => GetScreensListKeyboard(),
                 CommandInfo.ToKillList => GetKillListKeyboard(),
                 _ => Throw.NotImplemented<IReplyMarkup>($"{nameof(TransferMarkup)} -> {_command}")
             };
+        }
+
+        private static IReplyMarkup GetScreensListKeyboard()
+        {
+            return Keyboard.GenerateIndexedKeyboard(ScreenManager.VisibleScreensCount, Keyboard.UPDATE_SCREENS_LIST);
         }
 
         private static IReplyMarkup GetKillListKeyboard()

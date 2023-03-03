@@ -1,4 +1,5 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace RemoteControlBot
 {
@@ -8,8 +9,8 @@ namespace RemoteControlBot
 
         public static Command LastExecutedCommand { get; private set; }
 
-        public delegate Task CommandHandler(Command command, CancellationToken cancellation);
-        public static event CommandHandler? CommandExecuted;
+        public delegate Task CommandHandle(Command command, CancellationToken cancellation);
+        public static event CommandHandle? CommandExecuted;
 
         public Execute(Command command)
         {
@@ -67,6 +68,9 @@ namespace RemoteControlBot
             {
                 case CommandInfo.ToKillList:
                     ProcessManager.SetVisibleProcceses();
+                    break;
+                case CommandInfo.ToScreensList:
+                    ScreenManager.SetVisibleScreen();
                     break;
                 default:
                     break;
@@ -215,12 +219,14 @@ namespace RemoteControlBot
     public class ScreenExecute : IExecutable
     {
         private readonly CommandInfo _commandInfo;
+        private readonly string _commandText;
 
         public ScreenExecute(Command command)
         {
             Throw.IfIncorrectCommandType(command, CommandType.Screen);
 
             _commandInfo = command.Info;
+            _commandText = command.RawText;
         }
 
         public void Execute()
@@ -236,12 +242,10 @@ namespace RemoteControlBot
             }
         }
 
-        private static void DoAndSaveScreenshot(string filepath, ImageFormat imageFormat)
+        private void DoAndSaveScreenshot(string filepath, ImageFormat imageFormat)
         {
-            var size = ScreenManager.GetPrimaryScreenSize();
-            using var screenshot = ScreenManager.DoScreenshot(size);
-
-            ScreenManager.SaveScreenshot(screenshot, imageFormat, filepath);
+            if (ScreenManager.TryDoScreenshotByIndex(int.Parse(_commandText) - 1, out Bitmap screenshot))
+                ScreenManager.SaveScreenshot(screenshot, imageFormat, filepath);
         }
     }
 

@@ -14,6 +14,7 @@
         ToScreen,
         ToProcess,
 
+        ToScreensList,
         ToKillList,
 
         Shutdown,
@@ -32,6 +33,6 @@
 
         Screenshot,
 
-        Kill
+        Kill,
     }
 }
