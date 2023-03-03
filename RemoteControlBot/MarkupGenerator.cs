@@ -67,7 +67,7 @@ namespace RemoteControlBot
 
         private static IReplyMarkup GetScreensListKeyboard()
         {
-            return Keyboard.GenerateIndexedKeyboard(ScreenManager.VisibleScreensCount, Keyboard.UPDATE_SCREENS_LIST);
+            return Keyboard.GenerateIndexedKeyboard(ScreenManager.ScreensCount, Keyboard.UPDATE_SCREENS_LIST);
         }
 
         private static IReplyMarkup GetKillListKeyboard()

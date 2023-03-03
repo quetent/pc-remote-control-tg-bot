@@ -123,9 +123,14 @@ namespace RemoteControlBot
             }
 
             if (result.ToString() == string.Empty)
-                result.Append(GetNoVisibleProccessesFoundAnswer());
+                result.Append(GetNoScreensFoundAnswer());
 
             return result.ToString();
+        }
+
+        private static string GetNoScreensFoundAnswer()
+        {
+            return "No screens found";
         }
 
         private static string GetProcessesListAnswer()
