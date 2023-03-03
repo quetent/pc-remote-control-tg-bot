@@ -98,6 +98,7 @@ namespace RemoteControlBot
         {
             return _commandInfo switch
             {
+                CommandInfo.ToScreensList => GetScreensListAnswer(),
                 CommandInfo.ToKillList => GetProcessesListAnswer(),
                 _ => GetDefaultAnswer()
             };
@@ -106,6 +107,25 @@ namespace RemoteControlBot
         private static string GetDefaultAnswer()
         {
             return "...";
+        }
+
+        private static string GetScreensListAnswer()
+        {
+            var counter = 1;
+            var result = new StringBuilder();
+
+            foreach (var screen in ScreenManager.VisibleScreens)
+            {
+                var primaryAddition = screen.Primary ? " (Primary)" : string.Empty;
+
+                result.AppendLine($"{counter}. {screen.Bounds.Width}x{screen.Bounds.Height}{primaryAddition}");
+                counter++;
+            }
+
+            if (result.ToString() == string.Empty)
+                result.Append(GetNoVisibleProccessesFoundAnswer());
+
+            return result.ToString();
         }
 
         private static string GetProcessesListAnswer()
