@@ -126,7 +126,7 @@ namespace RemoteControlBot
 
         private static string GetProcessesListAnswer()
         {
-            return GenerateNumeratedAnswerFromCollection(ProcessManager.VisibleProcesses, (process, counter, sb) =>
+            return GenerateNumeratedAnswerFromCollection(ProcessManager.Processes, (process, counter, sb) =>
             {
                 sb.AppendLine($"{counter}. {process.ProcessName}");
             },

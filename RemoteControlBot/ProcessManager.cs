@@ -6,19 +6,29 @@ namespace RemoteControlBot
 {
     public static class ProcessManager
     {
-        public static int VisibleProcessesCount => _visibleProcesses.Count;
+        public static int ProcessesCount => _processes.Count;
 
         public static bool IsSuccessfulLastKill { get; private set; }
         public static bool IsLastKillSystemProcess { get; private set; }
 
         public static bool IsValidLastIndex { get; private set; }
 
-        private static readonly List<Process> _visibleProcesses;
-        public static ReadOnlyCollection<Process> VisibleProcesses => _visibleProcesses.AsReadOnly();
+        private static readonly List<Process> _processes;
+        public static ReadOnlyCollection<Process> Processes => _processes.AsReadOnly();
 
         static ProcessManager()
         {
-            _visibleProcesses = new List<Process>();
+            _processes = new List<Process>();
+        }
+
+        public static void ScanProcesses()
+        {
+            if (_processes.Count != 0)
+                _processes.Clear();
+
+            foreach (var process in Process.GetProcesses())
+                if (!IsProcessHidden(process))
+                    _processes.Add(process);
         }
 
         public static void StartProcess(string filepath, string args, bool createNoWindow)
@@ -32,21 +42,11 @@ namespace RemoteControlBot
             Process.Start(processInfo);
         }
 
-        public static void SetVisibleProcceses()
-        {
-            if (_visibleProcesses.Count != 0)
-                _visibleProcesses.Clear();
-
-            foreach (var process in Process.GetProcesses())
-                if (!IsProcessHidden(process))
-                    _visibleProcesses.Add(process);
-        }
-
         public static void TryKillProcessByIndex(int index)
         {
             try
             {
-                if (index < _visibleProcesses.Count)
+                if (index < _processes.Count)
                 {
                     IsValidLastIndex = true;
 
@@ -71,7 +71,7 @@ namespace RemoteControlBot
 
         private static void KillProcessByIndex(int index)
         {
-            _visibleProcesses[index].Kill();
+            _processes[index].Kill();
         }
 
         private static bool IsProcessHidden(Process process)
@@ -83,7 +83,7 @@ namespace RemoteControlBot
         {
             try
             {
-                var process = Process.GetProcessById(_visibleProcesses[index].Id);
+                var process = Process.GetProcessById(_processes[index].Id);
                 return process.HasExited;
             }
             catch (ArgumentException)

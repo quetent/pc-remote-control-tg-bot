@@ -19,7 +19,7 @@ namespace RemoteControlBot
             _screens = new List<Screen>();
         }
 
-        public static void SetVisibleScreen()
+        public static void DetectScreens()
         {
             if (_screens.Count != 0)
                 _screens.Clear();

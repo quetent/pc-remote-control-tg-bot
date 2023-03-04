@@ -67,10 +67,10 @@ namespace RemoteControlBot
             switch (_commandInfo)
             {
                 case CommandInfo.ToKillList:
-                    ProcessManager.SetVisibleProcceses();
+                    ProcessManager.ScanProcesses();
                     break;
                 case CommandInfo.ToScreensList:
-                    ScreenManager.SetVisibleScreen();
+                    ScreenManager.DetectScreens();
                     break;
                 default:
                     break;
