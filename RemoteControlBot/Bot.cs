@@ -17,7 +17,7 @@ namespace RemoteControlBot
         private DateTime _startupTime;
         private readonly CancellationToken _cancellationToken;
 
-        private static Command PreviousExecutedCommand => new Command(); // todo
+        private static Command PreviousExecutedCommand => Execute.LastExecutedCommand;
 
         public Bot(long ownerId,
                    string token,
@@ -187,9 +187,9 @@ namespace RemoteControlBot
         {
             Command command;
 
-            if (Command.IsNumberForProccesManager(previousCommand, messageText))
+            if (CommandHelper.IsNumberForProccesManager(previousCommand, messageText))
                 command = new Command(CommandType.Process, CommandInfo.Kill, messageText, senderId);
-            else if (Command.IsNumberForScreenshotManager(previousCommand, messageText))
+            else if (CommandHelper.IsNumberForScreenshotManager(previousCommand, messageText))
                 command = new Command(CommandType.Screen, CommandInfo.Screenshot, messageText, senderId);
             else
                 command = new Command(messageText, senderId);

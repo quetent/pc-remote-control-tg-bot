@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace RemoteControlBot
@@ -9,18 +8,9 @@ namespace RemoteControlBot
         public delegate Task CommandHandle(Command command, CancellationToken cancellation);
         public static event CommandHandle? CommandExecuted;
 
-        public static int LastExecutedCommandsCount => _lasExecutedCommands.Count;
-        public static ImmutableList<Command> LastExecutedCommands => _lasExecutedCommands.ToImmutableList();
-        private static readonly LimitedSizeList<Command> _lasExecutedCommands;
+        public static Command LastExecutedCommand { get; private set; }
 
         private readonly Command _command;
-
-        static Execute()
-        {
-            var buffer = 3;
-
-            _lasExecutedCommands = new(buffer);
-        }
 
         public Execute(Command command)
         {
@@ -57,7 +47,7 @@ namespace RemoteControlBot
 
         private static void SetLastExecutedCommand(Command command)
         {
-            _lasExecutedCommands.Add(command);
+            LastExecutedCommand = command;
         }
     }
 
