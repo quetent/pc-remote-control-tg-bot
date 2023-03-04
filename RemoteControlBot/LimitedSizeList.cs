@@ -1,8 +1,11 @@
-﻿namespace RemoteControlBot
+﻿using System.Collections.Immutable;
+
+namespace RemoteControlBot
 {
     public class LimitedSizeList<T>
     {
         public readonly int Buffer;
+        public int Count => _data.Count;
 
         private readonly LinkedList<T> _data;
 
@@ -18,6 +21,11 @@
                 _data.RemoveFirst();
 
             _data.AddLast(item);
+        }
+
+        public ImmutableList<T> ToImmutableList()
+        {
+            return _data.ToImmutableList();
         }
     }
 }

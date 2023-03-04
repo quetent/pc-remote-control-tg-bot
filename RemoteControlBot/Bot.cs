@@ -17,7 +17,7 @@ namespace RemoteControlBot
         private DateTime _startupTime;
         private readonly CancellationToken _cancellationToken;
 
-        private static Command PreviousExecutedCommand => Execute.LastExecutedCommand;
+        private static Command PreviousExecutedCommand => new Command(); // todo
 
         public Bot(long ownerId,
                    string token,
