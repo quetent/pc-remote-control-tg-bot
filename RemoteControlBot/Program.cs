@@ -8,6 +8,11 @@ namespace RemoteControlBot
     {
         static async Task Main(string[] args)
         {
+            var x = new LimitedSizeList<int>(3);
+            x.Add(1);
+            x.Add(2);
+            x.Add(3);
+            x.Add(4);
             await Execute.ExecuteIfAsync(() => !COMPILE_BACKGROUND, () => SetConsoleTitle());
 
             var startUpCode = StartUpCodeUtilities.ParseStartUpCode(args);
