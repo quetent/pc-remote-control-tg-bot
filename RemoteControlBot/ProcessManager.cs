@@ -53,6 +53,7 @@ namespace RemoteControlBot
                     if (!IsProcessExited(index))
                     {
                         KillProcessByIndex(index);
+                        _processes.RemoveAt(index);
                         IsSuccessfulLastKill = true;
                     }
                     else

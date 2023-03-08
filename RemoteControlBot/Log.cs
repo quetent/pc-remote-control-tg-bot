@@ -13,9 +13,9 @@ namespace RemoteControlBot
         public static ConsoleColor NewMessageColor { get; set; } = ConsoleColor.DarkGreen;
         public static ConsoleColor NotImportantColor { get; set; } = ConsoleColor.DarkGray;
 
-        public static void If(Func<bool> condition, Action logMethod)
+        public static void If(bool condition, Action logMethod)
         {
-            if (condition.Invoke())
+            if (condition)
                 logMethod.Invoke();
         }
 
@@ -112,7 +112,7 @@ namespace RemoteControlBot
             }
         }
 
-        public static void LogToFile(StreamWriter stream, DateTime now, string eventType, string eventText)
+        private static void LogToFile(StreamWriter stream, DateTime now, string eventType, string eventText)
         {
             var logString = $"({now})\n[ {eventType} ]\n{eventText}\n";
 
@@ -134,12 +134,9 @@ namespace RemoteControlBot
         {
             var now = DateTimeManager.GetCurrentDateTime();
 
-            If(() => LOG_TO_CONSOLE, () =>
-            {
-                LogToConsole(now, eventType, eventText, eventColor);
-            });
+            If(LOG_TO_CONSOLE, () => LogToConsole(now, eventType, eventText, eventColor));
 
-            If(() => LOG_TO_FILE, () =>
+            If(LOG_TO_FILE, () =>
             {
                 var filename = isException ? BUG_REPORT_FILENAME : LOG_FILENAME;
                 using var stream = new StreamWriter(filename, true, Encoding.UTF8);

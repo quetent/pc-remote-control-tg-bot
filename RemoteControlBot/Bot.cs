@@ -45,7 +45,7 @@ namespace RemoteControlBot
                 receiverOptions: _receiverOptions,
                 cancellationToken: _cancellationToken);
 
-            Log.If(() => ENABLE_LOGGING, () => Log.BotStartup(message));
+            Log.If(ENABLE_LOGGING, () => Log.BotStartup(message));
         }
 
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ namespace RemoteControlBot
 
             if (!isUpdateValid)
             {
-                Log.If(() => ENABLE_LOGGING, () => Log.MessageSkipped("< invalid message >", null));
+                Log.If(ENABLE_LOGGING, () => Log.MessageSkipped("< invalid message >", null));
                 return;
             }
 
@@ -68,16 +68,16 @@ namespace RemoteControlBot
                     UpdateValidator.IsAccessAllowed(this, user),
                     UpdateValidator.IsMessageAfterStartup(_startupTime, updateSendTime)))
             {
-                Log.If(() => ENABLE_LOGGING, () => Log.MessageSkipped(messageText, user));
+                Log.If(ENABLE_LOGGING, () => Log.MessageSkipped(messageText, user));
                 return;
             }
 
-            Log.If(() => ENABLE_LOGGING, () => Log.MessageRecieved(messageText, user));
+            Log.If(ENABLE_LOGGING, () => Log.MessageRecieved(messageText, user));
 
             var chatId = GetChatId(message);
             var command = GetCommand(messageText, chatId, PreviousExecutedCommand);
 
-            Log.If(() => ENABLE_LOGGING, () => Log.UpdateExecute(command, messageText));
+            Log.If(ENABLE_LOGGING, () => Log.UpdateExecute(command, messageText));
 
             await new Execute(command).ExecuteAsync(cancellationToken);
 
@@ -93,22 +93,22 @@ namespace RemoteControlBot
         {
             if (exception is AppRestartRequested)
             {
-                Log.If(() => ENABLE_LOGGING, () => Log.AppRestart());
+                Log.If(ENABLE_LOGGING, () => Log.AppRestart());
                 App.Restart(StartUpCode.RestartRequested);
             }
             else if (exception is AppExitRequested)
             {
-                Log.If(() => ENABLE_LOGGING, () => Log.AppExit());
+                Log.If(ENABLE_LOGGING, () => Log.AppExit());
                 App.Exit();
             }
             else if (exception is RequestException)
                 await HandleConnectionLost();
 
-            Log.If(() => ENABLE_LOGGING, () => Log.UnhandledException(exception));
+            Log.If(ENABLE_LOGGING, () => Log.UnhandledException(exception));
 
             await Execute.ExecuteIfAsync(() => !AUTO_RESTART_IF_CRASHED, () =>
             {
-                Log.If(() => ENABLE_LOGGING, () => Log.AppRestart());
+                Log.If(ENABLE_LOGGING, () => Log.AppRestart());
                 App.Restart(StartUpCode.Crashed);
             });
 
@@ -117,18 +117,18 @@ namespace RemoteControlBot
 
         private static async Task HandleConnectionLost()
         {
-            Log.If(() => ENABLE_LOGGING, () => Log.ConnectionLost());
+            Log.If(ENABLE_LOGGING, () => Log.ConnectionLost());
 
             await Execute.ExecuteIfAsync(() => AUTO_RESTART_IF_CONNECTION_LOST, async () =>
             {
-                Log.If(() => ENABLE_LOGGING, () => Log.WaitingForInternetConnection());
+                Log.If(ENABLE_LOGGING, () => Log.WaitingForInternetConnection());
 
                 await HttpClientUtilities.WaitForInternetConnectionAsync(
                         INTERNET_CHECKING_URL,
                         5000,
                         3000);
 
-                Log.If(() => ENABLE_LOGGING, () =>
+                Log.If(ENABLE_LOGGING, () =>
                 {
                     Log.ConnectionRestored();
                     Log.AppRestart();
@@ -145,7 +145,7 @@ namespace RemoteControlBot
                 case CommandType.Screen:
                     if (command.Info is CommandInfo.Screenshot && ScreenManager.IsValidLastIndex)
                     {
-                        Log.If(() => ENABLE_LOGGING, () => Log.ScreenshotSending());
+                        Log.If(ENABLE_LOGGING, () => Log.ScreenshotSending());
                         await SendScreenshotAsync(command.SenderId, cancellationToken);
                     }
                     break;

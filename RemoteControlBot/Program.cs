@@ -30,13 +30,13 @@ namespace RemoteControlBot
                 {
                     await Execute.ExecuteIfAsync(() => !WAIT_INTERNET_TO_START, () => throw new RequestException(e.Message));
 
-                    Log.If(() => ENABLE_LOGGING, () => Log.NoConnection());
+                    Log.If(ENABLE_LOGGING, () => Log.NoConnection());
 
                     await HttpClientUtilities.WaitForInternetConnectionAsync(
                             INTERNET_CHECKING_URL,
                             5000, 3000);
 
-                    Log.If(() => ENABLE_LOGGING, () => Log.ConnectionRestored());
+                    Log.If(ENABLE_LOGGING, () => Log.ConnectionRestored());
                 }
             }
 
